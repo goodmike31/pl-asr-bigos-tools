@@ -15,3 +15,5 @@ BIGOS diagnostic suite is used for:
   - Hugging Face leaderboard [link]
 - Evaluation of community-provided ASR systems
   - PolEval challenge [link]
+
+Evaluation scripts for benchmark results replication are available here [link]
