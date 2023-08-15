@@ -1,2 +1,2 @@
 # pl-asr-bigos-tools
-Tools for BIGOS corpus curation and evaluation of popular ASR systems for Polish
+Tools for self-curation of BIGOS (Benchmark Intended Grouping of Open Speech) datasets for Polish language.
