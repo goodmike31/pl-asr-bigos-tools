@@ -1,19 +1,9 @@
 # pl-asr-bigos-tools
-BIGOS (Benchmark Intended Grouping of Open Speech) collects publicly available Polish-language ASR speech datasets.
-The curated dataset can be used for the development and evaluation of ASR systems for Polish.
+This repository contains tools for benchmarking ASR systems using BIGOS corpora.
+BIGOS (Benchmark Intended Grouping of Open Speech) corpora collects publicly available ASR speech datasets for Polish.
+The corpus is available at the [Hugging Face platform](https://huggingface.co/datasets/michaljunczyk/pl-asr-bigos).
+The results of the initial BIGOS-based evaluation of publicly available ASR systems are available in the [paper](https://www.researchgate.net/publication/370983845_BIGOS_-_Benchmark_Intended_Grouping_of_Open_Speech_Corpora_for_Polish_Automatic_Speech_Recognition)
+Hugging Face leaderboard for systematic evaluation of publicly available evaluation is under construction.
+Community-provided ASR systems evaluation is under preparation as part of the 2024 PolEval challenge.
 
-Two variants of BIGOS corpora are available:
-1. Automatically curated suite of publicly available corpora:
-  - Curated corpora are available from the hugging face dataset repository
-  - Scripts for self-curation are also available (link)
-2. The manually curated diagnostic subset
-  - Available for download from HF datasets repository
 
-BIGOS diagnostic suite use-cases:
-1. Evaluation of publicly available ASR systems
-  - Iteration 1 publication [arxiv]
-  - Hugging Face leaderboard [link]
-2. Evaluation of community-provided ASR systems
-  - PolEval challenge [link]
-
-Evaluation scripts for benchmark results replication are available here [link]
