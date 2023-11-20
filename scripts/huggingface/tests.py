@@ -1,17 +1,11 @@
 import pytest, requests
 from bs4 import BeautifulSoup
-
+from const import BIGOS_SUBSETS, BIGOS_SPLITS
 
 _HOMEPAGE = 'https://huggingface.co/datasets/michaljunczyk/pl-asr-bigos-v2'
 
-_BIGOS_SUBSETS = {
-    'fair-mls-20', 'mailabs-corpus_librivox-19', 'mozilla-common_voice_15-23', 
-    'pwr-shortwords-unk', 'pwr-maleset-unk', 'pwr-viu-unk', 
-    'pwr-azon_read-20', 'pwr-azon_spont-20', 'polyai-minds14-21', 
-    'google-fleurs-22', 'pjatk-clarin_mobile-15', 'pjatk-clarin_studio-15',
-}
-
-_BIGOS_SPLITS = {'test', 'train', 'validation'}
+_BIGOS_SUBSETS = set(BIGOS_SUBSETS)
+_BIGOS_SPLITS = set(BIGOS_SPLITS)
 
 
 @pytest.mark.parametrize('subset', _BIGOS_SUBSETS)
@@ -21,8 +15,8 @@ def test_if_subset_uploaded(subset):
 
     Parameters
     ----------
-        subset : str
-            Name of a subset taken from _BIGOS_SUBSETS.
+    subset : str
+        Name of a subset taken from _BIGOS_SUBSETS.
     """
     response = requests.get(f'{_HOMEPAGE}/tree/main/data/{subset}')
     assert response.status_code == 200, \
@@ -50,12 +44,12 @@ def test_if_file_exists(subset, split, frmt):
 
     Parameters
     ----------
-        subset : str
-            Name of a subset taken from _BIGOS_SUBSETS.
-        split : str
-            Name of a split taken from _BIGOS_SPLITS.
-        frmt : str
-            Format of a file, i.e. tar.gz or tsv.
+    subset : str
+        Name of a subset taken from _BIGOS_SUBSETS.
+    split : str
+        Name of a split taken from _BIGOS_SPLITS.
+    frmt : str
+        Format of a file, i.e. tar.gz or tsv.
     """
     response = requests.get(f'{_HOMEPAGE}/blob/main/data/{subset}/{split}.{frmt}')
     assert response.status_code == 200, \
@@ -69,8 +63,8 @@ def test_for_extra_files(subset):
 
     Parameters
     ----------
-        subset : str
-            Name of a subset taken from _BIGOS_SUBSETS.
+    subset : str
+        Name of a subset taken from _BIGOS_SUBSETS.
     """
     expected_files = {f'{split}{frmt}' for split in _BIGOS_SPLITS for frmt in ['.tar.gz', '.tsv']}
     response = requests.get(f'{_HOMEPAGE}/tree/main/data/{subset}')
