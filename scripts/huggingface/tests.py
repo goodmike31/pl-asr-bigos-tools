@@ -2,7 +2,7 @@ import pytest, requests
 from bs4 import BeautifulSoup
 from const import BIGOS_SUBSETS, BIGOS_SPLITS
 
-_HOMEPAGE = 'https://huggingface.co/datasets/michaljunczyk/pl-asr-bigos-v2'
+_HOMEPAGE = 'https://huggingface.co/datasets/amu-cai/pl-asr-bigos-v2'
 
 _BIGOS_SUBSETS = set(BIGOS_SUBSETS)
 _BIGOS_SPLITS = set(BIGOS_SPLITS)
