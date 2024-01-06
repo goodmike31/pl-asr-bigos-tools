@@ -9,7 +9,7 @@ from huggingface.const import BIGOS_SUBSETS, BIGOS_SPLITS
 class DataAnalyzer:
     def __init__(
         self, 
-        dataset: str = 'michaljunczyk/pl-asr-bigos-v2', 
+        dataset: str = 'amu-cai/pl-asr-bigos-v2', 
         subsets: list = BIGOS_SUBSETS, 
         splits: list = BIGOS_SPLITS,
     ) -> None:
