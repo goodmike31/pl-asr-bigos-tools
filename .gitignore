@@ -1,3 +1,4 @@
 data/
 */__pycacache__/*
 config/user-specific/config.ini
+.python-version
