@@ -7,5 +7,7 @@ BIGOS family corpora are available at the Hugging Face platform: <br>
 * [PELCRA for BIGOS](https://huggingface.co/datasets/pelcra/pl-asr-pelcra-for-bigos)<br>
 
 Both BIGOS V2 and PELCRA for BIGOS corpora are intended for evaluation of community-provided ASR systems as part of the 2024 PolEval challenge.<br>
-Evaluation results on BIGOS V1 are available in the [paper](https://annals-csis.org/proceedings/2023/drp/pdf/1609.pdf)<br>
+Evaluation results on [BIGOS V1](https://huggingface.co/datasets/michaljunczyk/pl-asr-bigos) are available in the [paper](https://annals-csis.org/proceedings/2023/drp/pdf/1609.pdf)<br>
 Hugging Face leaderboard for systematic evaluation of publicly available ASR systems for Polish is under construction.<br>
+
+# usage manual
