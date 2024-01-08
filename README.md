@@ -10,4 +10,12 @@ Both BIGOS V2 and PELCRA for BIGOS corpora are intended for evaluation of commun
 Evaluation results on [BIGOS V1](https://huggingface.co/datasets/michaljunczyk/pl-asr-bigos) are available in the [paper](https://annals-csis.org/proceedings/2023/drp/pdf/1609.pdf)<br>
 Hugging Face leaderboard for systematic evaluation of publicly available ASR systems for Polish is under construction.<br>
 
-# usage manual
+# How to use this repo
+
+## BIGOS datasets inspection
+
+## Replicating BIGOS benchmark results for publicly available ASR systems for Polish
+
+## Adding new ASR system to the BIGOS benchmark
+
+## Adding new dataset to the BIGOS benchmark
