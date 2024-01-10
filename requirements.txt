@@ -1,3 +1,5 @@
 langdetect
 pandas
 datasets
+librosa
+soundfile
