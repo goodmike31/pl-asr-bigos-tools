@@ -132,7 +132,7 @@ class DataAnalyzer:
         split : str
             Name of the currently processed split.
         sample : dict
-            Currently processed sample. Available keys: ['file_id', 'dataset_id', 'ref_orig', 'audio'].
+            Currently processed sample. Available keys: ['audioname', 'dataset_id', 'ref_orig', 'audio'].
         """
         self.output[subset][split]['noSamples'] += 1
         if split == 'test':
@@ -141,11 +141,11 @@ class DataAnalyzer:
         else:
             if self._is_empty(sample['ref_orig']):
                 self.output[subset][split]['noEmptyReferences'] += 1
-                self.output[subset][split]['emptyReference'].append(sample['file_id'])
+                self.output[subset][split]['emptyReference'].append(sample['audioname'])
 
             if not self._in_polish(sample['ref_orig']):
                 self.output[subset][split]['noDifferentLanguage'] += 1
-                self.output[subset][split]['differentLanguage'].append(sample['file_id'])
+                self.output[subset][split]['differentLanguage'].append(sample['audioname'])
 
             if self._contains_double_white_spaces(sample['ref_orig']):
                 self.output[subset][split]['noDoubleWhitespaces'] += 1
@@ -166,7 +166,7 @@ class DataAnalyzer:
         split : str
             Name of the currently processed split.
         """
-        dataset = load_dataset(self.dataset_name, subset, split=split, streaming=True)
+        dataset = load_dataset(self.dataset_name, subset, split=split)
         for sample in tqdm(dataset):
             self._analyze_sample(subset=subset, split=split, sample=sample)
 
