@@ -1,0 +1,47 @@
+{
+    "BIGOS_CORPORA": ["amu-cai/pl-asr-bigos-v2", "pelcra/pl-asr-pelcra-for-bigos"],
+    "amu-cai/pl-asr-bigos-v2":
+    {
+        "SUBSETS":
+        [
+            "fair-mls-20", 
+            "mailabs-corpus_librivox-19", 
+            "mozilla-common_voice_15-23", 
+            "pwr-shortwords-unk", 
+            "pwr-maleset-unk", 
+            "pwr-viu-unk", 
+            "pwr-azon_read-20", 
+            "pwr-azon_spont-20", 
+            "pjatk-clarin_studio-15", 
+            "pjatk-clarin_mobile-15",
+            "google-fleurs-22",
+            "polyai-minds14-21"
+        ],
+
+        "SPLITS": ["train", "validation", "test"],
+        "HF_URL_PUBLIC": "https://huggingface.co/datasets/amu-cai/pl-asr-bigos-v2",
+        "HF_URL_SECRET": "https://huggingface.co/datasets/amu-cai/pl-asr-bigos-v2-secret"
+    },
+    "pelcra/pl-asr-pelcra-for-bigos":
+    {
+        "SUBSETS":
+        [
+            "ul-diabiz_poleval-22" , 
+            "ul-spokes_mix_emo-18", 
+            "ul-spokes_mix_luz-18", 
+            "ul-spokes_mix_parl-18", 
+            "ul-spokes_biz_bio-23", 
+            "ul-spokes_biz_int-23", 
+            "ul-spokes_biz_luz-23", 
+            "ul-spokes_biz_pod-23", 
+            "ul-spokes_biz_pres-23",
+            "ul-spokes_biz_vc-23",
+            "ul-spokes_biz_vc2-23",
+            "ul-spokes_biz_wyw-23"
+        ],
+
+        "SPLITS": ["train", "validation", "test"],
+        "HF_URL_PUBLIC": "https://huggingface.co/datasets/pelcra/pl-asr-pelcra-for-bigos",
+        "HF_URL_SECRET": "https://huggingface.co/datasets/pelcra/pl-asr-pelcra-for-bigos"
+    }
+}
