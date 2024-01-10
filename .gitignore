@@ -1,5 +1,5 @@
 data/
-*__pycacache__*
+scripts/__pycache__/
 config/user-specific/config.ini
 .python-version
 *.pyc
