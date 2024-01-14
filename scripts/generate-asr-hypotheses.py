@@ -63,71 +63,12 @@ def generate_asr_hypotheses(args, config_user, config_common):
             # get paths to audio files
             print ("Retrieving audio from column: " + col_name_audiopath)
             audio_paths = hf_dataset[split][col_name_audiopath]
-            for audio_path in audio_paths:
-                print(audio_path)
+
             
-            #whisper cloud
-            print("Generating hypotheses for Whisper cloud")
-            whisper_transcriptions= []
-            col_name_asr_hyp="hyp_whisper_cloud"
-            for _, row in df_input.iterrows():
-                audio_fp_local=row[col_name_audiopath]
-                audio_fp = os.path.join(bigos_repo_root_dir, audio_fp_local)
-                if(force_hyps_gen_whisper == "true" or cache_file_exists==False):
-                    whisper_transcription = transcribe_whisper(audio_fp, col_name_asr_hyp)
-                else:
-                    whisper_transcription_cached = get_hyp_from_cache(df_cache, audio_fp_local, col_name_asr_hyp)
-                    if(whisper_transcription_cached==""):
-                        whisper_transcription = transcribe_whisper(audio_fp, col_name_asr_hyp)
-                    else:
-                        whisper_transcription = whisper_transcription_cached
-                whisper_transcriptions.append(whisper_transcription)
-
-            df_input[col_name_asr_hyp] = whisper_transcriptions
-
-            #google
-            for model_type in google_model_types:
-                print("Generating hypotheses for Google "+ model_type)
-                google_transcriptions = []
-                col_name_asr_hyp = "hyp_google_" + model_type
-
-                for _, row in df_input.iterrows():
-                    audio_fp_local=row[col_name_audiopath]
-                    audio_fp = os.path.join(bigos_repo_root_dir, audio_fp_local)
-                    if(force_hyps_gen_google == "true" or cache_file_exists==False):
-                        google_transcription = transcribe_google(audio_fp,col_name_asr_hyp)
-                    else:
-                        google_transcription_cached = get_hyp_from_cache(df_cache, audio_fp_local, col_name_asr_hyp)
-                        if(google_transcription_cached == ""):
-                            google_transcription = transcribe_google(audio_fp,col_name_asr_hyp)
-                        else:
-                            google_transcription=google_transcription_cached
-                    google_transcriptions.append(google_transcription)
-
-                df_input[col_name_asr_hyp] = google_transcriptions
-
-            #azure
-            for model_type in azure_model_types:
-                print("Generating hypotheses for Azure "+ model_type)
-                azure_transcriptions = []
-                col_name_asr_hyp = "hyp_azure_" + model_type
-                
-                for _, row in df_input.iterrows():
-                    audio_fp_local=row[col_name_audiopath]
-                    audio_fp = os.path.join(bigos_repo_root_dir, audio_fp_local)
-                    print(f"Generating transcription for: {audio_fp} and {col_name_asr_hyp}")
-                    if(force_hyps_gen_azure == "true" or cache_file_exists==False):
-                        azure_transcription = transcribe_azure(audio_fp, col_name_asr_hyp)
-                    else:
-                        azure_transcription_cached = get_hyp_from_cache(df_cache, audio_fp_local, col_name_asr_hyp)
-                        if(azure_transcription_cached==""):
-                            azure_transcription = transcribe_azure(audio_fp,col_name_asr_hyp)
-                        else:
-                            azure_transcription=azure_transcription_cached
-                    azure_transcriptions.append(azure_transcription)
-
-                df_input[col_name_asr_hyp] = azure_transcriptions
-
+            transcribe_whisper_cloud(audio_paths, config_user)
+            transcribe_azure(audio_paths, config_user)
+            transcribe_google(audio_paths, config_user)
+  
             # Save the updated DataFrame to a new TSV file
             df_input.to_csv(output_file, sep="\t", index=False)
             print(f"Results saved to {output_file}")
@@ -154,6 +95,33 @@ def get_hyp_from_cache(df_cache, audio_fp_local, col_name_asr_hyp):
         return("")
     
 def transcribe_google(audio_fp, col_name_asr_hyp):
+    # check asr systems to generate hypotheses
+    google_model_types_str = config_user.get("CLOUD_ASR_SETTINGS", "GOOGLE_MODELS")
+    google_model_types = google_model_types_str.split(", ")
+    
+    for audio_path in audio_paths:
+    print("Generating ASR hyps for: " + audio_path)
+    #google
+            for model_type in google_model_types:
+                print("Generating hypotheses for Google "+ model_type)
+                google_transcriptions = []
+                col_name_asr_hyp = "hyp_google_" + model_type
+
+                for _, row in df_input.iterrows():
+                    audio_fp_local=row[col_name_audiopath]
+                    audio_fp = os.path.join(bigos_repo_root_dir, audio_fp_local)
+                    if(force_hyps_gen_google == "true" or cache_file_exists==False):
+                        google_transcription = transcribe_google(audio_fp,col_name_asr_hyp)
+                    else:
+                        google_transcription_cached = get_hyp_from_cache(df_cache, audio_fp_local, col_name_asr_hyp)
+                        if(google_transcription_cached == ""):
+                            google_transcription = transcribe_google(audio_fp,col_name_asr_hyp)
+                        else:
+                            google_transcription=google_transcription_cached
+                    google_transcriptions.append(google_transcription)
+
+                df_input[col_name_asr_hyp] = google_transcriptions
+
     print(f"Generating transcription for: {col_name_asr_hyp}\n{audio_fp}")
     try:
         client = speech.SpeechClient()
@@ -172,6 +140,30 @@ def transcribe_google(audio_fp, col_name_asr_hyp):
 
     
 def transcribe_azure(audio_fp, col_name_asr_hyp):
+    azure_model_types_str = config_user.get("CLOUD_ASR_SETTINGS", "AZURE_MODELS")
+    azure_model_types = azure_model_types_str.split(", ")
+     #azure
+            for model_type in azure_model_types:
+                print("Generating hypotheses for Azure "+ model_type)
+                azure_transcriptions = []
+                col_name_asr_hyp = "hyp_azure_" + model_type
+                
+                for _, row in df_input.iterrows():
+                    audio_fp_local=row[col_name_audiopath]
+                    audio_fp = os.path.join(bigos_repo_root_dir, audio_fp_local)
+                    print(f"Generating transcription for: {audio_fp} and {col_name_asr_hyp}")
+                    if(force_hyps_gen_azure == "true" or cache_file_exists==False):
+                        azure_transcription = transcribe_azure(audio_fp, col_name_asr_hyp)
+                    else:
+                        azure_transcription_cached = get_hyp_from_cache(df_cache, audio_fp_local, col_name_asr_hyp)
+                        if(azure_transcription_cached==""):
+                            azure_transcription = transcribe_azure(audio_fp,col_name_asr_hyp)
+                        else:
+                            azure_transcription=azure_transcription_cached
+                    azure_transcriptions.append(azure_transcription)
+
+                df_input[col_name_asr_hyp] = azure_transcriptions
+
     print(f"Generating transcription for: {col_name_asr_hyp}\n{audio_fp}")
     try:
         speech_config = speechsdk.SpeechConfig(subscription=azure_api_key, region=azure_region)
@@ -195,7 +187,31 @@ def transcribe_azure(audio_fp, col_name_asr_hyp):
         print(f"Other error: {e}")
     return(result.text)
 
-def transcribe_whisper_cloud(audio_fp,col_name_asr_hyp):
+def transcribe_whisper_cloud(audio_fp, config_user)->DataFrame:
+
+    whisper_cloud_model_types_str = config_user.get("CLOUD_ASR_SETTINGS", "WHISPER_CLOUD_MODELS")
+    whisper_cloud_model_types = whisper_cloud_model_types_str.split(", ")
+
+                #whisper cloud
+            print("Generating hypotheses for Whisper cloud")
+            whisper_transcriptions= []
+            col_name_asr_hyp="hyp_whisper_cloud"
+            for _, row in df_input.iterrows():
+                audio_fp_local=row[col_name_audiopath]
+                audio_fp = os.path.join(bigos_repo_root_dir, audio_fp_local)
+                if(force_hyps_gen_whisper == "true" or cache_file_exists==False):
+                    whisper_transcription = transcribe_whisper(audio_fp, col_name_asr_hyp)
+                else:
+                    whisper_transcription_cached = get_hyp_from_cache(df_cache, audio_fp_local, col_name_asr_hyp)
+                    if(whisper_transcription_cached==""):
+                        whisper_transcription = transcribe_whisper(audio_fp, col_name_asr_hyp)
+                    else:
+                        whisper_transcription = whisper_transcription_cached
+                whisper_transcriptions.append(whisper_transcription)
+
+            df_input[col_name_asr_hyp] = whisper_transcriptions
+
+       
     print(f"Generating transcription for: {col_name_asr_hyp}\n{audio_fp}")
     try:
         audio_data = open(audio_fp, "rb")
@@ -214,7 +230,13 @@ def transcribe_whisper_cloud(audio_fp,col_name_asr_hyp):
         result = "Other error"
     return result
 
+def transcribe_whisper_local(audio_fp, col_name_asr_hyp):
+    #whisper local_model_types_str = config_user.get("LOCAL_ASR_SETTINGS", "WHISPER_LOCAL_MODELS")
+    #whisper_local_model_types = whisper_local_model_types_str.split(", ")
+
+
 if __name__ == "__main__":
+    """
     parser = argparse.ArgumentParser(description='Reads TSV with speech recordings and generates hypotheses with local whisper ASR')
 
     # Default location of config files.
@@ -246,6 +268,4 @@ if __name__ == "__main__":
     generate_asr_hypotheses(args, config_user, config_common)
 
     print("Hypotheses generated successfully.")
-else:
-    print("Please specify --input_file, --config_file, --asr_hyps_cache_file, --col_name_audiopath and --output_file arguments")
-    sys.exit(1)
+    """

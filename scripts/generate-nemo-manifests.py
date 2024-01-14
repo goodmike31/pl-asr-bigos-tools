@@ -79,9 +79,9 @@ def convert_hf_to_nemo(dataset_id, subset, split, target_dir=None):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Converts Hugging Face datasets to NeMo manifests')
-    parser.add_argument('--dataset', type=str, help='Split to convert. Default = all datasets', default='all')
-    parser.add_argument('--subset', type=str, help='Subset to convert. Default = all splits',default='all')
-    parser.add_argument('--split', type=str, help='Split to convert. Default = all splits',default='all')
+    parser.add_argument('--dataset', type=str, help='Split to convert. Default = all datasets from the common config file', default='all')
+    parser.add_argument('--subset', type=str, help='Subset to convert. Default = all splits from the common config file',default='all')
+    parser.add_argument('--split', type=str, help='Split to convert. Default = all splits from the common config file',default='all')
     
     script_dir = os.path.dirname(os.path.realpath(__file__))
     common_config_path_default=os.path.join(script_dir, '../config/common/config.json')
