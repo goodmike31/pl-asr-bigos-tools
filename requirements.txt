@@ -3,3 +3,7 @@ pandas
 datasets
 librosa
 soundfile
+google.cloud.speech
+azure.cognitiveservices.speech
+openai
+prefect
