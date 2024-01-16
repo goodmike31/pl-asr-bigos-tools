@@ -8,12 +8,15 @@ def load_config(config_path):
     print("Loading config from {}".format(config_path))
 
 @task
-def process_audio_sample(sample, asr_system):
-    print("Processing audio sample {} for ASR system {}".format(sample, asr_system))
-    # Implement logic to process a single audio sample
-    asr_hyp = asr_system.process_audio(sample)
-    return(asr_hyp)
+def gen_hyps_from_audio_samples(audio_paths, asr_system):
+    asr_hyps = []
+    for audiopath in audio_paths[0:10]:
+        print("Processing sample {}".format(audiopath))
+        asr_hyp = asr_system.process_audio(audiopath)
+        asr_hyps.append(asr_hyp)
     
+    asr_system.save_cache()
+    return(asr_hyps)
 
 @task
 def load_hf_dataset(dataset_name, subset="all"):
