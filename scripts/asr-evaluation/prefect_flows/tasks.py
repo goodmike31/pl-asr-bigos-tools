@@ -10,7 +10,7 @@ def load_config(config_path):
 @task
 def gen_hyps_from_audio_samples(audio_paths, asr_system):
     asr_hyps = []
-    for audiopath in audio_paths[0:10]:
+    for audiopath in audio_paths[0:3]:
         print("Processing sample {}".format(audiopath))
         asr_hyp = asr_system.process_audio(audiopath)
         asr_hyps.append(asr_hyp)

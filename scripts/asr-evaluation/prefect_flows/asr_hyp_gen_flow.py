@@ -6,7 +6,7 @@ from asr_systems import initialize_asr_system
 def asr_hyp_gen_flow(config_user, config_common, datasets_to_process, subsets, splits, systems, models):
 
     for system in systems:
-        for model in models:
+        for model in models[system]:
             asr_system = initialize_asr_system(system, model, config_user)  # Assume this is defined
             print("ASR system initialized")
             print(asr_system)
