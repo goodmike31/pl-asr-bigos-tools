@@ -48,11 +48,12 @@ if __name__ == "__main__":
     #datasets = user_config["datasets_to_eval"]
     splits = ["test"]
     subsets = ["pwr-viu-unk"]
-    
+
     # get for each dataset inside the loop
-    systems = ["google", "azure"]
+    systems = ["google", "azure", "whisper_cloud"]
     models = {  "google": ["default", "command_and_search", "latest_long", "latest_short"],
-                "azure": ["latest"]
+                "azure": ["latest"],
+                "whisper_cloud": ["whisper-1"]
                 }
 
     asr_hyp_gen_flow(user_config, common_config, datasets, subsets, splits, systems, models)
