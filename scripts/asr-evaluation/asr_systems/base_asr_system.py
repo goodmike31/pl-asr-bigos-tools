@@ -2,18 +2,8 @@
 import os
 import json
 
-class BaseLocalASRSystem:
-    
-    def initialize_model(self, model_config):
-        raise NotImplementedError
 
-    def process_audio(self, audio_sample, model):
-        raise NotImplementedError
-    
-    def get_name(self):
-        raise NotImplementedError
-
-class BaseCloudASRSystem:
+class BaseASRSystem:
     def __init__(self, system, model) -> None:
         
         self.system = system
