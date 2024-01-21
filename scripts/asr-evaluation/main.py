@@ -50,10 +50,12 @@ if __name__ == "__main__":
     subsets = ["pwr-viu-unk"]
 
     # get for each dataset inside the loop
-    systems = ["google", "azure", "whisper_cloud"]
+    #systems = ["google", "azure", "whisper_cloud", "whisper_local"]
+    systems = ["whisper_local"]
     models = {  "google": ["default", "command_and_search", "latest_long", "latest_short"],
                 "azure": ["latest"],
-                "whisper_cloud": ["whisper-1"]
+                "whisper_cloud": ["whisper-1"],
+                "whisper_local": ["tiny", "base", "medium", "large", "large-v1", "large-v2"]
                 }
 
     asr_hyp_gen_flow(user_config, common_config, datasets, subsets, splits, systems, models)

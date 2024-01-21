@@ -3,6 +3,7 @@ from .base_asr_system import BaseASRSystem
 from .google_cloud_asr import GoogleCloudASR
 from .azure_cloud_asr import AzureCloudASR
 from .whisper_cloud_asr import WhisperCloudASR
+from .whisper_local_asr import WhisperLocalASR
 
 def initialize_asr_system(system, model, config_file):
     return asr_system_factory(system, model, config_file)
@@ -20,6 +21,8 @@ def asr_system_factory(system, model, config):
     elif system == 'whisper_cloud':
         openai_api_key = config.get("API_KEYS", "WHISPER_API_KEY")
         return WhisperCloudASR(system, model, openai_api_key)
+    elif system == 'whisper_local':
+        return WhisperLocalASR(system, model)
     
     else:
         raise ValueError(f"Unknown ASR system type: {system}")

@@ -1,13 +1,13 @@
-
 import os
 import json
 
 
 class BaseASRSystem:
-    def __init__(self, system, model) -> None:
+    def __init__(self, system, model, language_code) -> None:
         
         self.system = system
         self.model = model
+        self.language_code = language_code
         
         self.codename = "Cloud_ASR_{}_{}".format(self.system.upper(), self.model.upper())
         self.name = "Cloud ASR - {} - {}".format(self.system.upper(), self.model.upper())

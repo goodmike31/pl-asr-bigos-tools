@@ -1,12 +1,11 @@
 import os
-import json
 from .base_asr_system import BaseASRSystem
 from google.cloud import speech
 
 class GoogleCloudASR(BaseASRSystem):
     #https://cloud.google.com/speech-to-text/docs/transcription-model#speech_transcribe_model_selection-python
     def __init__(self, system, model, credentials:str, language_code:str = "pl-PL", enable_automatic_punctuation:bool = True, sampling_rate:int = 16000):
-        super().__init__(system, model)
+        super().__init__(system, model,language_code)
 
         # system specific handling of creadentials. Can be API key or path to credentials file        
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials
