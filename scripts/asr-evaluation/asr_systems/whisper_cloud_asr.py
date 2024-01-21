@@ -1,12 +1,9 @@
-import os
-import json
 from .base_asr_system import BaseASRSystem
 import openai
-import time
 
 class WhisperCloudASR(BaseASRSystem):
     def __init__(self, system, model, credentials:str, language_code:str = "pl-PL",sampling_rate:int = 16000) -> None:
-        super().__init__(system, model)
+        super().__init__(system, model, language_code)
         openai.api_key = credentials
         self.language_code = language_code
         

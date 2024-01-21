@@ -1,12 +1,9 @@
-import os
-import json
 from .base_asr_system import BaseASRSystem
-#import azure.cognitiveservices.speech as speechsdk
 from azure.cognitiveservices.speech import SpeechConfig, SpeechRecognizer, AudioConfig, ResultReason, CancellationReason
 
 class AzureCloudASR(BaseASRSystem):
-    def __init__(self, system, model, credentials:str, region:str, language_code:str = "pl-PL",sampling_rate:int = 16000) -> None:
-        super().__init__(system, model)
+    def __init__(self, system, model, credentials:str, region:str, language_code:str = "pl-PL", sampling_rate:int = 16000) -> None:
+        super().__init__(system, model, language_code)
 
         # Set up the speech sdk configuration
         self.speech_config = SpeechConfig(subscription=credentials, region=region)
