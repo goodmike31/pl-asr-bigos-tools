@@ -8,5 +8,4 @@ azure.cognitiveservices.speech
 openai
 prefect
 whisper
-marvin
 adala
