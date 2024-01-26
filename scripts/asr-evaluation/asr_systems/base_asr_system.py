@@ -1,19 +1,27 @@
 import os
 import json
-
-
+from datetime import datetime
 class BaseASRSystem:
     def __init__(self, system, model, language_code) -> None:
         
         self.system = system
         self.model = model
         self.language_code = language_code
-        
-        self.codename = "Cloud_ASR_{}_{}".format(self.system.upper(), self.model.upper())
-        self.name = "Cloud ASR - {} - {}".format(self.system.upper(), self.model.upper())
-        print("Initializing Cloud ASR System for system {} and model {}".format(system, model))
 
-        self.common_cache_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../../data/asr_hyps_cache")
+        # add version encoded as YYQ (year and quarter) to codename to control for changes in the ASR system and model over time
+        # assumes that the ASR system and model are evaluated at most once per quarter
+        # get current year and quarter
+        # TODO consider making it more flexible, e.g. by allowing to specify the version in the config file
+
+        self.year = datetime.now().year
+        self.quarter = (datetime.now().month-1)//3 + 1
+        version = "{}Q{}".format(self.year, self.quarter)
+        self.version = version
+        self.codename = "ASR_{}_{}".format(self.system.upper(), self.model.upper(), self.version)
+        self.name = "ASR - {} - {}".format(self.system.upper(), self.model.upper(), self.version)
+        print("Initializing ASR system {}, model {}, version {}".format(system, model, version))
+
+        self.common_cache_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../../../data/asr_hyps_cache")
         os.makedirs(self.common_cache_dir, exist_ok=True)
 
         # Set up cache for already processed audio samples
@@ -53,6 +61,27 @@ class BaseASRSystem:
     
     def get_codename(self):
         return self.codename
+    
+    def get_hyp_from_cache(self, audio_sample):
+        if audio_sample in self.cache:
+            return self.cache[audio_sample]
+        else:
+            return None
+        
+    def update_cache(self, audio_sample, asr_hyp):
+        metadata = {
+            'model': self.model,
+            'codename': self.codename,
+            'hypothesis_generation_date': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        self.cache[audio_sample] = {
+            'asr_hyp': asr_hyp,
+            'metadata': metadata
+        }
+    
+    def save_cache(self):
+        with open(self.cache_file, "w") as f:
+            json.dump(self.cache, f)
     
     def get_hyp_from_cache(self, audio_sample):
         if audio_sample in self.cache:

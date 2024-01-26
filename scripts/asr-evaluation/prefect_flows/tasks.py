@@ -1,5 +1,7 @@
 from prefect import task
 from datasets import load_dataset
+from eval_utils.lexical_metrics import calculate_lexical_metrics
+import pandas as pd
 
 @task
 def load_config(config_path):
@@ -39,3 +41,47 @@ def save_results(results):
     # Implement logic to save results
     pass
 
+@task
+def prepare_eval_input_df(all_hyps_df, dataset, subset, split) -> pd.DataFrame:
+    # reads all_hyps_df and filters it according to the dataset, subset and split
+    # TODO as version as input argument
+    # Implement logic to prepare eval input
+    eval_input_df = pd.read_csv("/home/michal/Development/github/pl-asr-bigos-tools/test-eval-input.tsv", sep="\t")
+    #eval_input_df = eval_input_df.dropna()
+    #eval_input_df = eval_input_df.reset_index(drop=True)
+    #eval_input_df = eval_input_df.astype(str)
+    #eval_input_df = eval_input_df.apply(lambda x: x.str.strip())
+    #eval_input_df = eval_input_df.apply(lambda x: x.str.lower())
+    #eval_input_df = eval_input_df.apply(lambda x: x.str.replace(r"\s+", " ", regex=True))
+    #eval_input_df = eval_input_df.apply(lambda x: x.str.replace(r"\s+\.", ".", regex=True))
+    #eval_input_df = eval_input_df.apply(lambda x: x.str.replace(r"\s+\,", ",", regex=True))
+    #eval_input_df = eval_input_df.apply(lambda x: x.str.replace(r"\s+\?", "?", regex=True))
+    #eval_input_df = eval_input_df.apply(lambda x: x.str.replace(r"\s+\!", "!", regex=True))
+    #eval_input_df = eval_input_df.apply(lambda x: x.str.replace(r"\s+\:", ":", regex=True))
+    #eval_input_df = eval_input_df.apply(lambda x: x.str.replace(r"\s+\;", ";", regex=True))
+    #eval_input_df = eval_input_df.apply(lambda x: x.str.replace(r"\s+\-", "-", regex=True))
+    #eval_input_df = eval_input_df.apply(lambda x: x.str.replace(r"\s+\_", "_", regex=True))
+    #eval_input_df = eval_input_df.apply(lambda x: x.str.replace(r"\s+\'", "'", regex=True))
+    pass
+
+@task
+def calculate_eval_metrics_multiple_systems(eval_input_df, systems, models):
+    # Implement logic to calculate eval metrics
+    df_eval_results = calculate_lexical_metrics(eval_input_df, "test")
+    return(df_eval_results)
+
+@task
+def calculate_eval_metrics_single_system(eval_input_df, system, model):
+    # Implement logic to calculate eval metrics
+    df_eval_results = calculate_lexical_metrics(eval_input_df, "test")
+    return(df_eval_results)
+
+@task
+def save_metrics_tsv(df_eval_results):
+    # Implement logic to save metrics as TSV
+    pass
+
+@task
+def save_metrics_json(df_eval_results):
+    # Implement logic to save metrics as JSON
+    pass

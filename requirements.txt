@@ -8,4 +8,5 @@ azure.cognitiveservices.speech
 openai
 prefect
 whisper
-adala
+pytest
+jiwer

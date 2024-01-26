@@ -1,0 +1,17 @@
+file_id	dataset	subset	split	ref	ref_norm	hyp_raw	hyp_norm	asr_system	model	hyp_date
+test1	test1	test	test	Ala ma kota	ala ma kota	ala ma koka.	ala ma koka	google	latest	20241025
+test2	test1	test	test	Aktor wystąpił w arcydramacie.	aktor wystąpił w arcydramacie	aktor wystąpił w arcy dramacie.	aktor wystąpił w arcy dramacie	google	latest	20241025
+test3	test2	test	test	Zaprosiłem dwóch gości.	zaprosiłem dwóch gości	zaprosiłem 2 gości.	zaprosiłem 2 gości	google	latest	20241025
+test4	test3	test	test	Obserwuję Cię od dawna.	obserwuję Cię od dawna	Obserwuje Cię od dawna.	obserwuje Cię od dawna	google	latest	20241025
+test5	test4	test	test	Poczuł smagły powiew wiatru.	poczuł smagły powiew wiatru	Poczuł smak zły powiew wiatru	poczuł smak zły powiew wiatru	google	latest	20241025
+test5	test4	test	test	Zapisz wynik.	zapisz wynik	Запись wynik.	Запись wynik	google	latest	20241025
+test6	test5	test	test	Zapisz wynik.	zapisz wynik	Zapisz wynik.	zapisz wynik	google	latest	20241025
+test7	test6	test	test	Podaj wynik.	podaj wynik	Podaj wynik.	podaj wynik	google	latest	20241025
+test8	test7	test	test		szczegółowa rozpiska zajęć pojawiła się na stronie.		szczegółow a rozpiska zajęć pojawiła się na stronie	google	latest	20241025
+test9	test8	test	test		ciekawe jaka za tym kryje się treść		ciekawe jaka za tym kryje się treści	google	latest	20241025
+test10	test9	test	test		wiązało się to z oślepieniem		wiązało się to z oś lepieniem	google	latest	20241025
+test11	test10	test	test		na pierwszy rzut oka wydawało się być ok		na 1 rzut oka wydawało się być okej	google	latest	20241025
+test12	test11	test	test		to jakiś arcydramat		to jakiś arcy dramat	google	latest	20241025
+test13	test12	test	test		co prawda wiedział, że może mieć z tego powodu kłopoty, ale i tak się odważył powiedzieć prawdę.		coprawda wiedzial, że może mieć z tego powodu kłopoty, ale i tak się odważył powiedzieć prawdę.	google	latest	20241025
+test14	test13	test	test		Wykonał manewr kisindżera		Wykonał manewr kissingera	google	latest	20241025
+test15	test14	test	test		gdyby tylko mieć trochę więcej czasu		gdyby tylko mieć trochę wiecej lasu	google	latest	20241025

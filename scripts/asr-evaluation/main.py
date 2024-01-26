@@ -1,4 +1,5 @@
 from prefect_flows.asr_hyp_gen_flow import asr_hyp_gen_flow
+from prefect_flows.asr_eval_results_flow import asr_eval_results_flow
 import argparse
 import os
 import json
@@ -47,7 +48,7 @@ if __name__ == "__main__":
     datasets = ["amu-cai/pl-asr-bigos-v2"]
     #datasets = user_config["datasets_to_eval"]
     splits = ["test"]
-    subsets = ["pwr-viu-unk"]
+    subsets = ["pwr-viu-unk", "pwr-maleset-unk"]
 
     # get for each dataset inside the loop
     #systems = ["google", "azure", "whisper_cloud", "whisper_local"]
@@ -58,4 +59,5 @@ if __name__ == "__main__":
                 "whisper_local": ["tiny", "base", "medium", "large", "large-v1", "large-v2"]
                 }
 
-    asr_hyp_gen_flow(user_config, common_config, datasets, subsets, splits, systems, models)
+    #asr_hyp_gen_flow(user_config, common_config, datasets, subsets, splits, systems, models)
+    asr_eval_results_flow(user_config, common_config, datasets, subsets, splits, systems, models)
