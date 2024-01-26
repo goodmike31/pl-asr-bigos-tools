@@ -72,6 +72,7 @@ class BaseASRSystem:
         metadata = {
             'model': self.model,
             'codename': self.codename,
+            'version': self.version,
             'hypothesis_generation_date': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
         self.cache[audio_sample] = {

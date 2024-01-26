@@ -20,6 +20,9 @@ def asr_eval_results_flow(config_user, config_common, datasets_to_process, subse
             pass
             #eval_input_df = prepare_eval_input_from_hyps_cache(system, model, version)
 
+    # calculate evaluation metrics for all available hypotheses
+    calculate_eval_metrics("eval-config.json")    
+    
     # for specified eval configuration, calculate evaluation metrics for each dataset, subset, split, system and model
     for dataset in datasets_to_process:
         for subset in subsets:
@@ -33,7 +36,8 @@ def asr_eval_results_flow(config_user, config_common, datasets_to_process, subse
                         # TODO consider adding ref_type as input argument
                         # TODO consider adding eval_type as input argument
                         # TODO consider "all" for subsets as the input argument
-                        eval_metrics = calculate_eval_metrics(dataset, subset, split, system, model)
+                        pass
+                        #eval_metrics = get_eval_metrics(eval_metrics_df, dataset, subset, split, system, model)
                         # save evaluation metrics
                         #save_metrics_tsv(eval_metrics)
                         #save_metrics_json(eval_metrics)

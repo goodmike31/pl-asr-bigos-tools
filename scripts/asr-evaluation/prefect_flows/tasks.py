@@ -42,7 +42,7 @@ def save_results(results):
     pass
 
 @task
-def prepare_eval_input_df(all_hyps_df, dataset, subset, split) -> pd.DataFrame:
+def prepare_eval_input_from_hyps_cache(all_hyps_df, dataset, subset, split) -> pd.DataFrame:
     # reads all_hyps_df and filters it according to the dataset, subset and split
     # TODO as version as input argument
     # Implement logic to prepare eval input
@@ -65,15 +65,14 @@ def prepare_eval_input_df(all_hyps_df, dataset, subset, split) -> pd.DataFrame:
     pass
 
 @task
-def calculate_eval_metrics_multiple_systems(eval_input_df, systems, models):
+def calculate_eval_metrics(eval_config):
     # Implement logic to calculate eval metrics
-    df_eval_results = calculate_lexical_metrics(eval_input_df, "test")
-    return(df_eval_results)
+    # extract config from eval_config
+    eval_input_df = pd.read_csv("/home/michal/Development/github/pl-asr-bigos-tools/test/test-eval-input.tsv", sep="\t")
 
-@task
-def calculate_eval_metrics_single_system(eval_input_df, system, model):
-    # Implement logic to calculate eval metrics
-    df_eval_results = calculate_lexical_metrics(eval_input_df, "test")
+    df_eval_results = calculate_lexical_metrics(eval_input_df, "test", "norm", "norm", "all")
+    #def calculate_lexical_metrics(df_eval_input, test_set_name, ref_type, system_codename, norm)->pd.DataFrame:
+
     return(df_eval_results)
 
 @task
