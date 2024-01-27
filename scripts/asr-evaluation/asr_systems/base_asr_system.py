@@ -68,8 +68,13 @@ class BaseASRSystem:
         return self.version
     
     def get_hyp_from_cache(self, audio_sample, version):
-        if audio_sample[version] in self.cache:
-            return self.cache[audio_sample][version]['asr_hyp']
+        # check if audio sample is in cache
+        if audio_sample in self.cache:
+            # check if version is in cache
+            if version in self.cache[audio_sample]:
+                return self.cache[audio_sample][version]['asr_hyp']
+            else:
+                return None
         else:
             return None
         
