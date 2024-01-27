@@ -7,13 +7,13 @@ import configparser
 
 from typing import List
 
-def read_user_config(user_config_path):
+def read_config_user(config_user_path):
     config = configparser.ConfigParser()
-    config.read(user_config_path)
+    config.read(config_user_path)
     return config
 
-def read_common_config(common_config_path):
-    with open(common_config_path, "r") as f:
+def read_config_common(config_common_path):
+    with open(config_common_path, "r") as f:
         config = json.load(f)
     return config
 
@@ -23,11 +23,11 @@ if __name__ == "__main__":
 
     # Default location of config files.
     script_dir = os.path.dirname(os.path.realpath(__file__))
-    common_config_path = os.path.join(script_dir, '../../config/common/config.json')
-    print("common_config_path", common_config_path)
+    config_common_path = os.path.join(script_dir, '../../config/common/config.json')
+    print("config_common_path", config_common_path)
     
-    user_config_path = os.path.join(script_dir, '../../config/user-specific/config.ini')
-    print("user_config_path", user_config_path)
+    config_user_path = os.path.join(script_dir, '../../config/user-specific/config.ini')
+    print("config_user_path", config_user_path)
 
     # Optional CLI arguments. If not specified, the default values are used.
     # User can specify custom location of output files or cache.
@@ -42,22 +42,38 @@ if __name__ == "__main__":
 
     #args = parser.parse_args()
 
-    user_config = read_user_config(user_config_path)
-    common_config = read_common_config(common_config_path)
+    config_user = read_config_user(config_user_path)
+    config_common = read_config_common(config_common_path)
 
-    datasets = ["amu-cai/pl-asr-bigos-v2"]
-    #datasets = user_config["datasets_to_eval"]
-    splits = ["test"]
-    subsets = ["pwr-viu-unk", "pwr-maleset-unk"]
-
-    # get for each dataset inside the loop
-    #systems = ["google", "azure", "whisper_cloud", "whisper_local"]
-    systems = ["whisper_local"]
-    models = {  "google": ["default", "command_and_search", "latest_long", "latest_short"],
-                "azure": ["latest"],
-                "whisper_cloud": ["whisper-1"],
-                "whisper_local": ["tiny", "base", "medium", "large", "large-v1", "large-v2"]
+    #"pwr-maleset-unk"
+    config_runtime = {
+        "datasets": ["amu-cai/pl-asr-bigos-v2"],
+        "subsets": ["pwr-viu-unk"],
+        "splits": ["test"],
+        "eval_metrics": ["lexical"],
+        "ref_type": ["orig"],
+        "systems": 
+        {
+            "google": { 
+                "models":["default", "command_and_search", "latest_long", "latest_short"],
+                "versions": ["2024Q1"]
+                },
+            "azure":{ 
+                "models": ["latest"],
+                "versions": ["2024Q1"]
+                },
+            "whisper_cloud":{ 
+                "models": ["whisper-1"],
+                "versions": ["2024Q1"]
+                },
+            "whisper_local":{ 
+                "models": ["tiny", "base", "medium", "large", "large-v1", "large-v2"],
+                "versions": ["2024Q1"]
                 }
+            },
+        "norm": "all"
+    }
 
-    #asr_hyp_gen_flow(user_config, common_config, datasets, subsets, splits, systems, models)
-    asr_eval_results_flow(user_config, common_config, datasets, subsets, splits, systems, models)
+    asr_hyp_gen_flow(config_user, config_common, config_runtime)
+    #asr_hyps_postprocess_flow(config_user, config_common, config_runtime)
+    asr_eval_results_flow(config_user, config_common, config_runtime)

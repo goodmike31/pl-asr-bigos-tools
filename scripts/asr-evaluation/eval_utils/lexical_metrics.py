@@ -24,7 +24,7 @@ transf_punc = jiwer.Compose([
 ])
 
 # TODO consider splitting into specific metrics
-def calculate_lexical_metrics(df_eval_input, test_set_name, ref_type, system_codename, norm)->pd.DataFrame:
+def get_lexical_metrics(df_eval_input, test_set_name, system_codename, ref_type, norm)->pd.DataFrame:
 
     # assume that the input dataframe 
     # a. was prefiltered accordingly to the proper business logic e.g. only test set, only specific subset, etc.
@@ -39,7 +39,7 @@ def calculate_lexical_metrics(df_eval_input, test_set_name, ref_type, system_cod
     assert len(ref) == len(hyp)
 
     # output columns
-    df_results_header=["dataset", "test cases", "ref type", "eval norm", "system", "SER", "WIL", "MER", "WER", "CER"]
+    df_results_header=["dataset", "samples", "ref_type", "eval_norm", "system", "SER", "WIL", "MER", "WER", "CER"]
     # dataset  - name of the dataset
     # test cases - number of test cases
     # reference - type of source reference from the dataset (original, manually verified, normalized, etc.)
@@ -69,7 +69,6 @@ def calculate_lexical_metrics(df_eval_input, test_set_name, ref_type, system_cod
         hyp=hyp
     
     # Calculate metrics
-    size=len(ref)
     match_sents = sum(r == h for r, h in zip(ref, hyp))
 
     ser = round((1 - (match_sents / len(ref))) * 100,2)
@@ -81,6 +80,9 @@ def calculate_lexical_metrics(df_eval_input, test_set_name, ref_type, system_cod
     print("SER: ", ser)
     print("WER: ", wer)
     print("CER: ", cer)
+    print("MER: ", mer)
+    print("WIL: ", wil)
+    # TODO add more metrics e.g. TER, PER, etc.
     
     result.append([test_set_name, len(ref), norm, ref_type, system_codename, ser, wil, mer, wer, cer])
     
@@ -88,12 +90,34 @@ def calculate_lexical_metrics(df_eval_input, test_set_name, ref_type, system_cod
     return df_results
 
 
-#    for norm in postnorm_types:
-#        #print("Norm:" + norm)
-#        for ref_col in ref_cols:
-#            #print("ref_col:" + ref_col)
-#            for hyp_col in hyp_cols:
+def get_lexical_metrics_all_norm_types(df_eval_input, test_set_name, system_codename, ref_type)-> pd.DataFrame:
+    df_results_header=["dataset", "samples", "ref_type", "eval_norm", "system", "SER", "WIL", "MER", "WER", "CER"]
+    df_results = pd.DataFrame([], columns=df_results_header)
 
-#
-#    ref_cols = [col for col in df_eval_input.columns if col.startswith('ref')]
-#    hyp_cols =  [col for col in df_eval_input.columns if col.startswith('hyp')]
+    for norm in postnorm_types:
+        print("Norm:" + norm)
+        df__single_result = get_lexical_metrics(df_eval_input, test_set_name, system_codename, ref_type, norm) 
+        df_results = df_results.append(df__single_result, ignore_index=True)
+
+def get_lexical_metrics_all_ref_types(df_eval_input, test_set_name, system_codename, norm)-> pd.DataFrame:
+    df_results_header=["dataset", "samples", "ref_type", "eval_norm", "system", "SER", "WIL", "MER", "WER", "CER"]
+    df_results = pd.DataFrame([], columns=df_results_header)
+
+    ref_cols = [col for col in df_eval_input.columns if col.startswith('ref')]
+    for ref_col in ref_cols:
+        print("ref_col" + ref_col)
+        ref_type = ref_col.split("_")[1]
+        df__single_result = get_lexical_metrics(df_eval_input, test_set_name, system_codename, ref_type, norm) 
+        df_results = df_results.append(df__single_result, ignore_index=True)
+
+def get_lexical_metrics_all_systems(df_eval_input, test_set_name, ref_type, norm)-> pd.DataFrame:
+    df_results_header=["dataset", "samples", "ref_type", "eval_norm", "system", "SER", "WIL", "MER", "WER", "CER"]
+    df_results = pd.DataFrame([], columns=df_results_header)
+
+    hyp_cols =  [col for col in df_eval_input.columns if col.startswith('hyp')]
+    for hyp_col in hyp_cols:
+        print("hyp_col" + hyp_col)
+        system_codename = hyp_col.split("_")[1]
+        df__single_result = get_lexical_metrics(df_eval_input, test_set_name, system_codename, ref_type, norm) 
+        df_results = df_results.append(df__single_result, ignore_index=True)
+

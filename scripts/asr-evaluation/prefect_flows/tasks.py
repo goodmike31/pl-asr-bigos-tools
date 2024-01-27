@@ -1,6 +1,6 @@
 from prefect import task
 from datasets import load_dataset
-from eval_utils.lexical_metrics import calculate_lexical_metrics
+from eval_utils.lexical_metrics import get_lexical_metrics
 import pandas as pd
 
 @task
@@ -42,11 +42,32 @@ def save_results(results):
     pass
 
 @task
-def prepare_eval_input_from_hyps_cache(all_hyps_df, dataset, subset, split) -> pd.DataFrame:
-    # reads all_hyps_df and filters it according to the dataset, subset and split
+def prepare_eval_input_from_hyps_cache(hf_dataset, asr_system) -> pd.DataFrame:
+    
+    # Implement logic to prepare eval input
+    # use audio path columns as index
+    audio_paths = hf_dataset["audiopath_local"]
+
+    eval_input_df = pd.DataFrame(audio_paths, columns=["audiopath_local"])
+    eval_input_df["system"] = asr_system.get_system()
+    eval_input_df["model"] = asr_system.get_model()
+    eval_input_df["version"] = asr_system.get_version()
+    eval_input_df["codename"] = asr_system.get_codename()
+
+    # extract names of columns with references from hf dataset (starting with "ref")
+    ref_cols = [col for col in hf_dataset.column_names if col.startswith("ref")]
+    
+    # extract references from hf dataset
+    for ref_col in ref_cols:
+        eval_input_df[ref_col] = hf_dataset[ref_col]
+    
+    # get hyps from cache
+    eval_input_df["hyp_"+ asr_system.get_codename()] = eval_input_df["audiopath_local"].apply(lambda x: asr_system.get_hyp_from_cache(x, asr_system.get_version()))
+    print(eval_input_df)
+
     # TODO as version as input argument
     # Implement logic to prepare eval input
-    eval_input_df = pd.read_csv("/home/michal/Development/github/pl-asr-bigos-tools/test-eval-input.tsv", sep="\t")
+    
     #eval_input_df = eval_input_df.dropna()
     #eval_input_df = eval_input_df.reset_index(drop=True)
     #eval_input_df = eval_input_df.astype(str)
@@ -62,15 +83,14 @@ def prepare_eval_input_from_hyps_cache(all_hyps_df, dataset, subset, split) -> p
     #eval_input_df = eval_input_df.apply(lambda x: x.str.replace(r"\s+\-", "-", regex=True))
     #eval_input_df = eval_input_df.apply(lambda x: x.str.replace(r"\s+\_", "_", regex=True))
     #eval_input_df = eval_input_df.apply(lambda x: x.str.replace(r"\s+\'", "'", regex=True))
-    pass
 
 @task
 def calculate_eval_metrics(eval_config):
     # Implement logic to calculate eval metrics
-    # extract config from eval_config
-    eval_input_df = pd.read_csv("/home/michal/Development/github/pl-asr-bigos-tools/test/test-eval-input.tsv", sep="\t")
 
-    df_eval_results = calculate_lexical_metrics(eval_input_df, "test", "norm", "norm", "all")
+    eval_input_df = pd.read_csv(eval_config["eval_input_path"], sep="\t")
+    # loop over all datasets, subsets, splits, systems, models, versions, postnorms, evalnorms, ref_types, eval_types
+    df_eval_results = get_lexical_metrics(eval_input_df, "test", "norm", "norm", "all")
     #def calculate_lexical_metrics(df_eval_input, test_set_name, ref_type, system_codename, norm)->pd.DataFrame:
 
     return(df_eval_results)

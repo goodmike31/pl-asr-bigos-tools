@@ -15,84 +15,79 @@ class BaseASRSystem:
 
         self.year = datetime.now().year
         self.quarter = (datetime.now().month-1)//3 + 1
-        version = "{}Q{}".format(self.year, self.quarter)
-        self.version = version
-        self.codename = "ASR_{}_{}".format(self.system.upper(), self.model.upper(), self.version)
-        self.name = "ASR - {} - {}".format(self.system.upper(), self.model.upper(), self.version)
-        print("Initializing ASR system {}, model {}, version {}".format(system, model, version))
+        self.version = "{}Q{}".format(self.year, self.quarter)
+        
+        self.codename = "{}_{}".format(system.lower(), model.lower())
+        self.name = "{} - {}".format(system.lower(), model.lower())
+        print("Initializing ASR system {}, model {}, version {}".format(system, model, self.version))
 
         self.common_cache_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../../../data/asr_hyps_cache")
         os.makedirs(self.common_cache_dir, exist_ok=True)
 
         # Set up cache for already processed audio samples
         self.cache = {}
-        self.cache_dir = os.path.join(self.common_cache_dir, self.codename)
-        os.makedirs(self.cache_dir, exist_ok=True)
-
-        self.cache_file = os.path.join(self.cache_dir, "asr_cache.json")
+        self.cache_file = os.path.join(self.common_cache_dir, self.codename + ".asr_cache.jsonl")
         
         if os.path.exists(self.cache_file):
             with open(self.cache_file, "r") as f:
-                self.cache = json.load(f)
-
+                # read as JSONL file
+                for line in f:
+                    self.cache.update(json.loads(line))
 
     def get_model(self):
         return self.model
     
+    # TODO consider saving only ID of file and dataset name, not the full path, to make cache reusable across systems
     def process_audio(self, speech_file:str) -> str:
         # Load the audio into memory
         print("Processing audio with {}".format(self.get_name()))
         print("Filename:", os.path.basename(speech_file))
 
         # Load results from cache if possible
-        asr_hyp = self.get_hyp_from_cache(speech_file)
+        asr_hyp = self.get_hyp_from_cache(speech_file, self.version)
         if asr_hyp is not None:
             print("ASR hypothesis loaded from cache")
             print("Hypothesis: ", asr_hyp, "\n")
             return asr_hyp
         else:
             return self.generate_asr_hyp(speech_file)
-        
-    def generate_asr_hyp(self, speech_file):
-        raise NotImplementedError
-    
+
     def get_name(self):
         return self.name
     
     def get_codename(self):
         return self.codename
     
-    def get_hyp_from_cache(self, audio_sample):
-        if audio_sample in self.cache:
-            return self.cache[audio_sample]
+    def get_model(self):
+        return self.model
+    
+    def get_system(self):
+        return self.system
+    
+    def get_version(self):
+        return self.version
+    
+    def get_hyp_from_cache(self, audio_sample, version):
+        if audio_sample[version] in self.cache:
+            return self.cache[audio_sample][version]['asr_hyp']
         else:
             return None
         
     def update_cache(self, audio_sample, asr_hyp):
         metadata = {
-            'model': self.model,
-            'codename': self.codename,
-            'version': self.version,
-            'hypothesis_generation_date': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        }
-        self.cache[audio_sample] = {
             'asr_hyp': asr_hyp,
-            'metadata': metadata
+            'system': self.system,
+            'model': self.model,
+            'version': self.version,
+            'codename': self.codename,
+            'hyp_gen_date': datetime.now().strftime("%Y%m%d")
         }
+        self.cache[audio_sample] = {self.version: metadata}
     
     def save_cache(self):
         with open(self.cache_file, "w") as f:
-            json.dump(self.cache, f)
-    
-    def get_hyp_from_cache(self, audio_sample):
-        if audio_sample in self.cache:
-            return self.cache[audio_sample]
-        else:
-            return None
-        
-    def update_cache(self, audio_sample, asr_hyp):
-        self.cache[audio_sample] = asr_hyp
-    
-    def save_cache(self):
-        with open(self.cache_file, "w") as f:
-            json.dump(self.cache, f)
+            # save as JSONL file
+            for audio_sample in self.cache:
+                # save JSONL using audio sample as key
+                json.dump({audio_sample: self.cache[audio_sample]}, f)
+                f.write("\n")
