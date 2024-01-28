@@ -6,6 +6,7 @@ def get_lexical_metrics(df_eval_input, test_set_name, system_codename, ref_type,
     # TODO consider standardizing the names of transformations
     # TODO consider splitting into specific metrics
     # TODO consider generating multiple metrics for all norm types
+    # https://jitsi.github.io/jiwer/reference/transformations/
 
     transf_all = jiwer.Compose([
         jiwer.ToLowerCase(),

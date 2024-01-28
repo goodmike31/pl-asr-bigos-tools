@@ -45,10 +45,11 @@ if __name__ == "__main__":
     config_user = read_config_user(config_user_path)
     config_common = read_config_common(config_common_path)
 
+    #TODO - add support for "all" subset and split
     #"pwr-maleset-unk"
     config_runtime = {
         "datasets": ["amu-cai/pl-asr-bigos-v2"],
-        "subsets": ["pwr-viu-unk"],
+        "subsets": ["all"],
         "splits": ["validation"],
         "eval_metrics": ["lexical"],
         "ref_type": ["orig"],
@@ -71,8 +72,8 @@ if __name__ == "__main__":
                 "versions": ["2024Q1"]
                 }
             },
-        "norm": "all"
+        "norm_methods": "standard",
     }
 
-    #asr_hyp_gen_flow(config_user, config_common, config_runtime)
+    asr_hyp_gen_flow(config_user, config_common, config_runtime)
     asr_eval_results_flow(config_user, config_common, config_runtime)

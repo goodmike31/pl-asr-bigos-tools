@@ -75,5 +75,5 @@ def generate_eval_metrics(config_user, config_common, config_runtime):
 
 @flow(name="ASR Evaluation Results Flow")
 def asr_eval_results_flow(config_user, config_common, config_runtime):
-    #generate_eval_input(config_user, config_common, config_runtime)
+    generate_eval_input(config_user, config_common, config_runtime)
     generate_eval_metrics(config_user, config_common, config_runtime)
