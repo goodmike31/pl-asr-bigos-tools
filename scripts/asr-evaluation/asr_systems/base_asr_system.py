@@ -18,7 +18,7 @@ class BaseASRSystem:
         self.version = "{}Q{}".format(self.year, self.quarter)
         
         self.codename = "{}_{}".format(system.lower(), model.lower())
-        self.name = "{} - {}".format(system.lower(), model.lower())
+        self.name = "{} - {}".format(system.upper(), model.upper())
         print("Initializing ASR system {}, model {}, version {}".format(system, model, self.version))
 
         self.common_cache_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../../../data/asr_hyps_cache")

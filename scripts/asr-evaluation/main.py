@@ -75,5 +75,4 @@ if __name__ == "__main__":
     }
 
     asr_hyp_gen_flow(config_user, config_common, config_runtime)
-    #asr_hyps_postprocess_flow(config_user, config_common, config_runtime)
     asr_eval_results_flow(config_user, config_common, config_runtime)

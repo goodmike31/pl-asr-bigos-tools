@@ -63,35 +63,15 @@ def prepare_eval_input_from_hyps_cache(hf_dataset, asr_system) -> pd.DataFrame:
     
     # get hyps from cache
     eval_input_df["hyp_"+ asr_system.get_codename()] = eval_input_df["audiopath_local"].apply(lambda x: asr_system.get_hyp_from_cache(x, asr_system.get_version()))
-    print(eval_input_df)
-
-    # TODO as version as input argument
-    # Implement logic to prepare eval input
-    
-    #eval_input_df = eval_input_df.dropna()
-    #eval_input_df = eval_input_df.reset_index(drop=True)
-    #eval_input_df = eval_input_df.astype(str)
-    #eval_input_df = eval_input_df.apply(lambda x: x.str.strip())
-    #eval_input_df = eval_input_df.apply(lambda x: x.str.lower())
-    #eval_input_df = eval_input_df.apply(lambda x: x.str.replace(r"\s+", " ", regex=True))
-    #eval_input_df = eval_input_df.apply(lambda x: x.str.replace(r"\s+\.", ".", regex=True))
-    #eval_input_df = eval_input_df.apply(lambda x: x.str.replace(r"\s+\,", ",", regex=True))
-    #eval_input_df = eval_input_df.apply(lambda x: x.str.replace(r"\s+\?", "?", regex=True))
-    #eval_input_df = eval_input_df.apply(lambda x: x.str.replace(r"\s+\!", "!", regex=True))
-    #eval_input_df = eval_input_df.apply(lambda x: x.str.replace(r"\s+\:", ":", regex=True))
-    #eval_input_df = eval_input_df.apply(lambda x: x.str.replace(r"\s+\;", ";", regex=True))
-    #eval_input_df = eval_input_df.apply(lambda x: x.str.replace(r"\s+\-", "-", regex=True))
-    #eval_input_df = eval_input_df.apply(lambda x: x.str.replace(r"\s+\_", "_", regex=True))
-    #eval_input_df = eval_input_df.apply(lambda x: x.str.replace(r"\s+\'", "'", regex=True))
+    return(eval_input_df)
 
 @task
-def calculate_eval_metrics(eval_config):
+def calculate_eval_metrics(eval_input_df, dataset_codename, system_codename):
     # Implement logic to calculate eval metrics
 
-    eval_input_df = pd.read_csv(eval_config["eval_input_path"], sep="\t")
     # loop over all datasets, subsets, splits, systems, models, versions, postnorms, evalnorms, ref_types, eval_types
-    df_eval_results = get_lexical_metrics(eval_input_df, "test", "norm", "norm", "all")
-    #def calculate_lexical_metrics(df_eval_input, test_set_name, ref_type, system_codename, norm)->pd.DataFrame:
+    df_eval_results = get_lexical_metrics(eval_input_df, dataset_codename, system_codename, "orig", "all")
+    #def calculate_lexical_metrics(df_eval_input, test_set_name,  system_codename, ref_type, norm)->pd.DataFrame:
 
     return(df_eval_results)
 

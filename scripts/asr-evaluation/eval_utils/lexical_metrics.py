@@ -25,18 +25,35 @@ transf_punc = jiwer.Compose([
 
 # TODO consider splitting into specific metrics
 def get_lexical_metrics(df_eval_input, test_set_name, system_codename, ref_type, norm)->pd.DataFrame:
-
-    # assume that the input dataframe 
+    print("get_lexical_metrics:\nDataset: {}System: {}\nRef_type: {}\nNormalization: {}\n".format(test_set_name, system_codename, ref_type, norm))
+    # assume that the input dataframe   
     # a. was prefiltered accordingly to the proper business logic e.g. only test set, only specific subset, etc.
     # b. has the following columns: ref_col, hyp_col
     ref_col = "ref_" + ref_type
     hyp_col = "hyp_" + system_codename
 
-    ref = df_eval_input[ref_col].tolist()
+    ref = df_eval_input[ref_col].dropna().astype(str).tolist()
+    print ("refs: ", ref)
+    
+    hyp = df_eval_input[hyp_col].dropna().astype(str).tolist()
+    print ("hyps: ", hyp)
 
-    hyp = df_eval_input[hyp_col].tolist()
+    if len(ref) != len(hyp):
+        print("Warning: number of references and hypotheses does not match")
+        print("Generating metrics for common subset of references and hypotheses")
+        # TODO consider returning None or raising an exception
+        # Naive approach: cut the longer list to the length of the shorter one
+        ref = ref[:min(len(ref), len(hyp))]
+        hyp = hyp[:min(len(ref), len(hyp))]
 
-    assert len(ref) == len(hyp)
+        # More sophisticated approach: find common subset of references and hypotheses
+        # Generate mask from df_eval_input where ref and hyp are not empty
+        df_eval_input["mask"] = df_eval_input[ref_col].notnull() & df_eval_input[hyp_col].notnull()
+        ref = df_eval_input[df_eval_input["mask"]] 
+        # Apply mask to df_eval_input
+
+
+        return None
 
     # output columns
     df_results_header=["dataset", "samples", "ref_type", "eval_norm", "system", "SER", "WIL", "MER", "WER", "CER"]
