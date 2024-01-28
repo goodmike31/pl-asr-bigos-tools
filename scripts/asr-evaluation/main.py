@@ -49,7 +49,7 @@ if __name__ == "__main__":
     config_runtime = {
         "datasets": ["amu-cai/pl-asr-bigos-v2"],
         "subsets": ["pwr-viu-unk"],
-        "splits": ["test"],
+        "splits": ["validation"],
         "eval_metrics": ["lexical"],
         "ref_type": ["orig"],
         "systems": 
@@ -74,5 +74,5 @@ if __name__ == "__main__":
         "norm": "all"
     }
 
-    asr_hyp_gen_flow(config_user, config_common, config_runtime)
+    #asr_hyp_gen_flow(config_user, config_common, config_runtime)
     asr_eval_results_flow(config_user, config_common, config_runtime)
