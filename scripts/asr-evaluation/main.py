@@ -48,10 +48,7 @@ if __name__ == "__main__":
     #TODO - add support for "all" subset and split
     #"pwr-maleset-unk"
     #
-    #        "wav2vec":{ 
-    #            "models": ["jonatasgrosman/wav2vec2-large-xlsr-53-polish", "jonatasgrosman/wav2vec2-xls-r-1b-polish"],
-    #            "versions": ["2024Q1"]
-    #            },
+    #        
     
     config_runtime = {
         "datasets": ["amu-cai/pl-asr-bigos-v2-secret"],
@@ -60,24 +57,32 @@ if __name__ == "__main__":
         "eval_metrics": ["lexical"],
         "ref_type": ["orig"],
         "systems": 
-        {   
+        {
+            "wav2vec2":{ 
+                "models": ["large-xlsr-53-polish", "xls-r-1b-polish"],
+                "versions": ["2024Q1"]
+                },
 
             "mms":{ 
                 "models": ["1b-all"],
                 "versions": ["2024Q1"]
                 },
+
             "google": { 
                 "models":["default", "command_and_search", "latest_long", "latest_short"],
                 "versions": ["2024Q1"]
                 },
+
             "azure":{ 
                 "models": ["latest"],
                 "versions": ["2024Q1"]
                 },
+
             "whisper_cloud":{ 
                 "models": ["whisper-1"],
                 "versions": ["2024Q1"]
                 },
+
             "whisper_local":{ 
                 "models": ["tiny", "base", "medium", "large", "large-v1", "large-v2"],
                 "versions": ["2024Q1"]

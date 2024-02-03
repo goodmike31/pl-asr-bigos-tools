@@ -11,6 +11,7 @@ class FacebookMMS(BaseASRSystem):
     def __init__(self, system, model, language_code:str = "pl-PL",sampling_rate:int = 16000) -> None:
         super().__init__(system, model, language_code)
         # convert ISO-639-1 to ISO-639-3
+        self.model = model
         self.mms_lang = lang_code_693_3[language_code]
         self.mms_model = Wav2Vec2ForCTC.from_pretrained("facebook/mms-" + model)
         self.mms_model.load_adapter(self.mms_lang)
