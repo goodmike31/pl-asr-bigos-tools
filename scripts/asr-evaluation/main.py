@@ -48,9 +48,9 @@ if __name__ == "__main__":
     #TODO - add support for "all" subset and split
     #"pwr-maleset-unk"
     config_runtime = {
-        "datasets": ["amu-cai/pl-asr-bigos-v2"],
-        "subsets": ["all"],
-        "splits": ["validation"],
+        "datasets": ["amu-cai/pl-asr-bigos-v2-secret"],
+        "subsets": ["pwr-viu-unk"],
+        "splits": ["test"],
         "eval_metrics": ["lexical"],
         "ref_type": ["orig"],
         "systems": 
