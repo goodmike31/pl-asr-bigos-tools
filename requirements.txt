@@ -11,3 +11,4 @@ whisper
 pytest
 jiwer
 transformers
+huggingsound

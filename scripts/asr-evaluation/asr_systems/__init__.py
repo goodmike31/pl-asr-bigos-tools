@@ -26,7 +26,7 @@ def asr_system_factory(system, model, config):
     elif system == 'whisper_local':
         return WhisperLocalASR(system, model)
     
-    elif system == 'facebook_mms':
+    elif system == 'mms':
         return FacebookMMS(system, model)
     
     else:

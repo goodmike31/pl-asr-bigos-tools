@@ -12,8 +12,10 @@ class FacebookMMS(BaseASRSystem):
         super().__init__(system, model, language_code)
         # convert ISO-639-1 to ISO-639-3
         self.mms_lang = lang_code_693_3[language_code]
-        self.mms_model = Wav2Vec2ForCTC.from_pretrained("facebook/" + model)
-        self.processor = AutoProcessor.from_pretrained("facebook/" + model)
+        self.mms_model = Wav2Vec2ForCTC.from_pretrained("facebook/mms-" + model)
+        self.mms_model.load_adapter(self.mms_lang)
+
+        self.processor = AutoProcessor.from_pretrained("facebook/mms-" + model)
         self.processor.tokenizer.set_target_lang(self.mms_lang)
         self.sampling_rate = sampling_rate
 
@@ -21,14 +23,16 @@ class FacebookMMS(BaseASRSystem):
         #TODO add conversion to wav2vec supported input format
         try:
             speech_array, sampling_rate = librosa.load(speech_file, sr=self.sampling_rate)
+
             inputs = self.processor(speech_array, sampling_rate=16_000, return_tensors="pt")
             
             with torch.no_grad():
-                outputs = model(**inputs).logits
-
+                outputs = self.mms_model(**inputs).logits
+            
             ids = torch.argmax(outputs, dim=-1)[0]
-
             hyp = self.processor.decode(ids)
+
+            print(f"Hyp:   {hyp}")
 
         except Exception as e:
             print(f"Other error: {e}")

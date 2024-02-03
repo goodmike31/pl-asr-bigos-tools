@@ -47,6 +47,12 @@ if __name__ == "__main__":
 
     #TODO - add support for "all" subset and split
     #"pwr-maleset-unk"
+    #
+    #        "wav2vec":{ 
+    #            "models": ["jonatasgrosman/wav2vec2-large-xlsr-53-polish", "jonatasgrosman/wav2vec2-xls-r-1b-polish"],
+    #            "versions": ["2024Q1"]
+    #            },
+    
     config_runtime = {
         "datasets": ["amu-cai/pl-asr-bigos-v2-secret"],
         "subsets": ["pwr-viu-unk"],
@@ -54,10 +60,10 @@ if __name__ == "__main__":
         "eval_metrics": ["lexical"],
         "ref_type": ["orig"],
         "systems": 
-        {
+        {   
 
-            "facebook_mms":{ 
-                "models": ["mms-1b-all"],
+            "mms":{ 
+                "models": ["1b-all"],
                 "versions": ["2024Q1"]
                 },
             "google": { 
