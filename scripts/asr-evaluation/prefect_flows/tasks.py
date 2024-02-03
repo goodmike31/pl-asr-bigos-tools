@@ -21,10 +21,13 @@ def gen_hyps_from_audio_samples(audio_paths, asr_system):
     return(asr_hyps)
 
 @task
-def load_hf_dataset(dataset_name, split, subset="all"):
-    hf_dataset = load_dataset(dataset_name, subset, split=split)
+def load_hf_dataset(dataset_name,subset="all"):
+    hf_dataset = load_dataset(dataset_name, subset)
     return hf_dataset
 
+def load_hf_dataset_split(dataset_name, split, subset="all"):
+    hf_dataset = load_dataset(dataset_name, subset, split=split)
+    return hf_dataset
 
 @task
 def select_split_of_dataset(dataset, split):

@@ -55,6 +55,11 @@ if __name__ == "__main__":
         "ref_type": ["orig"],
         "systems": 
         {
+
+            "facebook_mms":{ 
+                "models": ["mms-1b-all"],
+                "versions": ["2024Q1"]
+                },
             "google": { 
                 "models":["default", "command_and_search", "latest_long", "latest_short"],
                 "versions": ["2024Q1"]

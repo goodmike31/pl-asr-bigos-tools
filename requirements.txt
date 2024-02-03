@@ -10,3 +10,4 @@ prefect
 whisper
 pytest
 jiwer
+transformers
