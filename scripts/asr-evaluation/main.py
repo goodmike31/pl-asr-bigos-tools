@@ -24,7 +24,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Script for generating ASR hypotheses for a given set of datasets, asr systems and models.')
     parser.add_argument('--config_runtime', type=str, help='Path to runtime config file', default=os.path.join(script_dir, "../../config/eval-run-specific/pl-asr-bigos-default.json"))
-    parser.add_argument('--flow', type=str, help='Flow to execute: GEN, EVAL_PREP, EVAL_RUN or ALL', default="asr_hyp_gen_flow")
+    parser.add_argument('--flow', type=str, help='Flow to execute: GEN, EVAL_PREP, EVAL_RUN or ALL', default="ALL")
     
     args = parser.parse_args()
                    
@@ -59,6 +59,13 @@ if __name__ == "__main__":
     with open(args.config_runtime, "r") as f:
         config_runtime = json.load(f)
 
-    asr_hyp_gen_flow(config_user, config_common, config_runtime)
-    asr_eval_prep(config_user, config_common, config_runtime)
-    asr_eval_run(config_user, config_common, config_runtime)
+    if args.flow == "ALL":
+        asr_hyp_gen_flow(config_user, config_common, config_runtime)
+        asr_eval_prep(config_user, config_common, config_runtime)
+        asr_eval_run(config_user, config_common, config_runtime)
+    elif args.flow == "GEN":
+        asr_hyp_gen_flow(config_user, config_common, config_runtime)
+    elif args.flow == "EVAL_PREP":
+        asr_eval_prep(config_user, config_common, config_runtime)
+    elif args.flow == "EVAL_RUN":
+        asr_eval_run(config_user, config_common, config_runtime)
