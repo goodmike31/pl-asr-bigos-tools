@@ -11,6 +11,7 @@ class WhisperLocalASR(BaseASRSystem):
         try:
             result = self.whisper_local_model.transcribe(speech_file, language=self.whisper_local_language)
             hyp=result["text"]
+            print("Hyp:", hyp)
         except Exception as e:
             print(f"Other error: {e}")
         

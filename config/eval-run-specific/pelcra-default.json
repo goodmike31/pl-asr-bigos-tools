@@ -1,0 +1,40 @@
+{
+    "datasets": ["pelcra/pl-asr-pelcra-for-bigos-secret"],
+    "subsets": ["ul-diabiz_poleval-22", "ul-spokes_mix_emo-18", "ul-spokes_mix_luz-18", "ul-spokes_mix_parl-18", "ul-spokes_biz_bio-23", "ul-spokes_biz_int-23", "ul-spokes_biz_luz-23", "ul-spokes_biz_pod-23", "ul-spokes_biz_pres-23", "ul-spokes_biz_vc-23", "ul-spokes_biz_vc2-23", "ul-spokes_biz_wyw-23"],
+    "splits": ["test"],
+    "eval_metrics": ["lexical"],
+    "ref_type": ["orig"],
+    "systems": 
+    {
+        "wav2vec2":{ 
+            "models": ["large-xlsr-53-polish", "xls-r-1b-polish"],
+            "versions": ["2024Q1"]
+            },
+
+        "mms":{ 
+            "models": ["1b-all"],
+            "versions": ["2024Q1"]
+            },
+
+        "google": { 
+            "models":["default", "command_and_search", "latest_long", "latest_short"],
+            "versions": ["2024Q1"]
+            },
+
+        "azure":{ 
+            "models": ["latest"],
+            "versions": ["2024Q1"]
+            },
+
+        "whisper_cloud":{ 
+            "models": ["whisper-1"],
+            "versions": ["2024Q1"]
+            },
+
+        "whisper_local":{ 
+            "models": ["tiny", "base", "medium", "large", "large-v1", "large-v2"],
+            "versions": ["2024Q1"]
+            }
+        },
+    "norm_methods": "standard"
+}
