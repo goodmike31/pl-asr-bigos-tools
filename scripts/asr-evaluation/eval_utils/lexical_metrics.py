@@ -33,9 +33,9 @@ def get_lexical_metrics(df_eval_input, test_set_name, system_codename, ref_type,
         jiwer.ReduceToListOfListOfWords()
     ])
 
-    transf_chars = jiwer.Compose([
-        jiwer.ReduceToListOfListOfChars()
-    ])
+    #transf_chars = jiwer.Compose([
+    #    jiwer.ReduceToListOfListOfChars()
+    #])
 
     print("get_lexical_metrics:\nDataset: {}System: {}\nRef_type: {}\nNormalization: {}\n".format(test_set_name, system_codename, ref_type, norm))
     # assume that the input dataframe   

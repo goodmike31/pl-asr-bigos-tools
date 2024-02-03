@@ -1,5 +1,6 @@
 from prefect_flows.asr_hyp_gen_flow import asr_hyp_gen_flow
-from prefect_flows.asr_eval_results_flow import asr_eval_results_flow
+from prefect_flows.asr_eval_prep import asr_eval_prep
+from prefect_flows.asr_eval_run import asr_eval_run
 import argparse
 import os
 import json
@@ -19,10 +20,15 @@ def read_config_common(config_common_path):
 
 # Example execution (you can also run this flow from CLI or Prefect UI)
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Script for generating ASR hypotheses for a given set of datasets, asr systems and models.')
-
-    # Default location of config files.
     script_dir = os.path.dirname(os.path.realpath(__file__))
+
+    parser = argparse.ArgumentParser(description='Script for generating ASR hypotheses for a given set of datasets, asr systems and models.')
+    parser.add_argument('--config_runtime', type=str, help='Path to runtime config file', default=os.path.join(script_dir, "../../config/eval-run-specific/pl-asr-bigos-default.json"))
+    parser.add_argument('--flow', type=str, help='Flow to execute: GEN, EVAL_PREP, EVAL_RUN or ALL', default="asr_hyp_gen_flow")
+    
+    args = parser.parse_args()
+                   
+    # Default location of config files.
     config_common_path = os.path.join(script_dir, '../../config/common/config.json')
     print("config_common_path", config_common_path)
     
@@ -48,48 +54,11 @@ if __name__ == "__main__":
     #TODO - add support for "all" subset and split
     #"pwr-maleset-unk"
     #
-    #        
-    
-    config_runtime = {
-        "datasets": ["amu-cai/pl-asr-bigos-v2-secret"],
-        "subsets": ["pwr-viu-unk"],
-        "splits": ["test"],
-        "eval_metrics": ["lexical"],
-        "ref_type": ["orig"],
-        "systems": 
-        {
-            "wav2vec2":{ 
-                "models": ["large-xlsr-53-polish", "xls-r-1b-polish"],
-                "versions": ["2024Q1"]
-                },
+    print(args.config_runtime)
 
-            "mms":{ 
-                "models": ["1b-all"],
-                "versions": ["2024Q1"]
-                },
-
-            "google": { 
-                "models":["default", "command_and_search", "latest_long", "latest_short"],
-                "versions": ["2024Q1"]
-                },
-
-            "azure":{ 
-                "models": ["latest"],
-                "versions": ["2024Q1"]
-                },
-
-            "whisper_cloud":{ 
-                "models": ["whisper-1"],
-                "versions": ["2024Q1"]
-                },
-
-            "whisper_local":{ 
-                "models": ["tiny", "base", "medium", "large", "large-v1", "large-v2"],
-                "versions": ["2024Q1"]
-                }
-            },
-        "norm_methods": "standard",
-    }
+    with open(args.config_runtime, "r") as f:
+        config_runtime = json.load(f)
 
     asr_hyp_gen_flow(config_user, config_common, config_runtime)
-    asr_eval_results_flow(config_user, config_common, config_runtime)
+    asr_eval_prep(config_user, config_common, config_runtime)
+    asr_eval_run(config_user, config_common, config_runtime)
