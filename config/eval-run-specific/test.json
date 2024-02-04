@@ -1,11 +1,15 @@
 {
     "datasets": ["amu-cai/pl-asr-bigos-v2-secret"],
-    "subsets": ["pjatk-clarin_mobile-15", "pjatk-clarin_studio-15", "fair-mls-20", "mailabs-corpus_librivox-19", "mozilla-common_voice_15-23", "pwr-azon_read-20", "pwr-azon_spont-20", "pwr-maleset-unk", "pwr-shortwords-unk", "pwr-viu-unk", "google-fleurs-22", "polyai-minds14-21"],
+    "subsets": ["polyai-minds14-21"],
     "splits": ["test"],
     "eval_metrics": ["lexical"],
     "ref_type": ["orig"],
     "systems": 
     {
+        "google_v2": { 
+                "models":["chirp", "long", "short"],
+                "versions": ["2024Q1"]
+                },
         "wav2vec2":{ 
             "models": ["large-xlsr-53-polish", "xls-r-1b-polish"],
             "versions": ["2024Q1"]
@@ -21,11 +25,6 @@
             "versions": ["2024Q1"]
             },
         
-        "google_v2": { 
-                "models":["chirp", "long", "short"],
-                "versions": ["2024Q1"]
-                },
-    
         "azure":{ 
             "models": ["latest"],
             "versions": ["2024Q1"]

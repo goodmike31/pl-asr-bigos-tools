@@ -32,6 +32,8 @@ if __name__ == "__main__":
         config_runtime_file = os.path.join(script_dir, '../../config/eval-run-specific/bigos-default.json')
     elif (args.eval_config == "PELCRA"):
         config_runtime_file = os.path.join(script_dir, '../../config/eval-run-specific/pelcra-default.json')
+    elif (args.eval_config == "TEST"):
+        config_runtime_file = os.path.join(script_dir, '../../config/eval-run-specific/test.json')
     else:
         print("Unknown runtime name. Exiting.")
         exit(1)
