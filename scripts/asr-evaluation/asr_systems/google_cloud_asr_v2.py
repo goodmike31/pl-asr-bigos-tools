@@ -5,8 +5,10 @@ from google.cloud.speech_v2.types import cloud_speech
 
 class GoogleCloudASRV2(BaseASRSystem):
     #https://cloud.google.com/speech-to-text/docs/transcription-model#speech_transcribe_model_selection-python
-    def __init__(self, system, model, project_id:str, language_code:str = "pl-PL", enable_automatic_punctuation:bool = True, sampling_rate:int = 16000):
+    def __init__(self, system, model, credentials:str, project_id:str, language_code:str = "pl-PL", enable_automatic_punctuation:bool = True, sampling_rate:int = 16000):
         super().__init__(system, model,language_code)
+        
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials
 
         self.project_id = project_id
 
@@ -16,10 +18,8 @@ class GoogleCloudASRV2(BaseASRSystem):
         # Set up the configuration
         self.config = cloud_speech.RecognitionConfig(
             auto_decoding_config=cloud_speech.AutoDetectDecodingConfig(),
-            language_code=language_code,
-            enable_automatic_punctuation=enable_automatic_punctuation,
-            model=self.get_model(),
-            sample_rate_hertz=sampling_rate,
+            language_codes=[language_code],
+            model=model,
         )
         
     def generate_asr_hyp(self, speech_file:str) -> str:
@@ -29,10 +29,10 @@ class GoogleCloudASRV2(BaseASRSystem):
             audio_content = audio_file.read()
         
         request = cloud_speech.RecognizeRequest(
-        recognizer=f"projects/{project_id}/locations/global/recognizers/_",
-        config=self.config,
-        content=audio_content,
-    )
+            recognizer=f"projects/{project_id}/locations/global/recognizers/_",
+            config=self.config,
+            content=audio_content,
+        )
 
         # Call the Google Cloud Speech API
         response = self.client.recognize(request=request)

@@ -19,7 +19,7 @@ def asr_system_factory(system, model, config):
     elif system == 'google_v2':
         google_api_key_path = config.get("CREDENTIALS", "GOOGLE_API_KEY_FILE")
         project_id = config.get("CREDENTIALS", "GOOGLE_PROJECT_ID")
-        return GoogleCloudASRV2(system, model, project_id)
+        return GoogleCloudASRV2(system, model, google_api_key_path, project_id)
     
     elif system == 'azure':
         azure_api_key_path = config.get("CREDENTIALS", "AZURE_API_KEY")
