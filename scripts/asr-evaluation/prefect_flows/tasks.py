@@ -82,11 +82,13 @@ def calculate_eval_metrics(eval_input_df, dataset_codename, system_codename):
     return(df_eval_results)
 
 @task
-def save_metrics_tsv(df_eval_results):
+def save_metrics_tsv(df_eval_results, filename):
     # Implement logic to save metrics as TSV
-    pass
+    print("Saving metrics to {}".format(filename))
+    df_eval_results.to_csv(filename, sep="\t", index=False)
 
 @task
-def save_metrics_json(df_eval_results):
+def save_metrics_json(df_eval_results, filename):
     # Implement logic to save metrics as JSON
-    pass
+    print("Saving metrics to {}".format(filename))
+    df_eval_results.to_json(filename, orient="records")

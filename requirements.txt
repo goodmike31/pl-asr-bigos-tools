@@ -3,7 +3,7 @@ pandas
 datasets
 librosa
 soundfile
-google.cloud.speech
+google.cloud.speech>=2.23.0
 azure.cognitiveservices.speech
 openai
 prefect
@@ -12,3 +12,4 @@ pytest
 jiwer
 transformers
 huggingsound
+google-auth>=2.27.0
