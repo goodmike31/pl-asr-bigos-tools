@@ -22,7 +22,7 @@
             },
         
         "google_v2": { 
-                "models":["chirp", "long", "short"],
+                "models":["long", "short"],
                 "versions": ["2024Q1"]
                 },
     

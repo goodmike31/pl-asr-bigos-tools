@@ -40,7 +40,14 @@ def generate_eval_metrics_subsets(config_user, config_common, config_runtime):
                             eval_input_dir = os.path.join(eval_in_dir, system_codename, version, dataset_codename )
                             eval_input_path = os.path.join(eval_input_dir, "eval_input.tsv")    
                             df_eval_input = pd.read_csv(eval_input_path, sep="\t")
-                            df_eval_result = calculate_eval_metrics(df_eval_input, dataset_codename, system_codename)
+                            filename = os.path.join(eval_out_dir, "eval_results", str.join("_", [dataset_codename, system_codename, version]) + ".tsv")
+                            if not os.path.exists(filename):
+                                df_eval_result = calculate_eval_metrics(df_eval_input, dataset_codename, system_codename)
+                                save_metrics_tsv(df_eval_result, filename)
+                                save_metrics_json(df_eval_result, filename.replace(".tsv", ".json"))
+                            else:
+                                print("Skipping calculation of evaluation metrics for ", filename, " as it already exists.")
+                                df_eval_result = pd.read_csv(filename, sep="\t")
                             df_eval_results_all = pd.concat([df_eval_results_all, df_eval_result])
     
     filename = os.path.join(eval_out_dir, "eval_results_all_" + datetime.now().strftime("%Y%m%d"))
