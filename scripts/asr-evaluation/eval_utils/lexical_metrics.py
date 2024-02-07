@@ -62,10 +62,10 @@ def get_lexical_metrics(df_eval_input, test_set_name, system_codename, ref_type,
         # Generate mask from df_eval_input where ref and hyp are not empty
         df_eval_input["mask"] = df_eval_input[ref_col].notnull() & df_eval_input[hyp_col].notnull()
         ref = df_eval_input[ref_col][df_eval_input["mask"]].astype(str).tolist() 
-        print("refs filtered to match hyps availability: ", ref)
+        #print("refs filtered to match hyps availability: ", ref)
         # Apply mask to df_eval_input
         hyp = df_eval_input[hyp_col][df_eval_input["mask"]].astype(str).tolist()
-        print("hyps filtered to match hyps availability: ", hyp)
+        #print("hyps filtered to match hyps availability: ", hyp)
 
     # output columns
     df_results_header=["dataset", "samples", "ref_type", "eval_norm", "system", "SER", "WIL", "MER", "WER", "CER"]
