@@ -6,6 +6,11 @@
     "ref_type": ["orig"],
     "systems": 
     {
+        "nvidia": { 
+            "models":["chirp", "long", "short"],
+            "versions": ["2024Q1"]
+            },
+
         "google_v2": { 
                 "models":["chirp", "long", "short"],
                 "versions": ["2024Q1"]

@@ -19,6 +19,7 @@ def generate_eval_metrics_subsets(config_user, config_common, config_runtime):
     # TODO move to config
     script_dir = os.path.dirname(os.path.realpath(__file__))
     eval_in_dir = os.path.join(script_dir, "../../../data/eval_input")
+    eval_out_dir_common = os.path.join(script_dir, "../../../data/eval_output")
     datasets, subsets, splits, systems = get_config_run(config_runtime)
     # initialize empty dataframe for storing all evaluation metrics
     df_eval_results_all = pd.DataFrame([])
@@ -26,10 +27,12 @@ def generate_eval_metrics_subsets(config_user, config_common, config_runtime):
     #TODO - decide on which level aggregate metrics should be calculated (e.g. for each dataset, subset, split, system, model, version, postnorm, evalnorm, ref_type, eval_type, etc.)
     
     for dataset in datasets:
+        eval_out_dir_dataset = os.path.join(eval_out_dir_common, dataset)
+        os.makedirs(eval_out_dir_dataset, exist_ok=True)
         for subset in subsets:
             for split in splits:
                 dataset_codename = str.join("-", [dataset, subset, split])
-                eval_out_dir = os.path.join(script_dir, "../../../data/eval_output", dataset_codename)
+                eval_out_dir = os.path.join(eval_out_dir_common, dataset_codename)
                 os.makedirs(eval_out_dir, exist_ok=True)
                 print("Calculating evaluation metrics for ", dataset_codename, " dataset.")
                 print("Output directory: ", eval_out_dir)
@@ -37,14 +40,15 @@ def generate_eval_metrics_subsets(config_user, config_common, config_runtime):
                     for model in config_runtime["systems"][system]["models"]:
                         for version in config_runtime["systems"][system]["versions"]:
                             # TODO add flag to skipping initializing model, if asr system is needed just to read cache or name (read_model=False)
-                            asr_system = initialize_asr_system(system, model, config_user) 
-                            system_codename = asr_system.get_codename()
+                            #TODO move to utils
+                            system_codename = str.join("_", [system, model])
                             # TODO move eval input dir root to config
                             eval_input_dir = os.path.join(eval_in_dir, system_codename, version, dataset_codename )
                             eval_input_path = os.path.join(eval_input_dir, "eval_input.tsv")    
                             df_eval_input = pd.read_csv(eval_input_path, sep="\t")
                             filename_out = os.path.join(eval_out_dir, "eval_results-" + system_codename + ".tsv")
                             if not os.path.exists(filename_out):
+                                asr_system = initialize_asr_system(system, model, config_user)
                                 df_eval_result = calculate_eval_metrics(df_eval_input, dataset_codename, system_codename)
                                 save_metrics_tsv(df_eval_result, filename_out)
                                 save_metrics_json(df_eval_result, filename_out.replace(".tsv", ".json"))
@@ -52,26 +56,26 @@ def generate_eval_metrics_subsets(config_user, config_common, config_runtime):
                                 print("Skipping calculation of evaluation metrics for ", system_codename, " and ", dataset_codename)
                                 df_eval_result = pd.read_csv(filename_out, sep="\t")
                             df_eval_results_all = pd.concat([df_eval_results_all, df_eval_result])
-        filename_out_agg = os.path.join(eval_out_dir, "eval_results-all-" + datetime.now().strftime("%Y%m%d"))
+
+        # Save aggregated evaluation metrics for all datasets, subsets, splits, systems and models
+        filename_out_agg = os.path.join(eval_out_dir_dataset, "eval_results-all-" + datetime.now().strftime("%Y%m%d"))
         save_metrics_tsv(df_eval_results_all, filename_out_agg + ".tsv")
         save_metrics_json(df_eval_results_all, filename_out_agg + ".json")
-        calculate_wer_summary(df_eval_results_all, dataset, filename_out_agg + "-hf_input.csv")
-        print(df_eval_results_all)
+        calculate_wer_summary(df_eval_results_all, filename_out_agg + "-hf_input.csv")
 
 def generate_eval_metrics_all():
     pass
 
-def calculate_wer_summary(data, dataset, output_csv_path):
+def calculate_wer_summary(data, output_csv_path):
     # TODO - split system and model into separate columns?
-    
+
     # Pivot the data to have one row per system/model with columns for each dataset's WER
     pivot_data = data.pivot_table(index='system', columns='dataset', values='WER', aggfunc='mean').reset_index()
     
     # change values in the dataset column, so that they are more human readable
     pivot_data.columns = pivot_data.columns.str.replace("test-", "")
-    pivot_data.columns = pivot_data.columns.str.replace("   valdation-", "")
+    pivot_data.columns = pivot_data.columns.str.replace("valdation-", "")
     pivot_data.columns = pivot_data.columns.str.replace("train-", "")
-    pivot_data.columns = pivot_data.columns.str.replace(dataset, "")
 
     # Calculate average WER and weighted average WER with 2 decimal places precision
 

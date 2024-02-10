@@ -13,3 +13,8 @@ jiwer
 transformers
 huggingsound
 google-auth>=2.27.0
+matplotlib>=3.3.2
+nemo_toolkit['all']
+Cython
+torch
+seaborn
