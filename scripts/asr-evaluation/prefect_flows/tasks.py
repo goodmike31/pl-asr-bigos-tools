@@ -1,8 +1,10 @@
 from prefect import task
 from datasets import load_dataset
 from eval_utils.lexical_metrics import get_lexical_metrics
+from eval_utils.eval_analysis import boxplot_performance
 import pandas as pd
 import matplotlib.pyplot as plt
+import os
 
 @task
 def load_config(config_path):
@@ -74,25 +76,16 @@ def prepare_eval_input_from_hyps_cache(hf_dataset, asr_system) -> pd.DataFrame:
     return(eval_input_df)
 
 @task
-def calculate_eval_metrics(eval_input_df, dataset_codename, system_codename):
-    # Implement logic to calculate eval metrics
-
-    # loop over all datasets, subsets, splits, systems, models, versions, postnorms, evalnorms, ref_types, eval_types
-    df_eval_results = get_lexical_metrics(eval_input_df, dataset_codename, system_codename, "orig", "all")
-    #def calculate_lexical_metrics(df_eval_input, test_set_name,  system_codename, ref_type, norm)->pd.DataFrame:
-    generate_plots(df_eval_results)
+def calculate_eval_metrics(eval_input_df, dataset, subset, split, system_codename):
+    df_eval_results = get_lexical_metrics(eval_input_df, dataset, subset, split, system_codename, "orig", "all")
     return(df_eval_results)
 
-def generate_plots(df_eval_results):
-    # Implement logic to generate plots
-    box_plot_path = "box_plot.png"
-    print("Saving box plot to {}".format(box_plot_path))
-    
-    df_eval_results.boxplot(column=["WER", "CER"], by="system", grid=False)
-    plt.savefig(box_plot_path)
-    plt.close()
-
-    pass
+@task
+def generate_plots(df_eval_results, output_dir, metrics=["WER", "CER"], agg_dim=["system", "subset"]):  
+    for metric in metrics:
+        for dim in agg_dim:
+            target_fn=os.path.join(output_dir, f"{metric}_across_{dim}.png")
+            boxplot_performance(df_eval_results, dim, metric, target_fn)
 
 @task
 def save_metrics_tsv(df_eval_results, filename):

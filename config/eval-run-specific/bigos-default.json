@@ -6,6 +6,11 @@
     "ref_type": ["orig"],
     "systems": 
     {
+        "nemo":{
+            "models": ["stt_pl_fastconformer_hybrid_large_pc"],
+            "versions": ["2024Q1"]
+            },
+
         "wav2vec2":{ 
             "models": ["large-xlsr-53-polish", "xls-r-1b-polish"],
             "versions": ["2024Q1"]

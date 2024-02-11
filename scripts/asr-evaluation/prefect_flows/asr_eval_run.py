@@ -1,10 +1,10 @@
 from prefect import flow
-from prefect_flows.tasks import calculate_eval_metrics, save_metrics_tsv, save_metrics_json 
+from prefect_flows.tasks import calculate_eval_metrics, save_metrics_tsv, save_metrics_json, generate_plots
 import pandas as pd
 from datetime import datetime
-from asr_systems import initialize_asr_system
 from pathlib import Path
 import os
+from datasets import get_dataset_config_names
 
 def get_config_run(config_runtime)->list:
 
@@ -13,7 +13,21 @@ def get_config_run(config_runtime)->list:
     splits = config_runtime["splits"]
     systems = config_runtime["systems"]
     return datasets, subsets, splits, systems
-                            
+
+def get_pretty_column_names(dataset, split):
+    config_names = get_dataset_config_names(dataset)[:-1]
+    #print(config_names)
+    # add split into to config_names e.g. "amu-cai/pl-asr-bigos-v2-secret-> amu-cai/pl-asr-bigos-v2-secret-test"
+    # add split into to config_names e.g. "amu-cai/pl-asr-bigos-diagnostic-> amu-cai/pl-asr-bigos-diagnostic-test"
+    config_names_new = [dataset + "-" + config_name + "-" + split for config_name in config_names]
+    config_names_short = [config_name.split("-")[1].upper() for config_name in config_names]
+    #print(config_names_new)
+    #print(config_names_short)
+    keys = config_names_new
+    values = config_names_short
+    column_names = dict(zip(keys, values))
+    return(column_names)
+                         
 def generate_eval_metrics_subsets(config_user, config_common, config_runtime):
     
     # TODO move to config
@@ -46,22 +60,29 @@ def generate_eval_metrics_subsets(config_user, config_common, config_runtime):
                             eval_input_dir = os.path.join(eval_in_dir, system_codename, version, dataset_codename )
                             eval_input_path = os.path.join(eval_input_dir, "eval_input.tsv")    
                             df_eval_input = pd.read_csv(eval_input_path, sep="\t")
-                            filename_out = os.path.join(eval_out_dir, "eval_results-" + system_codename + ".tsv")
-                            if not os.path.exists(filename_out):
-                                asr_system = initialize_asr_system(system, model, config_user)
-                                df_eval_result = calculate_eval_metrics(df_eval_input, dataset_codename, system_codename)
-                                save_metrics_tsv(df_eval_result, filename_out)
-                                save_metrics_json(df_eval_result, filename_out.replace(".tsv", ".json"))
+                            fn_eval_results_system = os.path.join(eval_out_dir, "eval_results-" + system_codename + ".tsv")
+                            if not os.path.exists(fn_eval_results_system):
+                                #asr_system = initialize_asr_system(system, model, config_user)
+                                df_eval_result = calculate_eval_metrics(df_eval_input, dataset, subset, split, system_codename)
+                                save_metrics_tsv(df_eval_result, fn_eval_results_system)
+                                save_metrics_json(df_eval_result, fn_eval_results_system.replace(".tsv", ".json"))
                             else:
                                 print("Skipping calculation of evaluation metrics for ", system_codename, " and ", dataset_codename)
-                                df_eval_result = pd.read_csv(filename_out, sep="\t")
+                                df_eval_result = pd.read_csv(fn_eval_results_system, sep="\t")
                             df_eval_results_all = pd.concat([df_eval_results_all, df_eval_result])
 
         # Save aggregated evaluation metrics for all datasets, subsets, splits, systems and models
-        filename_out_agg = os.path.join(eval_out_dir_dataset, "eval_results-all-" + datetime.now().strftime("%Y%m%d"))
-        save_metrics_tsv(df_eval_results_all, filename_out_agg + ".tsv")
-        save_metrics_json(df_eval_results_all, filename_out_agg + ".json")
-        calculate_wer_summary(df_eval_results_all, filename_out_agg + "-hf_input.csv")
+        fn_eval_results_agg = os.path.join(eval_out_dir_dataset, "eval_results-all-" + datetime.now().strftime("%Y%m%d"))
+        save_metrics_tsv(df_eval_results_all, fn_eval_results_agg + ".tsv")
+        save_metrics_json(df_eval_results_all, fn_eval_results_agg + ".json")
+
+        fn_hf_leaderboard_input = fn_eval_results_agg + "-hf_input.csv"
+        calculate_wer_summary(df_eval_results_all, fn_hf_leaderboard_input)
+
+        
+        eval_plots_dir= os.path.join(eval_out_dir_dataset, "eval_plots")
+        os.makedirs(eval_plots_dir, exist_ok=True)
+        generate_plots(df_eval_results_all, eval_plots_dir)
 
 def generate_eval_metrics_all():
     pass
@@ -101,6 +122,7 @@ def calculate_wer_summary(data, output_csv_path):
     
     # Save the summarized data to a CSV file
     summary_data.to_csv(output_csv_path, index=False)
+    return summary_data
 
 @flow(name="ASR Evaluation Execution Flow")
 def asr_eval_run(config_user, config_common, config_runtime):

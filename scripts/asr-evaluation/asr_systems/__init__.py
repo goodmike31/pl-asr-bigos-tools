@@ -7,6 +7,7 @@ from .whisper_cloud_asr import WhisperCloudASR
 from .whisper_local_asr import WhisperLocalASR
 from .facebook_mms_local import FacebookMMS
 from .facebook_wav2vec import FacebookWav2Vec
+from .nvidia_nemo_asr import NvidiaNemoASR
 
 def initialize_asr_system(system, model, config_file):
     return asr_system_factory(system, model, config_file)
@@ -38,6 +39,9 @@ def asr_system_factory(system, model, config):
     
     elif system == 'wav2vec2':
         return FacebookWav2Vec(system, model)
-
+    
+    elif system == 'nemo':
+        return NvidiaNemoASR(system, model)
+    
     else:
         raise ValueError(f"Unknown ASR system type: {system}")
