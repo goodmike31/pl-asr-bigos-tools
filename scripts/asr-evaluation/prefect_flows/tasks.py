@@ -1,6 +1,6 @@
 from prefect import task
 from datasets import load_dataset
-from eval_utils.lexical_metrics import get_lexical_metrics
+from eval_utils.lexical_metrics import get_lexical_metrics_per_dataset, get_lexical_metrics_per_sample
 from eval_utils.eval_analysis import boxplot_performance
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -76,8 +76,13 @@ def prepare_eval_input_from_hyps_cache(hf_dataset, asr_system) -> pd.DataFrame:
     return(eval_input_df)
 
 @task
-def calculate_eval_metrics(eval_input_df, dataset, subset, split, system_codename):
-    df_eval_results = get_lexical_metrics(eval_input_df, dataset, subset, split, system_codename, "orig", "all")
+def calculate_eval_metrics_per_dataset(eval_input_df, dataset, subset, split, system_codename):
+    df_eval_results = get_lexical_metrics_per_dataset(eval_input_df, dataset, subset, split, system_codename, "orig", "all")
+    return(df_eval_results)
+
+@task
+def calculate_eval_metrics_per_sample(eval_input_df, dataset, subset, split, system_codename):
+    df_eval_results = get_lexical_metrics_per_sample(eval_input_df, dataset, subset, split, system_codename, "orig", "all")
     return(df_eval_results)
 
 @task
