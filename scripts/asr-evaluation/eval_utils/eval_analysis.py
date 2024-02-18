@@ -35,6 +35,8 @@ def boxplot_wer_per_dataset(eval_results, save_path='./data/eval_plots'):
     # Plot and save the figures
     boxplot_performance(data, "dataset", "WER", os.path.join(save_path, "WER-across-systems.png")
 
+def wer_per_audio_duration
+
 def parse_arguments():
     parser = argparse.ArgumentParser(description='ASR Evaluation Analysis')
     parser.add_argument('--analysis_type', type=str, help='WER_PER_AUDIO_DURATION', "WER_PER_SYSTEM", "WER_PER_DATASET")
