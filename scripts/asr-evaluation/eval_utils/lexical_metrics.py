@@ -156,7 +156,7 @@ def get_lexical_metrics_per_dataset(df_eval_input, dataset, subset, split, syste
     ref_col = "ref_" + ref_type
     hyp_col = "hyp_" + system_codename
 
-    ref, hyp = prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm)
+    ref, hyp, ids, audio_paths = prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm)
     
     # output columns
     df_results_header=["dataset", "subset", "split", "samples", "ref_type", "eval_norm", "system", "SER", "WIL", "MER", "WER", "CER"]

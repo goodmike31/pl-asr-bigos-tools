@@ -4,6 +4,7 @@
     "splits": ["test"],
     "eval_metrics": ["lexical"],
     "ref_type": ["orig"],
+    "norm_methods": "standard",
     "systems": 
     {
         "nemo":{
@@ -45,6 +46,5 @@
             "models": ["tiny", "base", "medium", "large", "large-v1", "large-v2"],
             "versions": ["2024Q1"]
             }
-        },
-    "norm_methods": "standard"
+        }
 }

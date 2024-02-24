@@ -33,13 +33,13 @@ def boxplot_wer_per_dataset(eval_results, save_path='./data/eval_plots'):
     os.makedirs(os.path.join(save_path, today), exist_ok=True)
 
     # Plot and save the figures
-    boxplot_performance(data, "dataset", "WER", os.path.join(save_path, "WER-across-systems.png")
+    boxplot_performance(data, "dataset", "WER", os.path.join(save_path, "WER-across-systems.png"))
 
-def wer_per_audio_duration
+#def wer_per_audio_duration
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='ASR Evaluation Analysis')
-    parser.add_argument('--analysis_type', type=str, help='WER_PER_AUDIO_DURATION', "WER_PER_SYSTEM", "WER_PER_DATASET")
+    parser.add_argument('--analysis_type', type=str, help="WER_PER_AUDIO_DURATION or WER_PER_SYSTEM or WER_PER_DATASET")
     parser.add_argument('--eval_results', type=str, help='Path to the TSV file')
     parser.add_argument('--dim', type=str, default='dataset', help='Dimension to plot (default: dataset)')
     parser.add_argument('--metric', type=str, default='WER', help='Metric to plot (default: WER)')

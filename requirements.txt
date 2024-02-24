@@ -10,6 +10,16 @@ transformers
 librosa
 Cython
 nemo_toolkit
+hydra-core
 torch
 seaborn
 pandas
+pytorch-lightning
+sentencepiece
+youtokentome
+inflect
+webdataset
+pyannote.core
+pyannote.metrics
+editdistance
+ipython

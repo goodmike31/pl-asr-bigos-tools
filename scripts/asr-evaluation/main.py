@@ -24,7 +24,7 @@ if __name__ == "__main__":
     script_dir = os.path.dirname(os.path.realpath(__file__))
 
     parser = argparse.ArgumentParser(description='Script for generating ASR hypotheses for a given set of datasets, asr systems and models.')
-    parser.add_argument('--eval_config', type=str, help='Name of the runtime config file', default="BIGOS")
+    parser.add_argument('--eval_config', type=str, help='Name of the runtime config file', default="TEST")
     parser.add_argument('--flow', type=str, help='Flow to execute: GEN, EVAL_PREP, EVAL_RUN or ALL', default="ALL")
     
     args = parser.parse_args()

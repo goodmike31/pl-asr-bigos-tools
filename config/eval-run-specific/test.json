@@ -4,17 +4,14 @@
     "splits": ["test"],
     "eval_metrics": ["lexical"],
     "ref_type": ["orig"],
+    "norm_methods": "standard",
     "systems": 
     {
-        "nvidia": { 
-            "models":["chirp", "long", "short"],
+        "nemo":{
+            "models": ["stt_pl_fastconformer_hybrid_large_pc"],
             "versions": ["2024Q1"]
             },
 
-        "google_v2": { 
-                "models":["chirp", "long", "short"],
-                "versions": ["2024Q1"]
-                },
         "wav2vec2":{ 
             "models": ["large-xlsr-53-polish", "xls-r-1b-polish"],
             "versions": ["2024Q1"]
@@ -30,6 +27,11 @@
             "versions": ["2024Q1"]
             },
         
+        "google_v2": { 
+                "models":["long", "short"],
+                "versions": ["2024Q1"]
+                },
+    
         "azure":{ 
             "models": ["latest"],
             "versions": ["2024Q1"]
@@ -44,6 +46,5 @@
             "models": ["tiny", "base", "medium", "large", "large-v1", "large-v2"],
             "versions": ["2024Q1"]
             }
-        },
-    "norm_methods": "standard"
+        }
 }

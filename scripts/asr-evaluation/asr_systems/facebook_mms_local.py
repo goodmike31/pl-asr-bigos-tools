@@ -1,7 +1,9 @@
 from .base_asr_system import BaseASRSystem
 from transformers import Wav2Vec2ForCTC, AutoProcessor
 import librosa
-import torch
+import torch    
+
+#https://huggingface.co/docs/transformers/v4.36.1/model_doc/mms
 
 lang_code_693_3 = {
     "pl-PL":"pol"
