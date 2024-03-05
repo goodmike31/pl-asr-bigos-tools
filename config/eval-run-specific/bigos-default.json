@@ -2,6 +2,7 @@
     "datasets": ["amu-cai/pl-asr-bigos-v2-secret"],
     "subsets": ["pjatk-clarin_mobile-15", "pjatk-clarin_studio-15", "fair-mls-20", "mailabs-corpus_librivox-19", "mozilla-common_voice_15-23", "pwr-azon_read-20", "pwr-azon_spont-20", "pwr-maleset-unk", "pwr-shortwords-unk", "pwr-viu-unk", "google-fleurs-22", "polyai-minds14-21"],
     "splits": ["test"],
+    "max_samples_per_subset": 200,
     "eval_metrics": ["lexical"],
     "ref_type": ["orig"],
     "norm_methods": "standard",

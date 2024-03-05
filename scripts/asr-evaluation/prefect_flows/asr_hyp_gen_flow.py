@@ -9,6 +9,7 @@ def asr_hyp_gen_flow(config_user, config_common, config_runtime):
     subsets = config_runtime["subsets"]
     splits = config_runtime["splits"]
     systems = config_runtime["systems"]
+    max_samples_per_subset = config_runtime["max_samples_per_subset"]
 
     for system in systems:
         for model in config_runtime["systems"][system]["models"]:
@@ -19,6 +20,8 @@ def asr_hyp_gen_flow(config_user, config_common, config_runtime):
                     for split in splits:
                         hf_dataset = load_hf_dataset_split(dataset_name, split, subset)
                         audio_paths = hf_dataset["audiopath_local"]
+                        # limit the number of audio paths for testing
+                        audio_paths = audio_paths[:max_samples_per_subset]
                         gen_hyps = gen_hyps_from_audio_samples(audio_paths, asr_system)
                         print(gen_hyps)
     #print(final_result)
