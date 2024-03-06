@@ -20,8 +20,6 @@ def gen_hyps_from_audio_samples(audio_paths, asr_system):
         asr_hyp = asr_system.process_audio(audiopath)
         asr_hyps.append(asr_hyp)
     
-    print("Saving cache")
-    asr_system.save_cache()
     return(asr_hyps)
 
 @task

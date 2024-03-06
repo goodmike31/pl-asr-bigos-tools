@@ -90,7 +90,7 @@ class BaseASRSystem:
             # check if version is in cache
             if version in self.cache[audio_sample]:
                 asr_hyp = self.cache[audio_sample][version]['asr_hyp']
-                print("READ from cache.\nAudio sample: {}\nReference: {} ".format(audio_sample, asr_hyp))
+                print("READ from cache.\nAudio sample: {}\nHypothesis: {} ".format(audio_sample, asr_hyp))
                 return asr_hyp
             else:
                 return None
@@ -107,9 +107,11 @@ class BaseASRSystem:
             'hyp_gen_date': datetime.now().strftime("%Y%m%d")
         }
         self.cache[audio_sample] = {self.version: metadata}
-        print("UPDATED cache.\nAudio sample: {}\nReference: {} ".format(audio_sample, asr_hyp))
+        print("UPDATED cache.\nAudio sample: {}\nHypothesis: {} ".format(audio_sample, asr_hyp))
+        self.save_cache()
     
     def save_cache(self):
+        print("Saving cache")
         with open(self.cache_file, "w") as f:
             # save as JSONL file
             for audio_sample in self.cache:
