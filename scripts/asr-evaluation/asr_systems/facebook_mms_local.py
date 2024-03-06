@@ -39,6 +39,9 @@ class FacebookMMS(BaseASRSystem):
 
         except Exception as e:
             print(f"Other error: {e}")
+            hyp=""
         
-        self.update_cache(speech_file, hyp)
+        if hyp != "":
+            self.update_cache(speech_file, hyp)
+        
         return hyp

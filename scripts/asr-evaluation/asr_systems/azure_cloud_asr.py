@@ -14,20 +14,22 @@ class AzureCloudASR(BaseASRSystem):
         try:
             audio_config = AudioConfig(filename=speech_file)
             recognizer = SpeechRecognizer(speech_config=self.speech_config, audio_config=audio_config)
-            result = recognizer.recognize_once_async().get()
-            hyp = result.text
-            if result.reason == ResultReason.RecognizedSpeech:
-                print("Azure: {}".format(hyp))
-            elif result.reason == ResultReason.NoMatch:
-                print("No speech could be recognized: {}".format(result.no_match_details))
-            elif result.reason == ResultReason.Canceled:
-                cancellation_details = result.cancellation_details
-                print("Speech Recognition canceled: {}".format(cancellation_details.reason))
-                if cancellation_details.reason == CancellationReason.Error:
-                    print("Error details: {}".format(cancellation_details.error_details))
-                    print("Did you set the speech resource key and region values?")        
-        except IndexError:
-            result = "Index error"
+            try:
+                result = recognizer.recognize_once()
+                hyp = result.text
+                if result.reason == ResultReason.RecognizedSpeech:
+                    print("Azure: {}".format(hyp))
+                elif result.reason == ResultReason.NoMatch:
+                    print("No speech could be recognized: {}".format(result.no_match_details))
+                elif result.reason == ResultReason.Canceled:
+                    cancellation_details = result.cancellation_details
+                    print("Speech Recognition canceled: {}".format(cancellation_details.reason))
+                    if cancellation_details.reason == CancellationReason.Error:
+                        print("Error details: {}".format(cancellation_details.error_details))
+                        print("Did you set the speech resource key and region values?")
+            except Exception as e:
+                print(f"Error generating outputs: {e}. Skipping generation and returing empty hypothesis.")
+                hyp = ""        
         except Exception as e:
             print(f"Other error: {e}")
         self.update_cache(speech_file, hyp)

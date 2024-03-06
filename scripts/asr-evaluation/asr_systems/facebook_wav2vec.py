@@ -20,22 +20,32 @@ class FacebookWav2Vec(BaseASRSystem):
         self.sampling_rate = sampling_rate
 
     def generate_asr_hyp(self, speech_file):
-        #TODO add conversion to wav2vec supported input format
         try:
             speech_array, sampling_rate = librosa.load(speech_file, sr=self.sampling_rate)
-
+            print("Speech array length: ", len(speech_array))
             inputs = self.w2v_processor(speech_array, sampling_rate=16_000, return_tensors="pt")
-            
+            #print("Input read")
+            #print("Input type: ", type(inputs))
             #outputs = self.w2v_model(inputs).logits
-            outputs = self.w2v_model(**inputs).logits
-            
+            try:
+                outputs = self.w2v_model(**inputs).logits
+            except Exception as e:
+                print(f"Error generating outputs: {e}. Skipping generation and returing empty hypothesis.")
+                return ""
+            #print("Outputs generated")
             ids = torch.argmax(outputs, dim=-1)[0]
+            #print("IDS generated")
+
+            # add error handling for decoding
             hyp = self.w2v_processor.decode(ids)
-
             print(f"Hyp:   {hyp}")
-
+        
         except Exception as e:
             print(f"Other error: {e}")
-        
-        self.update_cache(speech_file, hyp)
+            hyp=""
+
+        #if hypothesis is not empty, update cache
+        if hyp != "":
+            self.update_cache(speech_file, hyp)
+                
         return hyp

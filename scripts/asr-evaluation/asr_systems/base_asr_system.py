@@ -1,6 +1,8 @@
 import os
 import json
 from datetime import datetime
+import librosa
+
 class BaseASRSystem:
     def __init__(self, system, model, language_code) -> None:
         
@@ -42,6 +44,19 @@ class BaseASRSystem:
         # Load the audio into memory
         print("Processing audio with {}".format(self.get_name()))
         print("Filename:", os.path.basename(speech_file))
+
+        # Check if the files exists
+        if not os.path.exists(speech_file):
+            print("File does not exist")
+            return ""
+        if os.path.getsize(speech_file) == 0:
+            print("File is empty")
+            return ""
+        
+        # check if audio length exceeds 1 minute
+        if librosa.get_duration(filename=speech_file) > 60:
+            print("Audio length exceeds 1 minute")
+            return ""
 
         # Load results from cache if possible
         asr_hyp = self.get_hyp_from_cache(speech_file, self.version)

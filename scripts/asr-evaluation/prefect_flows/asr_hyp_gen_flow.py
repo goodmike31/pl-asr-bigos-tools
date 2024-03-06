@@ -23,5 +23,4 @@ def asr_hyp_gen_flow(config_user, config_common, config_runtime):
                         # limit the number of audio paths for testing
                         audio_paths = audio_paths[:max_samples_per_subset]
                         gen_hyps = gen_hyps_from_audio_samples(audio_paths, asr_system)
-                        print(gen_hyps)
-    #print(final_result)
+                        print("Generated or retrieved hypotheses for {} samples for subset {} and split {}".format(len(gen_hyps), subset, split) )
