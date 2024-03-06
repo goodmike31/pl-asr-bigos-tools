@@ -35,12 +35,17 @@ transf_punc = jiwer.Compose([
 
 
 def prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm):
-    # filter out references which are empty
-    ref = df_eval_input[ref_col].dropna().astype(str).tolist()
+    # filter out hypotheses which are empty and corresponding references
+    audio_paths = df_eval_input['audiopath_local'].tolist()
+    # get masking vector for non-empty hypotheses
+    non_empty_hyps = df_eval_input[hyp_col].notnull()
+    # filter out non-empty hypotheses from dataframe
+    df_eval_input = df_eval_input[non_empty_hyps]
+    
+    # retrieve non-empty hypotheses and references    
+    ref = df_eval_input[ref_col]
+    hyp = df_eval_input[hyp_col]
     #print ("refs: ", ref)
-
-    # filter out hypotheses which are empty
-    hyp = df_eval_input[hyp_col].dropna().astype(str).tolist()
     #print ("hyps: ", hyp)
     
     if len(ref) != len(hyp):

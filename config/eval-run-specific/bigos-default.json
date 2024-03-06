@@ -8,31 +8,6 @@
     "norm_methods": "standard",
     "systems": 
     {
-        "google": { 
-            "models":["default", "command_and_search", "latest_long", "latest_short"],
-            "versions": ["2024Q1"]
-            },
-        
-        "google_v2": { 
-                "models":["long", "short"],
-                "versions": ["2024Q1"]
-                },
-    
-        "azure":{ 
-            "models": ["latest"],
-            "versions": ["2024Q1"]
-            },
-
-        "whisper_cloud":{ 
-            "models": ["whisper-1"],
-            "versions": ["2024Q1"]
-            },
-
-        "whisper_local":{ 
-            "models": ["tiny", "base", "medium", "large", "large-v1", "large-v2"],
-            "versions": ["2024Q1"]
-            },
-
         "nemo":{
             "models": ["stt_pl_fastconformer_hybrid_large_pc"],
             "versions": ["2024Q1"]
@@ -45,6 +20,31 @@
 
         "mms":{ 
             "models": ["1b-all"],
+            "versions": ["2024Q1"]
+            },
+
+        "whisper_local":{ 
+                "models": ["tiny", "base", "medium", "large", "large-v1", "large-v2"],
+                "versions": ["2024Q1"]
+                },
+
+        "whisper_cloud":{ 
+            "models": ["whisper-1"],
+            "versions": ["2024Q1"]
+            },
+
+        "google": { 
+            "models":["default", "command_and_search", "latest_long", "latest_short"],
+            "versions": ["2024Q1"]
+            },
+        
+        "google_v2": { 
+                "models":["long", "short"],
+                "versions": ["2024Q1"]
+                },
+    
+        "azure":{ 
+            "models": ["latest"],
             "versions": ["2024Q1"]
             }
         }

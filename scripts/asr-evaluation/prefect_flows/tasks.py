@@ -103,3 +103,27 @@ def save_metrics_json(df_eval_results, filename):
     # Implement logic to save metrics as JSON
     print("Saving metrics to {}".format(filename))
     df_eval_results.to_json(filename, orient="records")
+
+@task
+def check_cached_hyps_size_and_coverage(asr_system, audio_paths):
+    # Implement logic to get number of cached hypotheses
+    asr_system_codename = asr_system.get_codename()
+    cached_hyps = asr_system.get_cached_hyps()
+    # check if audio paths are in cache
+    cached_audio_paths = list(cached_hyps.keys())
+    nr_of_cached_hyps = len(cached_audio_paths)
+    # check common part of cached_audio_paths and audio_paths
+    common_audio_paths = list(set(cached_audio_paths) & set(audio_paths))
+    nr_of_common_audio_paths = len(common_audio_paths)
+    missing_audio_paths = list(set(audio_paths) - set(cached_audio_paths))
+    nr_of_missing_audio_paths = len(missing_audio_paths)
+    return(nr_of_cached_hyps, nr_of_common_audio_paths, nr_of_missing_audio_paths)
+
+
+    print("Retrieved number of cached hypotheses for ASR system {} and dataset {} {} {}".format(asr_system_codename, dataset_name, subset, split))
+
+@task
+def cached_hyps_stats_to_df(cached_hyps_stats):
+    # Implement logic to convert cached_hyps_stats to a dataframe
+    print(cached_hyps_stats)
+    print("Dataframe from cached_hyps_stats")

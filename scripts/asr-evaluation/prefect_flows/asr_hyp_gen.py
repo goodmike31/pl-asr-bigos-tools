@@ -3,7 +3,7 @@ from prefect_flows.tasks import load_hf_dataset_split, gen_hyps_from_audio_sampl
 from asr_systems import initialize_asr_system
 
 @flow(name="ASR Hypothesis Generation Flow")
-def asr_hyp_gen_flow(config_user, config_common, config_runtime):
+def asr_hyp_gen(config_user, config_common, config_runtime):
 
     datasets = config_runtime["datasets"]
     subsets = config_runtime["subsets"]

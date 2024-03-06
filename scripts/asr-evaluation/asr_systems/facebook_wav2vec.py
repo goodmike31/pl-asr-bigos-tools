@@ -8,6 +8,8 @@ class FacebookWav2Vec(BaseASRSystem):
         super().__init__(system, model, language_code)
         # convert ISO-639-1 to ISO-639-3
         self.model = model
+        # TODO - move max audio length to process param to user-specific asr-system related config. Default value = 30
+        self.max_audio_length_to_process_sec = 30
         #TODO - make customizable with system and model parameters
         if (model == "xls-r-1b-polish"):
             self.w2v_processor = Wav2Vec2Processor.from_pretrained("jonatasgrosman/wav2vec2-" + model)
@@ -22,7 +24,7 @@ class FacebookWav2Vec(BaseASRSystem):
     def generate_asr_hyp(self, speech_file):
         try:
             speech_array, sampling_rate = librosa.load(speech_file, sr=self.sampling_rate)
-            print("Speech array length: ", len(speech_array))
+            #print("Speech array length: ", len(speech_array))
             inputs = self.w2v_processor(speech_array, sampling_rate=16_000, return_tensors="pt")
             #print("Input read")
             #print("Input type: ", type(inputs))

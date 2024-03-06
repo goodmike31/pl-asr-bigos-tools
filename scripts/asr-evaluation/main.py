@@ -1,7 +1,8 @@
 
-from prefect_flows.asr_hyp_gen_flow import asr_hyp_gen_flow
+from prefect_flows.asr_hyp_gen import asr_hyp_gen
 from prefect_flows.asr_eval_prep import asr_eval_prep
 from prefect_flows.asr_eval_run import asr_eval_run
+from prefect_flows.asr_hyp_stats import asr_hyp_stats
 import argparse
 import os
 import json
@@ -53,12 +54,17 @@ if __name__ == "__main__":
         config_runtime = json.load(f)
 
     if args.flow == "ALL":
-        asr_hyp_gen_flow(config_user, config_common, config_runtime)
+        asr_hyp_gen(config_user, config_common, config_runtime)
         asr_eval_prep(config_user, config_common, config_runtime)
         asr_eval_run(config_user, config_common, config_runtime)
-    elif args.flow == "GEN":
-        asr_hyp_gen_flow(config_user, config_common, config_runtime)
+    elif args.flow == "HYP_GEN":
+        asr_hyp_gen(config_user, config_common, config_runtime)
     elif args.flow == "EVAL_PREP":
         asr_eval_prep(config_user, config_common, config_runtime)
     elif args.flow == "EVAL_RUN":
         asr_eval_run(config_user, config_common, config_runtime)
+    elif args.flow == "HYP_STATS":
+        asr_hyp_stats(config_user, config_common, config_runtime)
+    else:
+        print("Unknown flow name. Exiting.")
+        exit(1)

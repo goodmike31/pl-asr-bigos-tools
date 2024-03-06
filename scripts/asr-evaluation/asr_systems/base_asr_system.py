@@ -9,6 +9,7 @@ class BaseASRSystem:
         self.system = system
         self.model = model
         self.language_code = language_code
+        self.max_audio_length_to_process_sec = 300
 
         # add version encoded as YYQ (year and quarter) to codename to control for changes in the ASR system and model over time
         # assumes that the ASR system and model are evaluated at most once per quarter
@@ -44,6 +45,9 @@ class BaseASRSystem:
         # Load the audio into memory
         print("Processing audio with {}".format(self.get_name()))
         print("Filename:", os.path.basename(speech_file))
+        print("Path:", speech_file)
+        audio_duration = round(librosa.get_duration(filename=speech_file),2)
+        print("Audio duration [s]: ", audio_duration)
 
         # Check if the files exists
         if not os.path.exists(speech_file):
@@ -54,8 +58,8 @@ class BaseASRSystem:
             return ""
         
         # check if audio length exceeds 1 minute
-        if librosa.get_duration(filename=speech_file) > 60:
-            print("Audio length exceeds 1 minute")
+        if audio_duration > self.max_audio_length_to_process_sec:
+            print("Audio length exceeds max allowed duration of {} seconds. Skipping".format(self.max_audio_length_to_process_sec))
             return ""
 
         # Load results from cache if possible
@@ -111,3 +115,6 @@ class BaseASRSystem:
                 # save JSONL using audio sample as key
                 json.dump({audio_sample: self.cache[audio_sample]}, f)
                 f.write("\n")
+
+    def get_cached_hyps(self):
+        return self.cache
