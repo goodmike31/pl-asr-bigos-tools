@@ -20,6 +20,7 @@ def gen_hyps_from_audio_samples(audio_paths, asr_system):
         asr_hyp = asr_system.process_audio(audiopath)
         asr_hyps.append(asr_hyp)
     
+    print("Saving cache")
     asr_system.save_cache()
     return(asr_hyps)
 
@@ -124,6 +125,16 @@ def check_cached_hyps_size_and_coverage(asr_system, audio_paths):
 
 @task
 def cached_hyps_stats_to_df(cached_hyps_stats):
-    # Implement logic to convert cached_hyps_stats to a dataframe
-    print(cached_hyps_stats)
-    print("Dataframe from cached_hyps_stats")
+    data_list_new_format = []
+
+    for system, datasets in cached_hyps_stats.items():
+        for dataset, metrics in datasets.items():
+            target_hypotheses = metrics['nr_of_common_audio_paths'] + metrics['nr_of_missing_audio_paths']
+            common_hypotheses = metrics['nr_of_common_audio_paths']
+            missing_hypotheses = metrics['nr_of_missing_audio_paths']
+            hypothesis_coverage = metrics['hyps_coverage']
+            data_list_new_format.append([system, dataset, target_hypotheses, common_hypotheses, missing_hypotheses, hypothesis_coverage])
+
+    df = pd.DataFrame(data_list_new_format, columns=['System', 'Dataset', 'Target_Hypotheses', 'Common_Hypotheses', 'Missing_Hypotheses', 'Hypothesis_Coverage'])
+
+    return(df)

@@ -46,7 +46,7 @@ class BaseASRSystem:
         print("Processing audio with {}".format(self.get_name()))
         print("Filename:", os.path.basename(speech_file))
         print("Path:", speech_file)
-        audio_duration = round(librosa.get_duration(filename=speech_file),2)
+        audio_duration = round(librosa.get_duration(path=speech_file),2)
         print("Audio duration [s]: ", audio_duration)
 
         # Check if the files exists
@@ -65,8 +65,6 @@ class BaseASRSystem:
         # Load results from cache if possible
         asr_hyp = self.get_hyp_from_cache(speech_file, self.version)
         if asr_hyp is not None:
-            print("ASR hypothesis loaded from cache")
-            print("Hypothesis: ", asr_hyp, "\n")
             return asr_hyp
         else:
             return self.generate_asr_hyp(speech_file)
@@ -91,7 +89,9 @@ class BaseASRSystem:
         if audio_sample in self.cache:
             # check if version is in cache
             if version in self.cache[audio_sample]:
-                return self.cache[audio_sample][version]['asr_hyp']
+                asr_hyp = self.cache[audio_sample][version]['asr_hyp']
+                print("READ from cache.\nAudio sample: {}\nReference: {} ".format(audio_sample, asr_hyp))
+                return asr_hyp
             else:
                 return None
         else:
@@ -107,6 +107,7 @@ class BaseASRSystem:
             'hyp_gen_date': datetime.now().strftime("%Y%m%d")
         }
         self.cache[audio_sample] = {self.version: metadata}
+        print("UPDATED cache.\nAudio sample: {}\nReference: {} ".format(audio_sample, asr_hyp))
     
     def save_cache(self):
         with open(self.cache_file, "w") as f:

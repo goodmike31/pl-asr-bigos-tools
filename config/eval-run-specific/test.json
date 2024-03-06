@@ -1,4 +1,5 @@
 {
+    "name":"TEST",
     "datasets": ["amu-cai/pl-asr-bigos-v2-secret"],
     "subsets": ["polyai-minds14-21"],
     "splits": ["test"],

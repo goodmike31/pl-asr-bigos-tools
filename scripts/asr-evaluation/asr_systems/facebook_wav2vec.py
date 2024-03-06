@@ -9,7 +9,7 @@ class FacebookWav2Vec(BaseASRSystem):
         # convert ISO-639-1 to ISO-639-3
         self.model = model
         # TODO - move max audio length to process param to user-specific asr-system related config. Default value = 30
-        self.max_audio_length_to_process_sec = 30
+        self.max_audio_length_to_process_sec = 25
         #TODO - make customizable with system and model parameters
         if (model == "xls-r-1b-polish"):
             self.w2v_processor = Wav2Vec2Processor.from_pretrained("jonatasgrosman/wav2vec2-" + model)
