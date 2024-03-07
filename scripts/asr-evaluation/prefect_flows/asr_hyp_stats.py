@@ -67,6 +67,6 @@ def asr_hyp_stats(config_user, config_common, config_runtime):
         # convert cached_hyps_stats to a dataframe
         df_cached_hyps_stats = cached_hyps_stats_to_df(cached_hyps_stats)
         # save the dataframe to a file
-        print(df_cached_hyps_stats.head())  # Displaying only the first few rows for brevity
+        print(df_cached_hyps_stats)  # Displaying only the first few rows for brevity
         df_cached_hyps_stats.to_csv(cached_hyps_stats_file, index=False)
         print("Cached hypotheses statistics saved to file: ", cached_hyps_stats_file)    

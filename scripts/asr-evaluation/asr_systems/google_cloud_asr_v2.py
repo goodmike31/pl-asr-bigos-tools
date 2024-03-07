@@ -21,6 +21,8 @@ class GoogleCloudASRV2(BaseASRSystem):
             language_codes=[language_code],
             model=model,
         )
+        if (model == "short"):
+            self.max_audio_length_to_process_sec = 30
         
     def generate_asr_hyp(self, speech_file:str) -> str:
         project_id = self.project_id

@@ -21,6 +21,11 @@ class GoogleCloudASR(BaseASRSystem):
             model=self.get_model(),
             sample_rate_hertz=sampling_rate,
         )
+        if (model == "default"):
+            self.max_audio_length_to_process_sec = 60
+        elif (model == "latest_short"):
+            self.max_audio_length_to_process_sec = 30
+
         
     def generate_asr_hyp(self, speech_file:str) -> str:
         # if not available in cache, process audio
