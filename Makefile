@@ -10,6 +10,8 @@ else
     $(error Invalid PROJECT value. Use 'BIGOS', 'PELCRA' or 'TEST' as PROJECT.)
 endif
 
+AUDIO_ID="null"
+
 HYPS_STATS_FILE = ./data/asr_hyps_cache/stats/cached_hyps_stats-$(PROJECT)-$(TODAY).csv
 .PHONY: e2e-test e2e-eval run-tests hyps-stats
 
@@ -40,3 +42,6 @@ eval-run:
 eval-run-force:
 	@echo "Running eval run flow"
 	python scripts/asr-evaluation/main.py --flow=EVAL_RUN --eval_config=$(PROJECT) --force=True
+
+check-audio:
+	

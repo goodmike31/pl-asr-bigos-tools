@@ -42,6 +42,6 @@
 
         "SPLITS": ["train", "validation", "test"],
         "HF_URL_PUBLIC": "https://huggingface.co/datasets/pelcra/pl-asr-pelcra-for-bigos",
-        "HF_URL_SECRET": "https://huggingface.co/datasets/pelcra/pl-asr-pelcra-for-bigos"
+        "HF_URL_SECRET": "https://huggingface.co/datasets/pelcra/pl-asr-pelcra-for-bigos-secret"
     }
 }

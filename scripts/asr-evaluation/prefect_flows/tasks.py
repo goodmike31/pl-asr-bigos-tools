@@ -1,7 +1,6 @@
 from prefect import task
 from datasets import load_dataset
 from eval_utils.lexical_metrics import get_lexical_metrics_per_dataset, get_lexical_metrics_per_sample
-from eval_utils.eval_analysis import boxplot_performance
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
@@ -84,12 +83,6 @@ def calculate_eval_metrics_per_sample(eval_input_df, dataset, subset, split, sys
     df_eval_results = get_lexical_metrics_per_sample(eval_input_df, dataset, subset, split, system_codename, "orig", "all")
     return(df_eval_results)
 
-@task
-def generate_plots(df_eval_results, output_dir, metrics=["WER", "CER"], agg_dim=["system", "subset"]):  
-    for metric in metrics:
-        for dim in agg_dim:
-            target_fn=os.path.join(output_dir, f"{metric}_across_{dim}.png")
-            boxplot_performance(df_eval_results, dim, metric, target_fn)
 
 @task
 def save_metrics_tsv(df_eval_results, filename):
