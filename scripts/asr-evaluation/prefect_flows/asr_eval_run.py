@@ -1,18 +1,15 @@
 from prefect import flow
 from prefect_flows.tasks import calculate_eval_metrics_per_dataset, calculate_eval_metrics_per_sample, save_metrics_tsv, save_metrics_json, generate_plots
+from config_utils import get_config_run 
 import pandas as pd
 from datetime import datetime
 from pathlib import Path
 import os
 from datasets import get_dataset_config_names
 
-def get_config_run(config_runtime)->list:
+today = datetime.now().strftime("%Y%m%d")
 
-    datasets = config_runtime["datasets"]
-    subsets = config_runtime["subsets"]
-    splits = config_runtime["splits"]
-    systems = config_runtime["systems"]
-    return datasets, subsets, splits, systems
+
 
 def get_pretty_column_names(dataset, split):
     config_names = get_dataset_config_names(dataset)[:-1]
@@ -28,25 +25,28 @@ def get_pretty_column_names(dataset, split):
     column_names = dict(zip(keys, values))
     return(column_names)
 
-def generate_sample_eval_metrics_subsets(config_user, config_common, config_runtime):
+def generate_sample_eval_metrics_subsets(config_user, config_common, config_runtime, force):
     
+    datasets, subsets, splits, systems, eval_run_codename = get_config_run(config_runtime)
+
     # TODO move to config
     script_dir = os.path.dirname(os.path.realpath(__file__))
     eval_in_dir = os.path.join(script_dir, "../../../data/eval_input")
-    eval_out_dir_common = os.path.join(script_dir, "../../../data/eval_output/per_sample")
-    datasets, subsets, splits, systems = get_config_run(config_runtime)
+    eval_out_dir_common = os.path.join(script_dir, "../../../data/eval_output/per_sample/", eval_run_codename)
+    os.makedirs(eval_out_dir_common, exist_ok=True)
+
     # initialize empty dataframe for storing all evaluation metrics
     df_eval_results_all = pd.DataFrame([])
     # for specified eval configuration, calculate evaluation metrics for each dataset, subset, split, system and model
     #TODO - decide on which level aggregate metrics should be calculated (e.g. for each dataset, subset, split, system, model, version, postnorm, evalnorm, ref_type, eval_type, etc.)
     
     for dataset in datasets:
-        eval_out_dir_dataset = os.path.join(eval_out_dir_common, dataset)
+        eval_out_dir_dataset = os.path.join(eval_out_dir_common, dataset, eval_run_codename)
         os.makedirs(eval_out_dir_dataset, exist_ok=True)
         for subset in subsets:
             for split in splits:
                 dataset_codename = str.join("-", [dataset, subset, split])
-                eval_out_dir = os.path.join(eval_out_dir_common, dataset_codename)
+                eval_out_dir = os.path.join(eval_out_dir_common, dataset_codename, eval_run_codename)
                 os.makedirs(eval_out_dir, exist_ok=True)
                 print("Calculating evaluation metrics for ", dataset_codename, " dataset.")
                 print("Output directory: ", eval_out_dir)
@@ -57,11 +57,12 @@ def generate_sample_eval_metrics_subsets(config_user, config_common, config_runt
                             #TODO move to utils
                             system_codename = str.join("_", [system, model])
                             # TODO move eval input dir root to config
-                            eval_input_dir = os.path.join(eval_in_dir, system_codename, version, dataset_codename )
-                            eval_input_path = os.path.join(eval_input_dir, "eval_input.tsv")    
+                            eval_input_dir = os.path.join(eval_in_dir, system_codename, version, dataset_codename, eval_run_codename)
+                            eval_input_path = os.path.join(eval_input_dir, "eval_input.tsv")
+                            print("eval_input_path", eval_input_path)
                             df_eval_input = pd.read_csv(eval_input_path, sep="\t")
                             fn_eval_results_system = os.path.join(eval_out_dir, "eval_results-" + system_codename + ".tsv")
-                            if not os.path.exists(fn_eval_results_system):
+                            if not os.path.exists(fn_eval_results_system) or force:
                                 #asr_system = initialize_asr_system(system, model, config_user)
                                 df_eval_result = calculate_eval_metrics_per_sample(df_eval_input, dataset, subset, split, system_codename)
                                 save_metrics_tsv(df_eval_result, fn_eval_results_system)
@@ -78,25 +79,27 @@ def generate_sample_eval_metrics_subsets(config_user, config_common, config_runt
 
         #TODO - calculate WER per audio duration bucket and plot results
 
-def generate_agg_eval_metrics_subsets(config_user, config_common, config_runtime):
+def generate_agg_eval_metrics_subsets(config_user, config_common, config_runtime, force):
     
+    datasets, subsets, splits, systems, eval_run_codename = get_config_run(config_runtime)
+
     # TODO move to config
     script_dir = os.path.dirname(os.path.realpath(__file__))
     eval_in_dir = os.path.join(script_dir, "../../../data/eval_input")
-    eval_out_dir_common = os.path.join(script_dir, "../../../data/eval_output/per_dataset")
-    datasets, subsets, splits, systems = get_config_run(config_runtime)
+    eval_out_dir_common = os.path.join(script_dir, "../../../data/eval_output/per_dataset/", eval_run_codename)
+    os.makedirs(eval_out_dir_common, exist_ok=True)
     # initialize empty dataframe for storing all evaluation metrics
     df_eval_results_all = pd.DataFrame([])
     # for specified eval configuration, calculate evaluation metrics for each dataset, subset, split, system and model
     #TODO - decide on which level aggregate metrics should be calculated (e.g. for each dataset, subset, split, system, model, version, postnorm, evalnorm, ref_type, eval_type, etc.)
     
     for dataset in datasets:
-        eval_out_dir_dataset = os.path.join(eval_out_dir_common, dataset)
+        eval_out_dir_dataset = os.path.join(eval_out_dir_common, dataset, eval_run_codename)
         os.makedirs(eval_out_dir_dataset, exist_ok=True)
         for subset in subsets:
             for split in splits:
                 dataset_codename = str.join("-", [dataset, subset, split])
-                eval_out_dir = os.path.join(eval_out_dir_common, dataset_codename)
+                eval_out_dir = os.path.join(eval_out_dir_common, dataset_codename, eval_run_codename)
                 os.makedirs(eval_out_dir, exist_ok=True)
                 print("Calculating evaluation metrics for ", dataset_codename, " dataset.")
                 print("Output directory: ", eval_out_dir)
@@ -107,11 +110,11 @@ def generate_agg_eval_metrics_subsets(config_user, config_common, config_runtime
                             #TODO move to utils
                             system_codename = str.join("_", [system, model])
                             # TODO move eval input dir root to config
-                            eval_input_dir = os.path.join(eval_in_dir, system_codename, version, dataset_codename )
+                            eval_input_dir = os.path.join(eval_in_dir, system_codename, version, dataset_codename, eval_run_codename)
                             eval_input_path = os.path.join(eval_input_dir, "eval_input.tsv")    
                             df_eval_input = pd.read_csv(eval_input_path, sep="\t")
                             fn_eval_results_system = os.path.join(eval_out_dir, "eval_results-" + system_codename + ".tsv")
-                            if not os.path.exists(fn_eval_results_system):
+                            if not os.path.exists(fn_eval_results_system) or force:
                                 #asr_system = initialize_asr_system(system, model, config_user)
                                 df_eval_result = calculate_eval_metrics_per_dataset(df_eval_input, dataset, subset, split, system_codename)
                                 save_metrics_tsv(df_eval_result, fn_eval_results_system)
@@ -129,7 +132,7 @@ def generate_agg_eval_metrics_subsets(config_user, config_common, config_runtime
         fn_hf_leaderboard_input = fn_eval_results_agg + "-hf_input.csv"
         calculate_wer_summary(df_eval_results_all, fn_hf_leaderboard_input)
         
-        eval_plots_dir= os.path.join(eval_out_dir_dataset, "eval_plots")
+        eval_plots_dir= os.path.join(eval_out_dir, "eval_plots")
         os.makedirs(eval_plots_dir, exist_ok=True)
         generate_plots(df_eval_results_all, eval_plots_dir)
 
@@ -174,7 +177,7 @@ def calculate_wer_summary(data, output_csv_path):
     return summary_data
 
 @flow(name="ASR Evaluation Execution Flow")
-def asr_eval_run(config_user, config_common, config_runtime):
-    generate_agg_eval_metrics_subsets(config_user, config_common, config_runtime)
-    generate_sample_eval_metrics_subsets(config_user, config_common, config_runtime)
+def asr_eval_run(config_user, config_common, config_runtime, force):
+    generate_agg_eval_metrics_subsets(config_user, config_common, config_runtime, force)
+    generate_sample_eval_metrics_subsets(config_user, config_common, config_runtime, force)
     

@@ -25,6 +25,18 @@ e2e-eval:
 
 
 hyps-stats:
-	@echo "Running hyps stats"
+	@echo "Running hyps stats flow"
 	@python scripts/asr-evaluation/main.py --flow="HYP_STATS" --eval_config=$(PROJECT)
 	@cat $(HYPS_STATS_FILE)
+
+eval-prep:
+	@echo "Running eval prep flow"
+	@python scripts/asr-evaluation/main.py --flow="EVAL_PREP" --eval_config=$(PROJECT)
+
+eval-run:
+	@echo "Running eval run flow"
+	python scripts/asr-evaluation/main.py --flow=EVAL_RUN --eval_config=$(PROJECT) 
+
+eval-run-force:
+	@echo "Running eval run flow"
+	python scripts/asr-evaluation/main.py --flow=EVAL_RUN --eval_config=$(PROJECT) --force=True

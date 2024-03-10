@@ -35,18 +35,20 @@ transf_punc = jiwer.Compose([
 
 
 def prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm):
-    # filter out hypotheses which are empty and corresponding references
-    audio_paths = df_eval_input['audiopath_local'].tolist()
+    
     # get masking vector for non-empty hypotheses
     non_empty_hyps = df_eval_input[hyp_col].notnull()
     # filter out non-empty hypotheses from dataframe
     df_eval_input = df_eval_input[non_empty_hyps]
     
+    # filter out hypotheses which are empty and corresponding references
+    audio_paths = df_eval_input['audiopath_local'].tolist()
+  
     # retrieve non-empty hypotheses and references    
-    ref = df_eval_input[ref_col]
-    hyp = df_eval_input[hyp_col]
-    #print ("refs: ", ref)
-    #print ("hyps: ", hyp)
+    ref = df_eval_input[ref_col].tolist()
+    hyp = df_eval_input[hyp_col].tolist()
+    print ("refs len: ", len(ref))
+    print ("hyps len: ", len(hyp))
     
     if len(ref) != len(hyp):
         print("Warning: number of references and hypotheses does not match")
@@ -92,8 +94,8 @@ def prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm):
         ref=ref
         hyp=hyp
     
-    print("Ref post-proceessed: ", ref)
-    print("Hyp post-proceessed: ", hyp)
+    #print("Ref post-proceessed: ", ref)
+    #print("Hyp post-proceessed: ", hyp)
 
     # Calculate metrics for the whole dataset
     return ref, hyp, ids, audio_paths
@@ -109,8 +111,8 @@ def get_lexical_metrics_per_sample(df_eval_input, dataset, subset, split, system
     ref, hyp, ids, audio_paths = prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm)
     
     # output columns
-    df_results_header = ["dataset", "subset", "split", "ref_type", "eval_norm", "system", "id", "audio_duration", "WIL", "MER", "WER", "CER"]
-    
+    df_results_header = ["dataset", "subset", "split", "ref_type", "eval_norm", "system", "id", "ref", "hyp", "audio_duration", "WIL", "MER", "WER", "CER"]
+    print (df_results_header)
     result=[]
 
     for index in range(len(ids)):
@@ -120,28 +122,28 @@ def get_lexical_metrics_per_sample(df_eval_input, dataset, subset, split, system
         # calculate audio_duration
         audio_path = audio_paths[index]
         audio_duration = round(librosa.get_duration(path=audio_path),2)
-        print("Audio duration: ", audio_duration)
+        #print("Audio duration: ", audio_duration)
 
         id = ids[index]
-        print("ID: ", id)
+        #print("ID: ", id)
         ref_single = ref[index]
-        print("Ref: ", ref_single)
+        #print("Ref: ", ref_single)
         hyp_single = hyp[index]
-        print("Hyp: ", hyp_single)
+        #print("Hyp: ", hyp_single)
 
         output_words = jiwer.process_words(ref_single, hyp_single)
         wer = round(output_words.wer * 100 ,2)
         mer = round(output_words.mer * 100 ,2)
         wil = round(output_words.wil * 100 ,2)
-        print(jiwer.visualize_alignment(output_words))
+        #print(jiwer.visualize_alignment(output_words))
 
         output_chars = jiwer.process_characters(ref_single, hyp_single)
         cer = round(output_chars.cer * 100, 2)
 
-        print(jiwer.visualize_alignment(output_chars))
+        #print(jiwer.visualize_alignment(output_chars))
 
         # TODO add more metrics e.g. TER, PER, etc.
-        result.append([dataset, subset, split, ref_type, norm, system_codename, id, audio_duration, wil, mer, wer, cer])
+        result.append([dataset, subset, split, ref_type, norm, system_codename, id, ref_single, hyp_single, audio_duration, wil, mer, wer, cer])
 
     df_results = pd.DataFrame(result, columns=df_results_header)
     return df_results
@@ -176,7 +178,7 @@ def get_lexical_metrics_per_dataset(df_eval_input, dataset, subset, split, syste
     result=[]
     
     match_sents = sum(r == h for r, h in zip(ref, hyp))
-    print("match_sents: ", match_sents)
+    #print("match_sents: ", match_sents)
     ser = round((1 - (match_sents / len(ref))) * 100,2)
 
     output_words = jiwer.process_words(ref, hyp)

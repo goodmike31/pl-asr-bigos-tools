@@ -27,6 +27,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Script for generating ASR hypotheses for a given set of datasets, asr systems and models.')
     parser.add_argument('--eval_config', type=str, help='Name of the runtime config file', default="TEST")
     parser.add_argument('--flow', type=str, help='Flow to execute: GEN, EVAL_PREP, EVAL_RUN or ALL', default="ALL")
+    parser.add_argument('--force', type=bool, help='Force execution of the flow and generation of new results', default=False)
     
     args = parser.parse_args()
 
@@ -40,6 +41,11 @@ if __name__ == "__main__":
         print("Unknown runtime name. Exiting.")
         exit(1)
     
+    force = args.force
+    
+    print("config_runtime_file", config_runtime_file)
+    print("force", force)
+
     # Default location of config files.
     config_common_path = os.path.join(script_dir, '../../config/common/config.json')
     print("config_common_path", config_common_path)
@@ -56,13 +62,13 @@ if __name__ == "__main__":
     if args.flow == "ALL":
         asr_hyp_gen(config_user, config_common, config_runtime)
         asr_eval_prep(config_user, config_common, config_runtime)
-        asr_eval_run(config_user, config_common, config_runtime)
+        asr_eval_run(config_user, config_common, config_runtime, force)
     elif args.flow == "HYP_GEN":
         asr_hyp_gen(config_user, config_common, config_runtime)
     elif args.flow == "EVAL_PREP":
         asr_eval_prep(config_user, config_common, config_runtime)
     elif args.flow == "EVAL_RUN":
-        asr_eval_run(config_user, config_common, config_runtime)
+        asr_eval_run(config_user, config_common, config_runtime, force)
     elif args.flow == "HYP_STATS":
         asr_hyp_stats(config_user, config_common, config_runtime)
     else:

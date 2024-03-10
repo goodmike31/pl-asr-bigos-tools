@@ -1,5 +1,6 @@
 {
     "name":"TEST",
+    "eval_run_codename": "test",
     "datasets": ["amu-cai/pl-asr-bigos-v2-secret"],
     "subsets": ["polyai-minds14-21"],
     "splits": ["test"],
@@ -45,7 +46,7 @@
             },
 
         "whisper_local":{ 
-            "models": ["tiny", "base", "medium", "large", "large-v1", "large-v2"],
+            "models": ["tiny", "base", "small", "medium", "large", "large-v1", "large-v2"],
             "versions": ["2024Q1"]
             }
         }

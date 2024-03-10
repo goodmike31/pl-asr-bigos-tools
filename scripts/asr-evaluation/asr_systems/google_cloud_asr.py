@@ -23,8 +23,12 @@ class GoogleCloudASR(BaseASRSystem):
         )
         if (model == "default"):
             self.max_audio_length_to_process_sec = 60
+        elif (model == "command_and_search"):
+            self.max_audio_length_to_process_sec = 60
         elif (model == "latest_short"):
             self.max_audio_length_to_process_sec = 30
+        elif (model == "latest_long"):
+            self.max_audio_length_to_process_sec = 60    
 
         
     def generate_asr_hyp(self, speech_file:str) -> str:
