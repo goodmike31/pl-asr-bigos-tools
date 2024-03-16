@@ -37,6 +37,8 @@ if __name__ == "__main__":
         config_runtime_file = os.path.join(script_dir, '../../config/eval-run-specific/pelcra-default.json')
     elif (args.eval_config == "TEST"):
         config_runtime_file = os.path.join(script_dir, '../../config/eval-run-specific/test.json')
+    elif (args.eval_config == "SYNTH"):
+        config_runtime_file = os.path.join(script_dir, '../../config/eval-run-specific/test-synth.json')
     else:
         print("Unknown runtime name. Exiting.")
         exit(1)
@@ -60,6 +62,7 @@ if __name__ == "__main__":
         config_runtime = json.load(f)
 
     if args.flow == "ALL":
+        print("Executing all flows for the runtime config: ", args.eval_config) 
         asr_hyp_gen(config_user, config_common, config_runtime)
         asr_eval_prep(config_user, config_common, config_runtime)
         asr_eval_run(config_user, config_common, config_runtime, force)
