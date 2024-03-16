@@ -1,0 +1,28 @@
+{
+    "dataset_name": "HF_ACCOUNT/DB_NAME",
+    "split": "test",
+    "subsets_and_promptsets": 
+    {
+        "subset-1":
+        {
+            "promptset_source": "URL_TO_PROMPTSET",
+            "promptset_type": "google_sheet"
+        },
+        "subset-2":
+        {
+            "promptset_source": "PATH_TO_PROMPTSET",
+            "promptset_type": "tsv"
+        }
+    },
+    "tts_engines_and_settings":
+    {
+        "azure":
+        {
+            "sampling_rate": 16000,
+            "voices": {"0001":"pl-PL-AgnieszkaNeural", "0002":"pl-PL-MarekNeural", "0003":"pl-PL-ZofiaNeural"}
+        }
+    },
+    "hf_repo_local":"LOCAL_PATH_HF_DATASET",
+    "hf_repo_url":"URL_HF_DATASET"
+}
+
