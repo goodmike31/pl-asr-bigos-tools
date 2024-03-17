@@ -22,6 +22,8 @@ def asr_hyp_gen(config_user, config_common, config_runtime):
                             hf_dataset = load_hf_dataset_split(dataset_name, split, subset)
                         except Exception as e:
                             print("Failed to load dataset {} split {} subset {} with error: {}".format(dataset_name, split, subset, e))
+                            print("Trying force download")
+                            hf_dataset = load_hf_dataset_split(dataset_name, split, subset, force_download=True)
                             exit(1)
                         print("Loaded dataset {} split {} subset {}".format(dataset_name, split, subset))
                         print("Number of samples in dataset: ", len(hf_dataset))

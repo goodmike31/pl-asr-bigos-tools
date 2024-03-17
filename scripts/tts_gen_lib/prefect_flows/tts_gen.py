@@ -33,7 +33,6 @@ def tts_gen(config_user, config_common, config_runtime_tts):
     for subset in subsets:
         for split in splits:
             out_df_split = pd.DataFrame([], columns=get_meta_header_tts())
-
             print("Generating TTS dataset: {} for subset {} and split {}".format(dataset_name, subset, split))
             dir_tts_subset = os.path.join(tts_data_dir, dataset_name, subset, split)
             os.makedirs(dir_tts_subset, exist_ok=True)
@@ -43,16 +42,31 @@ def tts_gen(config_user, config_common, config_runtime_tts):
 
             # read prompts for the subset
             promptset_source = subsets_and_promptsets[subset]["promptset_source"]
+            print("promptset_source", promptset_source)
             promptset_type = subsets_and_promptsets[subset]["promptset_type"]
+            print("promptset_type", promptset_type)
             sample_prompts = subsets_and_promptsets[subset]["sample_prompts"]
-            if (sample_prompts):
-                sample_size = subsets_and_promptsets[subset]["sample_size"]
-                sample_type = subsets_and_promptsets[subset]["sample_type"]
-            else:
-                sample_size = None
-                sample_type = None
+            print("sample_prompts", sample_prompts)
 
-            df_prompts = read_prompts(promptset_source, promptset_type, sample_prompts, sample_size, sample_type)
+            if(sample_prompts == "True"):
+                sample_prompts = True
+            else:
+                sample_prompts = False
+
+            print("Reading prompts for subset: ", subset)
+
+            if (sample_prompts):
+                sample_size = int(subsets_and_promptsets[subset]["sample_size"])
+                sample_type = subsets_and_promptsets[subset]["sample_type"]
+
+                print("sample_size", sample_size)
+                print("sample_type", sample_type)
+
+                df_prompts = read_prompts(promptset_source, promptset_type, True, sample_size, sample_type)
+            else:
+                df_prompts = read_prompts(promptset_source, promptset_type, False)
+
+            print("Promptset length: ", len(df_prompts))
 
             spk_index = 1
             for tts_engine in tts_engines:
@@ -65,10 +79,11 @@ def tts_gen(config_user, config_common, config_runtime_tts):
 
                     out_dir_meta = os.path.join(dir_tts_subset)
                     out_df_spk = generate_speech_and_meta_for_tts_voice(df_prompts, tts_system, out_dir_meta, subset, split, speaker_id)
+                    # TODO - introduce fixed mapping of tts voices to speaker_id
                     spk_index += 1
-            
-                out_df_split = pd.concat([out_df_split, out_df_spk], axis=0)
+                    out_df_split = pd.concat([out_df_split, out_df_spk], axis=0)
 
+        print("Out DF split len: ", len(out_df_split))
         # Release and upload subset to HF
         prepare_hf_release(out_df_split, dir_tts_subset, dir_tts_hf)
         upload_subset_to_hf(subset, dir_tts_hf, dataset_hf_repo_local, dataset_hf_repo_url, overwrite=False, secret_repo=False)

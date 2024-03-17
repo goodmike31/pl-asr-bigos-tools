@@ -7,17 +7,26 @@
         "amu-med_terms_gen_comm-24":
         {
             "promptset_source": "https://docs.google.com/spreadsheets/d/1Dk-uXWbrXIg59xGd8MnHRljUjrHPW4xKfmunrqMuBRw/edit#gid=0",
-            "promptset_type": "google_sheet"
+            "promptset_type": "google_sheet",
+            "sample_prompts": "True",
+            "sample_size": "10",
+            "sample_type": "head"
         },
         "amu-med_terms_psych_comm-24":
         {
             "promptset_source": "https://docs.google.com/spreadsheets/d/1Dk-uXWbrXIg59xGd8MnHRljUjrHPW4xKfmunrqMuBRw/edit#gid=607198687",
-            "promptset_type": "google_sheet"
+            "promptset_type": "google_sheet",
+            "sample_prompts": "True",
+            "sample_size": "10",
+            "sample_type": "head"
         },
         "amu-med_terms_adolesc_comm-24":
         {
             "promptset_source": "https://docs.google.com/spreadsheets/d/1Dk-uXWbrXIg59xGd8MnHRljUjrHPW4xKfmunrqMuBRw/edit#gid=2138349120",
-            "promptset_type": "google_sheet"
+            "promptset_type": "google_sheet",
+            "sample_prompts": "True",
+            "sample_size": "10",
+            "sample_type": "head"
         }
     },
     "tts_engines_and_settings":

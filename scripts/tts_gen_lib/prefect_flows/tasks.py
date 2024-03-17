@@ -15,20 +15,24 @@ def load_config(config_path):
     print("Loading config from {}".format(config_path))
 
 @task 
-def read_prompts(promptset_source, promptset_type, sample = True,  sample_type = "head", sample_size = 10):
+def read_prompts(promptset_source, promptset_type, sample_prompts = True, sample_size = 10, sample_type = "head"):
     if (promptset_type == "google_sheet"):
         # download prompts from google sheet
         df_prompts = download_tsv_from_google_sheet(promptset_source)
 
     # validate prompts 
     #TODO
-    if (sample == True):
+    if (sample_prompts):
+        print("Sampling prompts")
         if (sample_type == "random"):
+            print("Sampling random prompts")
             df_prompts = df_prompts.sample(sample_size)
         elif (sample_type == "head"):
+            print("Sampling head prompts")
             df_prompts = df_prompts.head(sample_size)
     else:
-        df_prompts = df_prompts
+        print("Not sampling prompts")   
+     
     return(df_prompts)
 
 @task
@@ -89,6 +93,7 @@ def generate_speech_and_meta_for_tts_voice(df_prompts, tts_system, out_dir_meta,
     out_df_spk.to_csv(out_fp_spk, sep='\t', index=False)
     print("Saved meta for system {} and voice: {}".format(tts_system, tts_voice), out_fp_spk)
     print("Done!")
+    return(out_df_spk)
 
 @task
 def prepare_hf_release(df_subset_meta, source_dir, target_dir):
