@@ -12,6 +12,10 @@ test-e2e:
 	@echo "Running e2e pipeline on test configuration"
 	python scripts/asr_eval_lib/main.py
 
+e2e-eval:
+	@echo "Running e2e eval pipeline"
+	python scripts/asr_eval_lib/main.py --eval_config $(PROJECT)
+
 all:
 	@echo "Running e2e eval pipeline"
 	python scripts/asr_eval_lib/main.py --eval_config $(PROJECT)

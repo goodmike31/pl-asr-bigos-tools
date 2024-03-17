@@ -4,7 +4,7 @@
     "datasets": ["amu-cai/pl-asr-bigos-synth"],
     "subsets": ["amu-medical_test-24"],
     "splits": ["test"],
-    "max_samples_per_subset": 3,
+    "max_samples_per_subset": 200,
     "eval_metrics": ["lexical"],
     "ref_type": ["orig"],
     "norm_methods": "standard",

@@ -37,8 +37,8 @@ if __name__ == "__main__":
         config_runtime_file = os.path.join(script_dir, '../../config/eval-run-specific/pelcra-default.json')
     elif (args.eval_config == "TEST"):
         config_runtime_file = os.path.join(script_dir, '../../config/eval-run-specific/test.json')
-    elif (args.eval_config == "SYNTH"):
-        config_runtime_file = os.path.join(script_dir, '../../config/eval-run-specific/test-synth.json')
+    elif (args.eval_config == "AMU-MED"):
+        config_runtime_file = os.path.join(script_dir, '../../config/eval-run-specific/amumed-tts.json')
     else:
         print("Unknown runtime name. Exiting.")
         exit(1)
