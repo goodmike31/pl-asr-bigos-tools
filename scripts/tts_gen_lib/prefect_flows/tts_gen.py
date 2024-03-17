@@ -1,5 +1,5 @@
 from prefect import flow
-from prefect_flows.tasks import generate_speech_and_meta_for_tts_voice, read_prompts, release_hf_format, upload_subset_to_hf
+from prefect_flows.tasks import generate_speech_and_meta_for_tts_voice, read_prompts, prepare_hf_release, upload_subset_to_hf
 from tts_systems import initialize_tts_system
 from utils import get_meta_header_tts
 import pandas as pd
@@ -59,15 +59,10 @@ def tts_gen(config_user, config_common, config_runtime_tts):
                     out_dir_meta = os.path.join(dir_tts_subset)
                     out_df_spk = generate_speech_and_meta_for_tts_voice(df_prompts, tts_system, out_dir_meta, subset, split, speaker_id)
                     spk_index += 1
-                    #release_hf_format()
-                    #upload_subset_to_hf(subset, dir_tts_hf, bigos_hf_repo, hf_repo_url, overwrite=False, secret_repo=False)
-                    #print("Uploading to HF")
-                    #upload_subset_to_hf(subset, dir_tts_hf, dataset_hf_repo_local, dataset_hf_repo_url, overwrite=False, secret_repo=False)
-                    # create TSV file for all speakers
             
                 out_df_split = pd.concat([out_df_split, out_df_spk], axis=0)
 
-        out_fp_split = os.path.join(dir_tts_hf, f"{split}.tsv")
-        out_df_split.to_csv(out_fp_split, sep='\t', index=False)
-        print("Saved meta for split {} results to: ".format(split), out_fp_split)
+        # Release and upload subset to HF
+        prepare_hf_release(out_df_split, dir_tts_subset, dir_tts_hf)
+        upload_subset_to_hf(subset, dir_tts_hf, dataset_hf_repo_local, dataset_hf_repo_url, overwrite=False, secret_repo=False)
         

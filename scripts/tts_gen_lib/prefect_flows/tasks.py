@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 import os
 import shutil
 from utils import download_tsv_from_google_sheet, get_meta_header_tts
+import glob
+import os
+import tarfile
 
 @task
 def load_config(config_path):
@@ -88,8 +91,28 @@ def generate_speech_and_meta_for_tts_voice(df_prompts, tts_system, out_dir_meta,
     print("Done!")
 
 @task
-def release_hf_format():
-    pass
+def prepare_hf_release(df_subset_meta, source_dir, target_dir):
+    print("Preparing HF release")
+    split = os.path.basename(source_dir) # split name is the name of the directory
+
+     # create TSV file for all speakers
+    subset_meta_fp = os.path.join(target_dir, f"{split}.tsv")
+    df_subset_meta.to_csv(subset_meta_fp, sep='\t', index=False)
+    print("Saved subset meta for split {} results to: ".format(split), subset_meta_fp)
+
+    # generate archive_name based on audio_dir
+    archive_name = os.path.join(target_dir, split + ".tar.gz")
+
+    # Search for all audio files ending with ".wav"
+    audio_files = glob.glob(os.path.join(source_dir,"*/*.wav"))
+
+    with tarfile.open(archive_name, "w:gz") as tar:
+        # Add each audio file to the archive without preserving the directory structure
+        for audio_file in audio_files:
+            tar.add(audio_file, arcname=os.path.basename(audio_file))
+
+    print("Audio files added to", archive_name)
+        
 
 @task
 def upload_subset_to_hf(subset, subset_dir_hf_release, bigos_hf_repo, hf_repo_url, overwrite=False, secret_repo=False):
