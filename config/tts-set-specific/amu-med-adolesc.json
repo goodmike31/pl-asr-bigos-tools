@@ -1,0 +1,24 @@
+{
+    "dataset_name": "amu-cai/pl-asr-bigos-synth",
+    "splits": ["test"],
+
+    "subsets_and_promptsets": 
+    {
+        "amu-med_terms_adolesc_comm-24":
+        {
+            "promptset_source": "https://docs.google.com/spreadsheets/d/1Dk-uXWbrXIg59xGd8MnHRljUjrHPW4xKfmunrqMuBRw/edit#gid=2138349120",
+            "promptset_type": "google_sheet",
+            "sample_prompts": "False",
+            "sample_size": "N/A",
+            "sample_type": "N/A"
+        }
+    },
+    "tts_engines_and_settings":
+    {
+        "azure":
+        {
+            "sampling_rate": 16000,
+            "voices": ["pl-PL-AgnieszkaNeural", "pl-PL-MarekNeural"]
+        }
+    }
+}

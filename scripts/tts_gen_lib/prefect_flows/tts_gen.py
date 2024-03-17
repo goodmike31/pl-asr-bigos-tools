@@ -44,8 +44,15 @@ def tts_gen(config_user, config_common, config_runtime_tts):
             # read prompts for the subset
             promptset_source = subsets_and_promptsets[subset]["promptset_source"]
             promptset_type = subsets_and_promptsets[subset]["promptset_type"]
+            sample_prompts = subsets_and_promptsets[subset]["sample_prompts"]
+            if (sample_prompts):
+                sample_size = subsets_and_promptsets[subset]["sample_size"]
+                sample_type = subsets_and_promptsets[subset]["sample_type"]
+            else:
+                sample_size = None
+                sample_type = None
 
-            df_prompts = read_prompts(promptset_source, promptset_type)
+            df_prompts = read_prompts(promptset_source, promptset_type, sample_prompts, sample_size, sample_type)
 
             spk_index = 1
             for tts_engine in tts_engines:

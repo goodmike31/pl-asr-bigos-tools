@@ -28,8 +28,10 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
 
-    if (args.tts_set_config == "AMU-MED"):
-        config_runtime_file = os.path.join(script_dir, '../../config/tts-set-specific/amu-medical.json')
+    if (args.tts_set_config == "AMU-MED-ALL"):
+        config_runtime_file = os.path.join(script_dir, '../../config/tts-set-specific/amu-med-all.json')
+    elif (args.tts_set_config == "AMU-MED-ADOLESC"):
+        config_runtime_file = os.path.join(script_dir, '../../config/tts-set-specific/amu-med-adolesc.json')
     else:
         print("Unknown TTS config name. Exiting.")
         exit(1)
