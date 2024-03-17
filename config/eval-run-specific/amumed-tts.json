@@ -21,7 +21,7 @@
             },
 
         "google": { 
-            "models":["default", "command_and_search", "latest_long", "latest_short"],
+            "models":["latest_long", "latest_short"],
             "versions": ["2024Q1"]
             },
 
