@@ -26,7 +26,9 @@ def get_pretty_column_names(dataset, split):
 def generate_sample_eval_metrics_subsets(config_user, config_common, config_runtime, force):
     
     datasets, subsets, splits, systems, eval_run_codename = get_config_run(config_runtime)
-
+    norm_types=config_runtime["norm_types"]
+    ref_types=config_runtime["ref_types"]
+    print("ref_types", ref_types)
     bigos_leaderboard_dir = os.path.join(config_user["PATHS"]["BIGOS_EVAL_LEADERBOARD_DIR"], "data")
 
     # TODO move to config
@@ -61,10 +63,10 @@ def generate_sample_eval_metrics_subsets(config_user, config_common, config_runt
                             eval_input_path = os.path.join(eval_input_dir, "eval_input.tsv")
                             print("eval_input_path", eval_input_path)
                             df_eval_input = pd.read_csv(eval_input_path, sep="\t")
-                            fn_eval_results_system = os.path.join(eval_out_dir, "eval_results-per_sample" + system_codename + ".tsv")
+                            fn_eval_results_system = os.path.join(eval_out_dir, "eval_results-per_sample-" + system_codename + ".tsv")
                             if not os.path.exists(fn_eval_results_system) or force:
                                 #asr_system = initialize_asr_system(system, model, config_user)
-                                df_eval_result = calculate_eval_metrics_per_sample(df_eval_input, dataset, subset, split, system_codename)
+                                df_eval_result = calculate_eval_metrics_per_sample(df_eval_input, dataset, subset, split, system_codename, ref_types, norm_types)
                                 save_metrics_tsv(df_eval_result, fn_eval_results_system)
                                 save_metrics_json(df_eval_result, fn_eval_results_system.replace(".tsv", ".json"))
                             else:
@@ -89,6 +91,13 @@ def generate_sample_eval_metrics_subsets(config_user, config_common, config_runt
 def generate_agg_eval_metrics_subsets(config_user, config_common, config_runtime, force):
     
     datasets, subsets, splits, systems, eval_run_codename = get_config_run(config_runtime)
+    print("datasets", datasets)
+    print("subsets", subsets)
+    print("splits", splits)
+    print("systems", systems)
+
+    norm_types=config_runtime["norm_types"]
+    ref_types=config_runtime["ref_types"]
 
     bigos_leaderboard_dir = os.path.join(config_user["PATHS"]["BIGOS_EVAL_LEADERBOARD_DIR"], "data")
 
@@ -122,10 +131,10 @@ def generate_agg_eval_metrics_subsets(config_user, config_common, config_runtime
                             eval_input_dir = os.path.join(eval_in_dir, system_codename, version, dataset_codename, eval_run_codename)
                             eval_input_path = os.path.join(eval_input_dir, "eval_input.tsv")    
                             df_eval_input = pd.read_csv(eval_input_path, sep="\t")
-                            fn_eval_results_system = os.path.join(eval_out_dir, "eval_results-per_dataset" + system_codename + ".tsv")
+                            fn_eval_results_system = os.path.join(eval_out_dir, "eval_results-per_dataset-" + system_codename + ".tsv")
                             if not os.path.exists(fn_eval_results_system) or force:
                                 #asr_system = initialize_asr_system(system, model, config_user)
-                                df_eval_result = calculate_eval_metrics_per_dataset(df_eval_input, dataset, subset, split, system_codename)
+                                df_eval_result = calculate_eval_metrics_per_dataset(df_eval_input, dataset, subset, split, system_codename, ref_types, norm_types)
                                 save_metrics_tsv(df_eval_result, fn_eval_results_system)
                                 save_metrics_json(df_eval_result, fn_eval_results_system.replace(".tsv", ".json"))
                             else:
@@ -133,17 +142,17 @@ def generate_agg_eval_metrics_subsets(config_user, config_common, config_runtime
                                 df_eval_result = pd.read_csv(fn_eval_results_system, sep="\t")
                             df_eval_results_all = pd.concat([df_eval_results_all, df_eval_result])
 
-        # Save aggregated evaluation metrics for all datasets, subsets, splits, systems and models
-        fn_eval_results_agg = os.path.join(eval_out_dir_dataset, "eval_results-per_dataset-all_systems_and_subsets-" + datetime.now().strftime("%Y%m%d"))
-        
-        save_metrics_tsv(df_eval_results_all, fn_eval_results_agg + ".tsv")
+            # Save aggregated evaluation metrics for all datasets, subsets, splits, systems and models
+            fn_eval_results_agg = os.path.join(eval_out_dir_dataset, "eval_results-per_dataset-all_systems_and_subsets-" + datetime.now().strftime("%Y%m%d"))
+            
+            save_metrics_tsv(df_eval_results_all, fn_eval_results_agg + ".tsv")
 
-        results_tsv_fn_leaderboard_repo = os.path.join(bigos_leaderboard_dir, dataset, split, eval_run_codename, "eval_results-per_dataset-" + datetime.now().strftime("%Y%m%d") + ".tsv")
-        results_tsv_fn_leaderboard_latest = os.path.join(bigos_leaderboard_dir, dataset, split, "eval_results-per_dataset-latest.tsv")
-        os.makedirs(os.path.dirname(results_tsv_fn_leaderboard_repo), exist_ok=True)
-        
-        save_metrics_tsv(df_eval_results_all, results_tsv_fn_leaderboard_repo)
-        save_metrics_tsv(df_eval_results_all, results_tsv_fn_leaderboard_latest)
+            results_tsv_fn_leaderboard_repo = os.path.join(bigos_leaderboard_dir, dataset, split, eval_run_codename, "eval_results-per_dataset-" + datetime.now().strftime("%Y%m%d") + ".tsv")
+            results_tsv_fn_leaderboard_latest = os.path.join(bigos_leaderboard_dir, dataset, split, "eval_results-per_dataset-latest.tsv")
+            os.makedirs(os.path.dirname(results_tsv_fn_leaderboard_repo), exist_ok=True)
+            
+            save_metrics_tsv(df_eval_results_all, results_tsv_fn_leaderboard_repo)
+            save_metrics_tsv(df_eval_results_all, results_tsv_fn_leaderboard_latest)
 
 @flow(name="ASR Evaluation Execution Flow")
 def asr_eval_run(config_user, config_common, config_runtime, force):

@@ -14,19 +14,16 @@ transf_all = jiwer.Compose([
 
 transf_lc = jiwer.Compose([
     jiwer.ToLowerCase(),
-    jiwer.ReduceToListOfListOfWords()
 ]) 
 
 transf_blanks = jiwer.Compose([
     jiwer.RemoveWhiteSpace(replace_by_space=True),
     jiwer.RemoveMultipleSpaces(),
-    jiwer.Strip(),
-    jiwer.ReduceToListOfListOfWords()
+    jiwer.Strip()
 ]) 
 
 transf_punc = jiwer.Compose([
-    jiwer.RemovePunctuation(),
-    jiwer.ReduceToListOfListOfWords()
+    jiwer.RemovePunctuation()
 ])
 #transf_chars = jiwer.Compose([
 #    jiwer.ReduceToListOfListOfChars()
@@ -47,8 +44,8 @@ def prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm):
     # retrieve non-empty hypotheses and references    
     ref = df_eval_input[ref_col].tolist()
     hyp = df_eval_input[hyp_col].tolist()
-    print ("refs len: ", len(ref))
-    print ("hyps len: ", len(hyp))
+    #print ("refs len: ", len(ref))
+    #print ("hyps len: ", len(hyp))
     
     if len(ref) != len(hyp):
         print("Warning: number of references and hypotheses does not match")
@@ -77,7 +74,11 @@ def prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm):
     for i in range(len(audio_paths)):
         ids.append(os.path.basename(audio_paths[i]))
 
-    # Count matching elements
+
+    # make sure values passed to jiwer are strings
+    ref = [str(i) for i in ref]
+    hyp = [str(i) for i in hyp]
+
     if norm == "all":
         ref=transf_all(ref)
         hyp=transf_all(hyp)
@@ -90,6 +91,10 @@ def prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm):
     elif norm == "punct":
         ref=transf_punc(ref)
         hyp=transf_punc(hyp)
+    elif norm == "dict":
+        # TODO - add dictionary based normalization
+        ref=ref
+        hyp=hyp
     else:
         ref=ref
         hyp=hyp
@@ -111,8 +116,8 @@ def get_lexical_metrics_per_sample(df_eval_input, dataset, subset, split, system
     ref, hyp, ids, audio_paths = prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm)
     
     # output columns
-    df_results_header = ["dataset", "subset", "split", "ref_type", "eval_norm", "system", "id", "ref", "hyp", "audio_duration", "WIL", "MER", "WER", "CER"]
-    print (df_results_header)
+    df_results_header = ["dataset", "subset", "split", "ref_type", "norm_type", "system", "id", "ref", "hyp", "audio_duration", "WIL", "MER", "WER", "CER"]
+    #print (df_results_header)
     result=[]
 
     for index in range(len(ids)):
@@ -168,7 +173,7 @@ def get_lexical_metrics_per_dataset(df_eval_input, dataset, subset, split, syste
     ref, hyp, ids, audio_paths = prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm)
     
     # output columns
-    df_results_header=["dataset", "subset", "split", "samples", "ref_type", "eval_norm", "system", "SER", "WIL", "MER", "WER", "CER"]
+    df_results_header=["dataset", "subset", "split", "samples", "ref_type", "norm_type", "system", "SER", "WIL", "MER", "WER", "CER"]
     # dataset  - name of the dataset
     # test cases - number of test cases
     # reference - type of source reference from the dataset (original, manually verified, normalized, etc.)
@@ -189,11 +194,11 @@ def get_lexical_metrics_per_dataset(df_eval_input, dataset, subset, split, syste
     output_chars = jiwer.process_characters(ref, hyp)
     cer = round(output_chars.cer * 100, 2)
     
-    print("SER: ", ser)
-    print("WER: ", wer)
-    print("CER: ", cer)
-    print("MER: ", mer)
-    print("WIL: ", wil)
+    #print("SER: ", ser)
+    #print("WER: ", wer)
+    #print("CER: ", cer)
+    #print("MER: ", mer)
+    #print("WIL: ", wil)
     # TODO add more metrics e.g. TER, PER, etc.
     result.append([dataset, subset, split, len(ref), ref_type, norm, system_codename, ser, wil, mer, wer, cer])
     

@@ -84,20 +84,36 @@ class BaseASRSystem:
     def get_version(self):
         return self.version
     
-    def get_hyp_from_cache(self, audio_sample, version):
+    def get_hyp_from_cache(self, audio_path, version):
         # check if audio sample is in cache
-        if audio_sample in self.cache:
+        if audio_path in self.cache:
             # check if version is in cache
-            if version in self.cache[audio_sample]:
-                asr_hyp = self.cache[audio_sample][version]['asr_hyp']
-                print("READ from cache.\nAudio sample: {}\nHypothesis: {} ".format(audio_sample, asr_hyp))
+            if version in self.cache[audio_path]:
+                asr_hyp = self.cache[audio_path][version]['asr_hyp']
+                print("READ from cache.\nAudio sample: {}\nHypothesis: {} ".format(audio_path, asr_hyp))
                 return asr_hyp
             else:
                 return None
+        # check if audio filename is in cache
         else:
+            # get filename without path
+            audio_filename = os.path.basename(audio_path)
+            # the cache key contains full path, so we need to check if the filename is in the cache by iterating over all keys
+            for key in self.cache:
+                key_filename = os.path.basename(key)
+                if key_filename == audio_filename:
+                    # check if version is in cache
+                    if version in self.cache[key]:
+                        asr_hyp = self.cache[key][version]['asr_hyp']
+                        print("READ from cache.\nAudio sample: {}\nHypothesis: {} ".format(key, asr_hyp))
+                        # update cache with new key
+                        self.cache[audio_path] = asr_hyp
+                        return asr_hyp
+                    else:
+                        return None
             return None
         
-    def update_cache(self, audio_sample, asr_hyp):
+    def update_cache(self, audio_path, asr_hyp):
         metadata = {
             'asr_hyp': asr_hyp,
             'system': self.system,
@@ -106,17 +122,17 @@ class BaseASRSystem:
             'codename': self.codename,
             'hyp_gen_date': datetime.now().strftime("%Y%m%d")
         }
-        self.cache[audio_sample] = {self.version: metadata}
-        print("UPDATED cache.\nAudio sample: {}\nHypothesis: {} ".format(audio_sample, asr_hyp))
+        self.cache[audio_path] = {self.version: metadata}
+        print("UPDATED cache.\nAudio sample: {}\nHypothesis: {} ".format(audio_path, asr_hyp))
         self.save_cache()
     
     def save_cache(self):
         print("Saving cache")
         with open(self.cache_file, "w") as f:
             # save as JSONL file
-            for audio_sample in self.cache:
+            for audio_path in self.cache:
                 # save JSONL using audio sample as key
-                json.dump({audio_sample: self.cache[audio_sample]}, f)
+                json.dump({audio_path: self.cache[audio_path]}, f)
                 f.write("\n")
 
     def get_cached_hyps(self):

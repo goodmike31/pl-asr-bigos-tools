@@ -77,14 +77,28 @@ def prepare_eval_input_from_hyps_cache(hf_dataset, asr_system) -> pd.DataFrame:
     return(eval_input_df)
 
 @task
-def calculate_eval_metrics_per_dataset(eval_input_df, dataset, subset, split, system_codename):
-    df_eval_results = get_lexical_metrics_per_dataset(eval_input_df, dataset, subset, split, system_codename, "orig", "all")
-    return(df_eval_results)
+def calculate_eval_metrics_per_dataset(eval_input_df, dataset, subset, split, system_codename, ref_types=["orig"], norm_types=["all"]):
+    df_eval_results_all= pd.DataFrame()
+    for ref_type in ref_types:
+        #iterate over normalization methods
+        for norm_type in norm_types:
+            df_eval_results = get_lexical_metrics_per_dataset(eval_input_df, dataset, subset, split, system_codename, ref_type, norm_type)
+            df_eval_results_all = pd.concat([df_eval_results_all, df_eval_results])
+            
+    return(df_eval_results_all)
 
 @task
-def calculate_eval_metrics_per_sample(eval_input_df, dataset, subset, split, system_codename):
-    df_eval_results = get_lexical_metrics_per_sample(eval_input_df, dataset, subset, split, system_codename, "orig", "all")
-    return(df_eval_results)
+def calculate_eval_metrics_per_sample(eval_input_df, dataset, subset, split, system_codename, ref_types=["orig"], norm_types=["all"]):
+    # TODO - add support for different normalization methods and ref_types - provide them as input arguments (list or specific value)?
+    #iterate over reference types
+    df_eval_results_all= pd.DataFrame()
+    for ref_type in ref_types:
+        #iterate over normalization methods
+        for norm_type in norm_types:
+            df_eval_results = get_lexical_metrics_per_sample(eval_input_df, dataset, subset, split, system_codename, ref_type, norm_type)
+            df_eval_results_all = pd.concat([df_eval_results_all, df_eval_results])
+
+    return(df_eval_results_all)
 
 
 @task

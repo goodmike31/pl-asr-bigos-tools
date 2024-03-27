@@ -7,11 +7,11 @@
     "max_samples_per_subset": 3,
     "eval_metrics": ["lexical"],
     "ref_type": ["orig"],
-    "norm_methods": "standard",
+    "norm_types": ["all", "lowercase", "blanks", "punct", "dict"],
     "systems": 
     {
         "nemo":{
-            "models": ["stt_pl_fastconformer_hybrid_large_pc"],
+            "models": ["stt_pl_fastconformer_hybrid_large_pc", "stt_pl_quartznet15x5", "stt_multilingual_fastconformer_hybrid_large_pc"],
             "versions": ["2024Q1"]
             },
 

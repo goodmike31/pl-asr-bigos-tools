@@ -1,0 +1,23 @@
+{
+    "name":"BIGOS",
+    "eval_run_codename": "alpha",
+    "datasets": ["amu-cai/pl-asr-bigos-v2-diagnostic"],
+    "subsets": ["pjatk-clarin_mobile-15", "pjatk-clarin_studio-15", "mailabs-corpus_librivox-19", "pwr-azon_read-20", "pwr-azon_spont-20", "pwr-maleset-unk", "pwr-viu-unk", "pwr-shortwords-unk", "google-fleurs-22", "polyai-minds14-21"],
+    "splits": ["test", "validation", "train"],
+    "max_samples_per_subset": 200,
+    "eval_metrics": ["lexical"],
+    "ref_types": ["orig", "written", "spoken"],
+    "norm_types": ["all", "lowercase", "blanks", "punct", "dict"],
+    "systems": 
+    {
+        "whisper_local":{ 
+            "models": ["small", "medium"],
+            "versions": ["2024Q1"]
+            },
+
+        "mms":{ 
+            "models": ["1b-all"],
+            "versions": ["2024Q1"]
+            }
+        }
+}

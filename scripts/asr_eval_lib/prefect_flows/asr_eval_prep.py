@@ -8,6 +8,11 @@ from config_utils import get_config_run
 
 import os
 
+"""
+Input: dataset refs + hyps.cache
+Output: eval_input.tsv with all available ref types and hyps for each dataset, subset, split, system, model, version
+
+"""
 def generate_eval_input(config_user, config_common, config_runtime):
     script_dir = os.path.dirname(os.path.realpath(__file__))
     datasets, subsets, splits, systems, eval_run_codename = get_config_run(config_runtime)

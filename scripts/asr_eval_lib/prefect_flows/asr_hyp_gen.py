@@ -18,6 +18,7 @@ def asr_hyp_gen(config_user, config_common, config_runtime):
             for dataset_name in datasets:
                 for subset in subsets:
                     for split in splits:
+                        print("Loading dataset {} split {} subset {}".format(dataset_name, split, subset))
                         try:
                             hf_dataset = load_hf_dataset_split(dataset_name, split, subset)
                         except Exception as e:
