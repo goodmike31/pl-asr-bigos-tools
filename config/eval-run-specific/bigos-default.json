@@ -10,6 +10,11 @@
     "norm_types": ["all", "lowercase", "blanks", "punct", "dict"],
     "systems": 
     {
+        "mms":{
+            "models": ["1b-fl102", "1b-l1107", "1b-all"],
+            "versions": ["2024Q1"]
+            },
+            
         "google_v2": { 
             "models":["long", "short"],
             "versions": ["2024Q1"]
@@ -42,11 +47,6 @@
 
         "wav2vec2":{ 
             "models": ["large-xlsr-53-polish", "xls-r-1b-polish"],
-            "versions": ["2024Q1"]
-            },
-
-        "mms":{ 
-            "models": ["1b-all"],
             "versions": ["2024Q1"]
             }
         }

@@ -5,6 +5,11 @@ TTS_SET ?=
 TODAY=$(shell date +'%Y%m%d')
 
 HYPS_STATS_FILE = ./data/asr_hyps_cache/stats/cached_hyps_stats-$(PROJECT)-$(TODAY).csv
+SDE_PATH = ../../github/NeMo/tools/speech_data_explorer/data_explorer.py
+MANIFESTS_DIR = ./data/manifests
+
+DATASET = 
+SPLIT = 
 
 .PHONY: e2e-eval run-tests hyps-stats
 
@@ -12,7 +17,7 @@ test-e2e:
 	@echo "Running e2e pipeline on test configuration"
 	python scripts/asr_eval_lib/main.py
 
-e2e-eval:
+eval-e2e:
 	@echo "Running e2e eval pipeline"
 	python scripts/asr_eval_lib/main.py --eval_config $(PROJECT)
 
@@ -43,4 +48,7 @@ eval-run-force:
 tts-set-gen:
 	@echo "Generating synthetic test set for TTS_SET=$(TTS_SET)"
 	python scripts/tts_gen_lib/main.py --flow=TTS_SET_GEN --tts_set_config=$(TTS_SET)
-	
+
+sde-read-manifest:
+	@echo "Showing manifest for DATASET=$(DATASET) SPLIT=$(SPLIT) in SDE tool"
+	python $(SDE_PATH) -a $(MANIFESTS_DIR)/$(DATASET)-$(SPLIT).jsonl

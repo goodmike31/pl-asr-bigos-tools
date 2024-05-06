@@ -90,22 +90,25 @@ class BaseASRSystem:
             # check if version is in cache
             if version in self.cache[audio_path]:
                 asr_hyp = self.cache[audio_path][version]['asr_hyp']
-                print("READ from cache.\nAudio sample: {}\nHypothesis: {} ".format(audio_path, asr_hyp))
+                print("READ from cache based on audiopath.\nAudio sample: {}\nHypothesis: {} ".format(audio_path, asr_hyp))
                 return asr_hyp
             else:
                 return None
         # check if audio filename is in cache
         else:
+            print("Checking if audio filename is in cache")
             # get filename without path
             audio_filename = os.path.basename(audio_path)
+            #print("Filename: ", audio_filename)
             # the cache key contains full path, so we need to check if the filename is in the cache by iterating over all keys
             for key in self.cache:
                 key_filename = os.path.basename(key)
+                #print("Key: ", key_filename)
                 if key_filename == audio_filename:
                     # check if version is in cache
                     if version in self.cache[key]:
                         asr_hyp = self.cache[key][version]['asr_hyp']
-                        print("READ from cache.\nAudio sample: {}\nHypothesis: {} ".format(key, asr_hyp))
+                        print("READ from cache based on filename.\nAudio sample: {}\nHypothesis: {} ".format(key, asr_hyp))
                         # update cache with new key
                         self.cache[audio_path] = asr_hyp
                         return asr_hyp

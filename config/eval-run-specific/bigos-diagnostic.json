@@ -9,15 +9,45 @@
     "ref_types": ["orig", "written", "spoken"],
     "norm_types": ["all", "lowercase", "blanks", "punct", "dict"],
     "systems": 
-    {
-        "whisper_local":{ 
-            "models": ["small", "medium"],
+    {   
+        "google": { 
+            "models":["default", "command_and_search", "latest_long", "latest_short"],
+            "versions": ["2024Q1"]
+            },
+        
+        "google_v2": { 
+            "models":["long", "short"],
+            "versions": ["2024Q1"]
+            },
+
+        "azure":{ 
+            "models": ["latest"],
+            "versions": ["2024Q1"]
+            },
+
+        "nemo":{
+            "models": ["stt_pl_fastconformer_hybrid_large_pc", "stt_pl_quartznet15x5", "stt_multilingual_fastconformer_hybrid_large_pc"],
+            "versions": ["2024Q1"]
+            },
+
+        "wav2vec2":{ 
+            "models": ["large-xlsr-53-polish", "xls-r-1b-polish"],
             "versions": ["2024Q1"]
             },
 
         "mms":{ 
             "models": ["1b-all"],
             "versions": ["2024Q1"]
+            },
+
+        "whisper_cloud":{ 
+            "models": ["whisper-1"],
+            "versions": ["2024Q1"]
+            },
+    
+        "whisper_local":{ 
+            "models": ["tiny", "base", "small", "medium", "large", "large-v1", "large-v2"],
+            "versions": ["2024Q1"]
             }
         }
-}
+    }
