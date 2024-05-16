@@ -10,14 +10,18 @@
     "norm_types": ["all", "lowercase", "blanks", "punct", "dict"],
     "systems": 
     {
+        "assembly_ai":{
+            "models": ["nano", "best"],
+            "versions": ["2024Q1"]
+            },
                     
         "google": { 
-            "models":["default", "command_and_search", "latest_long", "latest_short"],
+            "models": ["default", "command_and_search", "latest_long", "latest_short"],
             "versions": ["2024Q1"]
             },
         
         "google_v2": { 
-            "models":["long", "short"],
+            "models": ["long", "short"],
             "versions": ["2024Q1"]
             },
 

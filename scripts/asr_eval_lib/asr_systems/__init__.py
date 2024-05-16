@@ -8,6 +8,7 @@ from .whisper_local_asr import WhisperLocalASR
 from .facebook_mms_local import FacebookMMS
 from .facebook_wav2vec import FacebookWav2Vec
 from .nvidia_nemo_asr import NvidiaNemoASR
+from .assembly_ai_asr import AssemblyAIASR
 
 def initialize_asr_system(system, model, config_file):
     return asr_system_factory(system, model, config_file)
@@ -30,7 +31,11 @@ def asr_system_factory(system, model, config):
     elif system == 'whisper_cloud':
         openai_api_key = config.get("CREDENTIALS", "WHISPER_API_KEY")
         return WhisperCloudASR(system, model, openai_api_key)
-    
+
+    elif system == 'assembly_ai':
+        assemblyai_api_key = config.get("CREDENTIALS", "ASSEMBLYAI_API_KEY")
+        return AssemblyAIASR(system, model, assemblyai_api_key)
+        
     elif system == 'whisper_local':
         return WhisperLocalASR(system, model)
     

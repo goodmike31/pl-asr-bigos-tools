@@ -41,6 +41,8 @@ if __name__ == "__main__":
         config_runtime_file = os.path.join(script_dir, '../../config/eval-run-specific/amumed-tts.json')
     elif (args.eval_config == "DIAGNOSTIC"):
         config_runtime_file = os.path.join(script_dir, '../../config/eval-run-specific/bigos-diagnostic.json')
+    elif (args.eval_config == "AAI"):
+        config_runtime_file = os.path.join(script_dir, '../../config/eval-run-specific/test-aai.json')
         
     else:
         print("Unknown runtime name. Exiting.")

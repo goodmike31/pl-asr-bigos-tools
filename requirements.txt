@@ -30,3 +30,4 @@ pyannote.core
 pyannote.metrics
 editdistance
 ipython
+assemblyai

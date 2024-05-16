@@ -49,6 +49,6 @@ tts-set-gen:
 	@echo "Generating synthetic test set for TTS_SET=$(TTS_SET)"
 	python scripts/tts_gen_lib/main.py --flow=TTS_SET_GEN --tts_set_config=$(TTS_SET)
 
-sde-read-manifest:
+sde-manifest:
 	@echo "Showing manifest for DATASET=$(DATASET) SPLIT=$(SPLIT) in SDE tool"
 	python $(SDE_PATH) -a $(MANIFESTS_DIR)/$(DATASET)-$(SPLIT).jsonl

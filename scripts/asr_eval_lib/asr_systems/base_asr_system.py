@@ -30,13 +30,15 @@ class BaseASRSystem:
         # Set up cache for already processed audio samples
         self.cache = {}
         self.cache_file = os.path.join(self.common_cache_dir, self.codename + ".asr_cache.jsonl")
-        
+        print("Reading cache: ", self.cache_file)
         if os.path.exists(self.cache_file):
             with open(self.cache_file, "r") as f:
                 # read as JSONL file
                 for line in f:
                     self.cache.update(json.loads(line))
-
+        else:
+            print("Cache file does not exist")
+            
     def get_model(self):
         return self.model
     

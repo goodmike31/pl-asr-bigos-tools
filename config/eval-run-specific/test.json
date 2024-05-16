@@ -6,7 +6,7 @@
     "splits": ["test"],
     "max_samples_per_subset": 3,
     "eval_metrics": ["lexical"],
-    "ref_type": ["orig"],
+    "ref_types": ["orig"],
     "norm_types": ["all", "lowercase", "blanks", "punct", "dict"],
     "systems": 
     {
