@@ -18,7 +18,9 @@ class BaseASRSystem:
 
         self.year = datetime.now().year
         self.quarter = (datetime.now().month-1)//3 + 1
-        self.version = "{}Q{}".format(self.year, self.quarter)
+        self.version = "2024Q1"
+        # TODO - add version as input argument to control ASR version somehow
+        #"{}Q{}".format(self.year, self.quarter)
         
         self.codename = "{}_{}".format(system.lower(), model.lower())
         self.name = "{} - {}".format(system.upper(), model.upper())
@@ -65,6 +67,7 @@ class BaseASRSystem:
             return ""
 
         # Load results from cache if possible
+        print("Checking cache:")
         asr_hyp = self.get_hyp_from_cache(speech_file, self.version)
         if asr_hyp is not None:
             return asr_hyp
@@ -88,6 +91,7 @@ class BaseASRSystem:
     
     def get_hyp_from_cache(self, audio_path, version):
         # check if audio sample is in cache
+        print("Checking if audio path is in cache.")
         if audio_path in self.cache:
             # check if version is in cache
             if version in self.cache[audio_path]:
@@ -95,29 +99,34 @@ class BaseASRSystem:
                 print("READ from cache based on audiopath.\nAudio sample: {}\nHypothesis: {} ".format(audio_path, asr_hyp))
                 return asr_hyp
             else:
-                return None
-        # check if audio filename is in cache
-        else:
-            print("Checking if audio filename is in cache")
-            # get filename without path
-            audio_filename = os.path.basename(audio_path)
-            #print("Filename: ", audio_filename)
-            # the cache key contains full path, so we need to check if the filename is in the cache by iterating over all keys
-            for key in self.cache:
-                key_filename = os.path.basename(key)
-                #print("Key: ", key_filename)
-                if key_filename == audio_filename:
-                    # check if version is in cache
-                    if version in self.cache[key]:
-                        asr_hyp = self.cache[key][version]['asr_hyp']
-                        print("READ from cache based on filename.\nAudio sample: {}\nHypothesis: {} ".format(key, asr_hyp))
-                        # update cache with new key
-                        self.cache[audio_path] = asr_hyp
-                        return asr_hyp
-                    else:
-                        return None
-            return None
-        
+                print("Version {} not in cache for audio sample {}".format(version, audio_path))
+            
+        print("Checking if audio filename is in cache.")
+        # get filename without path
+        audio_filename = os.path.basename(audio_path)
+        print("Filename: ", audio_filename)
+        # the cache key contains full path, so we need to check if the filename is in the cache by iterating over all keys
+        for key in self.cache:
+            key_filename = os.path.basename(key)
+#            print("Key: ", key_filename)
+            if key_filename == audio_filename:
+                print("Filename {} found in cache".format(audio_filename))
+ #               print(self.cache[key])
+  #              print("Version input: ", version)
+                # check if version is in cache
+                if version in self.cache[key]:
+                    asr_hyp = self.cache[key][version]['asr_hyp']
+                    print("READ from cache based on filename.\nAudio sample: {}\nHypothesis: {} ".format(key, asr_hyp))
+                    # update cache with new key
+                    self.cache[audio_path] = asr_hyp
+                    return asr_hyp
+                else:
+                    print("Filename {} found in cache, but version {} not in cache".format(audio_filename, version))
+                    return None
+
+        print("Audio filename {} not found in cache".format(audio_filename))
+        return None
+    
     def update_cache(self, audio_path, asr_hyp):
         metadata = {
             'asr_hyp': asr_hyp,
