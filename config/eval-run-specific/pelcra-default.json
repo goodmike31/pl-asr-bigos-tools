@@ -7,21 +7,12 @@
     "max_samples_per_subset": 200,
     "eval_metrics": ["lexical"],
     "ref_types": ["orig"],
-    "norm_types": ["all", "lowercase", "blanks", "punct", "dict"],
+    "norm_types": ["all", "lowercase", "blanks", "punct", "all+dict"],
     "systems": 
     {
-        "whisper_local":{ 
-            "models": ["tiny", "base", "small", "medium", "large", "large-v1", "large-v2"],
-            "versions": ["2024Q1"]
-            },
             
         "assembly_ai":{
             "models": ["nano", "best"],
-            "versions": ["2024Q1"]
-            },
-                    
-        "whisper_local":{ 
-            "models": ["tiny", "base", "small", "medium", "large", "large-v1", "large-v2"],
             "versions": ["2024Q1"]
             },
         
@@ -58,6 +49,12 @@
         "whisper_cloud":{ 
             "models": ["whisper-1"],
             "versions": ["2024Q1"]
+            },
+            
+        "whisper_local":{ 
+            "models": ["tiny", "base", "small", "medium", "large", "large-v1", "large-v2"],
+            "versions": ["2024Q1"]
             }
+
         }
 }

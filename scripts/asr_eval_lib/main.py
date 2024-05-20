@@ -41,8 +41,6 @@ if __name__ == "__main__":
         config_runtime_file = os.path.join(script_dir, '../../config/eval-run-specific/amumed-tts.json')
     elif (args.eval_config == "DIAGNOSTIC"):
         config_runtime_file = os.path.join(script_dir, '../../config/eval-run-specific/bigos-diagnostic.json')
-    elif (args.eval_config == "AAI"):
-        config_runtime_file = os.path.join(script_dir, '../../config/eval-run-specific/test-aai.json')
         
     else:
         print("Unknown runtime name. Exiting.")
@@ -69,12 +67,12 @@ if __name__ == "__main__":
     if args.flow == "ALL":
         print("Executing all flows for the runtime config: ", args.eval_config) 
         asr_hyp_gen(config_user, config_common, config_runtime)
-        asr_eval_prep(config_user, config_common, config_runtime)
+        asr_eval_prep(config_user, config_common, config_runtime, force)
         asr_eval_run(config_user, config_common, config_runtime, force)
     elif args.flow == "HYP_GEN":
         asr_hyp_gen(config_user, config_common, config_runtime)
     elif args.flow == "EVAL_PREP":
-        asr_eval_prep(config_user, config_common, config_runtime)
+        asr_eval_prep(config_user, config_common, config_runtime, force)
     elif args.flow == "EVAL_RUN":
         asr_eval_run(config_user, config_common, config_runtime, force)
     elif args.flow == "HYP_STATS":

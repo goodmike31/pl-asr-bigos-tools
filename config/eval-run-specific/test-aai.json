@@ -12,7 +12,7 @@
     {
         "assembly_ai":{
             "models": ["best", "nano"],
-            "versions": ["2024Q1"]
+            "versions": ["2024Q2"]
             }
         }
 }

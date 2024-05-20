@@ -29,23 +29,33 @@ transf_punc = jiwer.Compose([
 #    jiwer.ReduceToListOfListOfChars()
 #])
 
+# Function to replace words
+def replace_words(sentence, replacement_dict):
+    words = sentence.split()
+    print("Words in: ", words)
+    
+    replaced_sentence = ' '.join([replacement_dict.get(word, word) for word in words])
+    print("Words out: ", replaced_sentence)
+
+    return replaced_sentence
 
 
-def prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm):
+def prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm, norm_lexicon=None):
     
     # get masking vector for non-empty hypotheses
     non_empty_hyps = df_eval_input[hyp_col].notnull()
     # filter out non-empty hypotheses from dataframe
     df_eval_input = df_eval_input[non_empty_hyps]
+    print("Number of non-empty hypotheses: ", len(df_eval_input))
     
     # filter out hypotheses which are empty and corresponding references
     audio_paths = df_eval_input['audiopath_local'].tolist()
-  
+    
     # retrieve non-empty hypotheses and references    
     ref = df_eval_input[ref_col].tolist()
     hyp = df_eval_input[hyp_col].tolist()
-    #print ("refs len: ", len(ref))
-    #print ("hyps len: ", len(hyp))
+    print ("refs len: ", len(ref))
+    print ("hyps len: ", len(hyp))
     
     if len(ref) != len(hyp):
         print("Warning: number of references and hypotheses does not match")
@@ -91,29 +101,54 @@ def prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm):
     elif norm == "punct":
         ref=transf_punc(ref)
         hyp=transf_punc(hyp)
-    elif norm == "dict":
+    elif norm == "all+dict":
         # TODO - add dictionary based normalization
-        ref=ref
-        hyp=hyp
+        # Apply the function to both lists
+        ref=transf_all(ref)
+        hyp=transf_all(hyp)
+        if (norm_lexicon is not None):
+            ref = transf_blanks([replace_words(str(sentence), norm_lexicon) for sentence in ref])
+            hyp = transf_blanks([replace_words(str(sentence), norm_lexicon) for sentence in hyp])
     else:
         ref=ref
         hyp=hyp
     
-    #print("Ref post-proceessed: ", ref)
-    #print("Hyp post-proceessed: ", hyp)
+    print ("refs len after normalization: ", len(ref))
+    print ("hyps len after normalization: ", len(hyp))
+
+    # combine into dataframe
+    df_eval_input[ref_col] = ref
+    df_eval_input[hyp_col] = hyp
+    # eliminate rows with empty references equal to ""
+    df_eval_input = df_eval_input[df_eval_input[ref_col] != ""]
+    # eliminate rows with empty hypotheses equal to ""
+    df_eval_input = df_eval_input[df_eval_input[hyp_col] != ""]
+        
+    ref = df_eval_input[ref_col].tolist()
+    hyp = df_eval_input[hyp_col].tolist()
+    
+    assert(len(ref) == len(hyp))
+   
+    print("Number of non-empty references: ", len(ref))
+    print("Number of non-empty hypotheses: ", len(hyp))
 
     # Calculate metrics for the whole dataset
     return ref, hyp, ids, audio_paths
 
-def get_lexical_metrics_per_sample(df_eval_input, dataset, subset, split, system_codename, ref_type, norm)->pd.DataFrame:
+def get_lexical_metrics_per_sample(df_eval_input, dataset, subset, split, system_codename, ref_type, norm, norm_lexicon = None)->pd.DataFrame:
     print("Calculating metrics for individual sentences for dataset:\nDataset: {}\nSubset: {}\nSplit: {}\nSystem: {}\nRef_type: {}\nNormalization: {}\n".format(dataset, subset, split, system_codename, ref_type, norm))
     # assume that the input dataframe   
     # a. was prefiltered accordingly to the proper business logic e.g. only test set, only specific subset, etc.
     # b. has the following columns: ref_col, hyp_col
+    print("Norm lexicon: ", norm_lexicon)
+
     ref_col = "ref_" + ref_type
     hyp_col = "hyp_" + system_codename
 
-    ref, hyp, ids, audio_paths = prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm)
+    if (norm == "dict"):
+        ref, hyp, ids, audio_paths = prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm, norm_lexicon)
+    else:
+        ref, hyp, ids, audio_paths = prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm)
     
     # output columns
     df_results_header = ["dataset", "subset", "split", "ref_type", "norm_type", "system", "id", "ref", "hyp", "audio_duration", "WIL", "MER", "WER", "CER"]
@@ -154,7 +189,7 @@ def get_lexical_metrics_per_sample(df_eval_input, dataset, subset, split, system
     return df_results
 
     
-def get_lexical_metrics_per_dataset(df_eval_input, dataset, subset, split, system_codename, ref_type, norm)->pd.DataFrame:
+def get_lexical_metrics_per_dataset(df_eval_input, dataset, subset, split, system_codename, ref_type, norm, norm_lexicon)->pd.DataFrame:
 
     # TODO consider moving to config
     # TODO consider standardizing the names of transformations
@@ -167,17 +202,23 @@ def get_lexical_metrics_per_dataset(df_eval_input, dataset, subset, split, syste
     # assume that the input dataframe   
     # a. was prefiltered accordingly to the proper business logic e.g. only test set, only specific subset, etc.
     # b. has the following columns: ref_col, hyp_col
+    print("Norm lexicon: ", norm_lexicon)
+
     ref_col = "ref_" + ref_type
     hyp_col = "hyp_" + system_codename
 
-    ref, hyp, ids, audio_paths = prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm)
-    
+
+    if (norm_lexicon is not None):
+        ref, hyp, ids, audio_paths = prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm, norm_lexicon)
+    else:
+        ref, hyp, ids, audio_paths = prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm)
+
     # output columns
     df_results_header=["dataset", "subset", "split", "samples", "ref_type", "norm_type", "system", "SER", "WIL", "MER", "WER", "CER"]
     # dataset  - name of the dataset
     # test cases - number of test cases
     # reference - type of source reference from the dataset (original, manually verified, normalized, etc.)
-    # eval norm - type of normalization applied to the reference and hypothesis using jiwer
+    # norm_type - type of normalization applied to the reference and hypothesis using jiwer
     # system - codename of the ASR system
     
     result=[]
@@ -206,38 +247,26 @@ def get_lexical_metrics_per_dataset(df_eval_input, dataset, subset, split, syste
     
     return df_results
 
-
-def get_lexical_metrics_all_norm_types(df_eval_input, dataset_codename, system_codename, ref_type)-> pd.DataFrame:
-    df_results = pd.DataFrame([])
-
-    for norm in postnorm_types:
-        print("Norm:" + norm)
-        df_single_result = get_lexical_metrics_per_dataset(df_eval_input, dataset_codename, system_codename, ref_type, norm) 
-        df_results = df_results.append(df_single_result, ignore_index=True)
-    
-    return(df_results)
-
-
-def get_lexical_metrics_per_dataset_all_ref_types(df_eval_input, dataset_codename, system_codename, norm)-> pd.DataFrame:
+def get_lexical_metrics_per_dataset_all_ref_types(df_eval_input, dataset_codename, system_codename, norm, norm_lexicon = None)-> pd.DataFrame:
     df_results = pd.DataFrame([])
 
     ref_cols = [col for col in df_eval_input.columns if col.startswith('ref')]
     for ref_col in ref_cols:
         print("ref_col" + ref_col)
         ref_type = ref_col.split("_")[1]
-        df_single_result = get_lexical_metrics_per_dataset(df_eval_input, dataset_codename, system_codename, ref_type, norm) 
+        df_single_result = get_lexical_metrics_per_dataset(df_eval_input, dataset_codename, system_codename, ref_type, norm, norm_lexicon) 
         df_results = df_results.append(df_single_result, ignore_index=True)
     
     return(df_results)
 
-def get_lexical_metrics_per_dataset_all_systems(df_eval_input, dataset_codename, ref_type, norm)-> pd.DataFrame:
+def get_lexical_metrics_per_dataset_all_systems(df_eval_input, dataset_codename, ref_type, norm, norm_lexicon = None)-> pd.DataFrame:
     df_results = pd.DataFrame([])
 
     hyp_cols =  [col for col in df_eval_input.columns if col.startswith('hyp')]
     for hyp_col in hyp_cols:
         print("hyp_col" + hyp_col)
         system_codename = hyp_col.split("_")[1]
-        df_single_result = get_lexical_metrics_per_dataset(df_eval_input, dataset_codename, system_codename, ref_type, norm) 
+        df_single_result = get_lexical_metrics_per_dataset(df_eval_input, dataset_codename, system_codename, ref_type, norm, norm_lexicon) 
         df_results = df_results.append(df_single_result, ignore_index=True)
     
     return(df_results)

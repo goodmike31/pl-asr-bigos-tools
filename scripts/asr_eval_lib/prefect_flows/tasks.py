@@ -49,7 +49,7 @@ def save_results(results):
     pass
 
 @task
-def prepare_eval_input_from_hyps_cache(hf_dataset, asr_system) -> pd.DataFrame:
+def prepare_eval_input_from_hyps_cache(hf_dataset, asr_system, max_samples_per_subset) -> pd.DataFrame:
     
     # Implement logic to prepare eval input
     # use audio path columns as index
@@ -74,28 +74,34 @@ def prepare_eval_input_from_hyps_cache(hf_dataset, asr_system) -> pd.DataFrame:
     
     # get hyps from cache
     eval_input_df["hyp_"+ asr_system.get_codename()] = eval_input_df["audiopath_local"].apply(lambda x: asr_system.get_hyp_from_cache(x, asr_system.get_version()))
+    print("Eval input DF shape: ", eval_input_df.shape)
+    # get only the first max_samples_per_subset samples
+    eval_input_df = eval_input_df.head(max_samples_per_subset)
+    print("Eval input DF shape after limiting to max_samples_per_subset: ", eval_input_df.shape)
     return(eval_input_df)
 
 @task
-def calculate_eval_metrics_per_dataset(eval_input_df, dataset, subset, split, system_codename, ref_types=["orig"], norm_types=["all"]):
+def calculate_eval_metrics_per_dataset(eval_input_df, dataset, subset, split, system_codename, ref_types=["orig"], norm_types=["all"], norm_lexicon=None):
+    
     df_eval_results_all= pd.DataFrame()
+
     for ref_type in ref_types:
         #iterate over normalization methods
         for norm_type in norm_types:
-            df_eval_results = get_lexical_metrics_per_dataset(eval_input_df, dataset, subset, split, system_codename, ref_type, norm_type)
+            df_eval_results = get_lexical_metrics_per_dataset(eval_input_df, dataset, subset, split, system_codename, ref_type, norm_type, norm_lexicon)
             df_eval_results_all = pd.concat([df_eval_results_all, df_eval_results])
             
     return(df_eval_results_all)
 
 @task
-def calculate_eval_metrics_per_sample(eval_input_df, dataset, subset, split, system_codename, ref_types=["orig"], norm_types=["all"]):
+def calculate_eval_metrics_per_sample(eval_input_df, dataset, subset, split, system_codename, ref_types=["orig"], norm_types=["all"], norm_lexicon=None):
     # TODO - add support for different normalization methods and ref_types - provide them as input arguments (list or specific value)?
     #iterate over reference types
     df_eval_results_all= pd.DataFrame()
     for ref_type in ref_types:
         #iterate over normalization methods
         for norm_type in norm_types:
-            df_eval_results = get_lexical_metrics_per_sample(eval_input_df, dataset, subset, split, system_codename, ref_type, norm_type)
+            df_eval_results = get_lexical_metrics_per_dataset(eval_input_df, dataset, subset, split, system_codename, ref_type, norm_type, norm_lexicon)
             df_eval_results_all = pd.concat([df_eval_results_all, df_eval_results])
 
     return(df_eval_results_all)
