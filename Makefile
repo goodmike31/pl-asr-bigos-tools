@@ -1,5 +1,6 @@
 
 # BIGOS PELCRA or TEST
+PROJECTS=TEST BIGOS PELCRA AMU-MED DIAGNOSTIC
 PROJECT ?= 
 TTS_SET ?=
 TODAY=$(shell date +'%Y%m%d')
@@ -12,6 +13,7 @@ DATASET =
 SPLIT = 
 
 .PHONY: eval-e2e run-tests hyps-stats
+
 
 test-e2e:
 	@echo "Running e2e pipeline on test configuration"
@@ -35,6 +37,22 @@ hyp-gen:
 	@echo "Running hyps generation flow"
 	@python scripts/asr_eval_lib/main.py --flow="HYP_GEN" --eval_config=$(PROJECT)
 
+
+#################################################################
+
+# Eval prep flows - ASR hyps input preparation
+eval-prep-force-all:
+	@for project in $(PROJECTS); do \
+		echo "Running eval prep flow for project $$project"; \
+		python scripts/asr_eval_lib/main.py --flow=EVAL_PREP --eval_config=$$project --force=True; \
+	done
+	
+eval-prep-all:
+	@for project in $(PROJECTS); do \
+		echo "Running eval prep flow for project $$project"; \
+		python scripts/asr_eval_lib/main.py --flow=EVAL_PREP --eval_config=$$project; \
+	done
+
 eval-prep:
 	@echo "Running eval prep flow"
 	@python scripts/asr_eval_lib/main.py --flow="EVAL_PREP" --eval_config=$(PROJECT)
@@ -43,7 +61,19 @@ eval-prep-force:
 	@echo "Running eval prep flow"
 	@python scripts/asr_eval_lib/main.py --flow="EVAL_PREP" --eval_config=$(PROJECT) --force=True
 
-# Evaluation flows
+# Evaluation flows - metrics calculation
+eval-run-force-all:
+	@for project in $(PROJECTS); do \
+		echo "Running eval run flow for project $$project"; \
+		python scripts/asr_eval_lib/main.py --flow=EVAL_RUN --eval_config=$$project --force=True; \
+	done
+
+eval-run-all:
+	@for project in $(PROJECTS); do \
+		echo "Running eval run flow for project $$project"; \
+		python scripts/asr_eval_lib/main.py --flow=EVAL_RUN --eval_config=$$project; \
+	done
+
 eval-run:
 	@echo "Running eval run flow"
 	@python scripts/asr_eval_lib/main.py --flow=EVAL_RUN --eval_config=$(PROJECT)

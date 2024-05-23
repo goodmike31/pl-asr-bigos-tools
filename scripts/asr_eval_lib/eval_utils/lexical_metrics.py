@@ -48,9 +48,6 @@ def prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm, norm_lexicon=None):
     df_eval_input = df_eval_input[non_empty_hyps]
     print("Number of non-empty hypotheses: ", len(df_eval_input))
     
-    # filter out hypotheses which are empty and corresponding references
-    audio_paths = df_eval_input['audiopath_local'].tolist()
-    
     # retrieve non-empty hypotheses and references    
     ref = df_eval_input[ref_col].tolist()
     hyp = df_eval_input[hyp_col].tolist()
@@ -74,24 +71,17 @@ def prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm, norm_lexicon=None):
         hyp = df_eval_input[hyp_col][df_eval_input["mask"]].astype(str).tolist()
         #print("hyps filtered to match hyps availability: ", hyp)
 
-        audio_paths = df_eval_input['audiopath_local'][df_eval_input["mask"]].tolist()
-
         # Remove mask column
         df_eval_input = df_eval_input.drop(columns=["mask"])
     
     
-    ids = []
-    for i in range(len(audio_paths)):
-        ids.append(os.path.basename(audio_paths[i]))
-
-
     # make sure values passed to jiwer are strings
     ref = [str(i) for i in ref]
     hyp = [str(i) for i in hyp]
 
-    if norm == "all":
-        ref=transf_all(ref)
-        hyp=transf_all(hyp)
+    if norm == "none":
+        ref=ref
+        hyp=hyp
     elif norm == "lowercase":
         ref=transf_lc(ref)
         hyp=transf_lc(hyp)
@@ -101,18 +91,22 @@ def prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm, norm_lexicon=None):
     elif norm == "punct":
         ref=transf_punc(ref)
         hyp=transf_punc(hyp)
-    elif norm == "all+dict":
+    elif norm == "dict":
         # TODO - add dictionary based normalization
         # Apply the function to both lists
+        if (norm_lexicon is not None):
+            ref = transf_blanks([replace_words(str(sentence), norm_lexicon) for sentence in ref])
+            hyp = transf_blanks([replace_words(str(sentence), norm_lexicon) for sentence in hyp])
+    elif norm == "all":
         ref=transf_all(ref)
         hyp=transf_all(hyp)
         if (norm_lexicon is not None):
             ref = transf_blanks([replace_words(str(sentence), norm_lexicon) for sentence in ref])
             hyp = transf_blanks([replace_words(str(sentence), norm_lexicon) for sentence in hyp])
     else:
-        ref=ref
-        hyp=hyp
-    
+        print("Normalization type not recognized. Please choose one of the following: none, lowercase, blanks, punct, dict, all.")
+        exit(1)
+        
     print ("refs len after normalization: ", len(ref))
     print ("hyps len after normalization: ", len(hyp))
 
@@ -131,6 +125,12 @@ def prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm, norm_lexicon=None):
    
     print("Number of non-empty references: ", len(ref))
     print("Number of non-empty hypotheses: ", len(hyp))
+
+    audio_paths = df_eval_input['audiopath_local'].tolist()
+    ids = []
+    for i in range(len(audio_paths)):
+        ids.append(os.path.basename(audio_paths[i]))
+
 
     # Calculate metrics for the whole dataset
     return ref, hyp, ids, audio_paths

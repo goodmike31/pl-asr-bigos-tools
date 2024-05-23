@@ -101,7 +101,7 @@ def calculate_eval_metrics_per_sample(eval_input_df, dataset, subset, split, sys
     for ref_type in ref_types:
         #iterate over normalization methods
         for norm_type in norm_types:
-            df_eval_results = get_lexical_metrics_per_dataset(eval_input_df, dataset, subset, split, system_codename, ref_type, norm_type, norm_lexicon)
+            df_eval_results = get_lexical_metrics_per_sample(eval_input_df, dataset, subset, split, system_codename, ref_type, norm_type, norm_lexicon)
             df_eval_results_all = pd.concat([df_eval_results_all, df_eval_results])
 
     return(df_eval_results_all)
