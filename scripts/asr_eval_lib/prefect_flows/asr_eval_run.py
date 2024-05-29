@@ -51,7 +51,9 @@ def generate_sample_eval_metrics_subsets(config_user, config_common, config_runt
                 
                 # convert HF dataset to pandas dataframe
                 df_hf_dataset = pd.DataFrame(hf_dataset)
-
+                # round all values to 2 decimal places
+                df_hf_dataset = df_hf_dataset.round(2)
+                
                 print("HF dataset shape: ", df_hf_dataset.shape)
                 print("HF dataset columns: ", df_hf_dataset.columns)
                 print("HF dataset sample: ", df_hf_dataset.head(1))
@@ -76,15 +78,18 @@ def generate_sample_eval_metrics_subsets(config_user, config_common, config_runt
                             fn_eval_results_system = os.path.join(eval_out_dir, "eval_results-per_sample-" + system_codename + ".tsv")
                             if not os.path.exists(fn_eval_results_system) or force:
                                 #asr_system = initialize_asr_system(system, model, config_user)
-                                df_eval_result = calculate_eval_metrics_per_sample(df_eval_input, dataset, subset, split, system_codename, ref_types, norm_types)
+                                df_eval_result_no_meta = calculate_eval_metrics_per_sample(df_eval_input, dataset, subset, split, system_codename, ref_types, norm_types)
                                 # get columns names not available in df_eval_results but available in hf_dataset_column_names
                                 # extend df_eval_results with metadata for specific dataset sample based on the content of hf_dataset
                                 # join on column "audiopath_bigos"
-                                df_eval_results_with_meta = pd.merge(df_eval_result, df_hf_dataset, how="left", left_on="id", right_on="audiopath_bigos")
-                                print("df_eval_results_with_meta shape: ", df_eval_results_with_meta.shape)
-                                print("df_eval_results_with_meta columns: ", df_eval_results_with_meta.columns)
-                                print("df_eval_results_with_meta sample: ", df_eval_results_with_meta.head(1))
-                                
+                                df_eval_result = pd.merge(df_eval_result_no_meta, df_hf_dataset, how="left", left_on="id", right_on="audiopath_bigos")
+                                # drop columns that are not needed for evaluation metrics - split_y	dataset_y audio audiopath_bigos audiopath_local
+                                df_eval_result = df_eval_result.drop(columns=["split_y", "dataset_y", "audio", "audiopath_bigos", "audiopath_local"])
+
+                                print("df_eval_results_with_meta shape: ", df_eval_result.shape)
+                                print("df_eval_results_with_meta columns: ", df_eval_result.columns)
+                                print("df_eval_results_with_meta sample: ", df_eval_result.head(1))
+
                                 save_metrics_tsv(df_eval_result, fn_eval_results_system)
                                 save_metrics_json(df_eval_result, fn_eval_results_system.replace(".tsv", ".json"))
                             else:
