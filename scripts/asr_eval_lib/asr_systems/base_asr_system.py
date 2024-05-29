@@ -69,14 +69,44 @@ class BaseASRSystem:
         # Load results from cache if possible
         print("Checking cache:")
         asr_hyp = self.get_hyp_from_cache(speech_file, self.version)
-        if asr_hyp is not None and asr_hyp != "":
-            return asr_hyp
+
+
+        # Generate new hypothesis if cache is empty or None
+        if asr_hyp is None:
+            print("Hypothesis in cache not available. Generating new hypothesis.")
+        elif asr_hyp == "INVALID":
+            print("Hypothesis in cache is invalid. Generating new hypothesis.")
+        elif asr_hyp == "":
+            print("Hypothesis in cache is the empty string. Generating new hypothesis.")
         else:
-            print("Hypothesis in cache not available or empty. Generating new hypothesis.")
-            asr_hyp = self.generate_asr_hyp(speech_file)
-            self.update_cache(speech_file, asr_hyp)
+            print("Hypothesis in cache is VALID: {}. Returning.".format(asr_hyp))
             return asr_hyp
 
+        asr_hyp = self.generate_asr_hyp(speech_file)
+        print("NEW ASR hypothesis: ", asr_hyp)
+
+        # Handle newly generated hypothesis
+        if asr_hyp == "":
+            print("ASR hypothesis is EMPTY AGAIN. Saving value EMPTY in cache.")
+            self.update_cache(speech_file, "EMPTY")
+            return "EMPTY"
+        elif asr_hyp is None:
+            print("ASR hypothesis is None. Trying again.")
+            asr_hyp = self.generate_asr_hyp(speech_file)
+            print("NEW ASR hypothesis: ", asr_hyp)
+            if asr_hyp == "":
+                print("ASR hypothesis is EMPTY AGAIN. Saving value EMPTY in cache.")
+                self.update_cache(speech_file, "EMPTY")
+                return "EMPTY"
+            elif asr_hyp is None:
+                print("ASR hypothesis is None AGAIN. Saving value INVALID in cache.")
+                self.update_cache(speech_file, "INVALID")
+                return "INVALID"
+
+        self.update_cache(speech_file, asr_hyp)
+        return asr_hyp
+            
+        
     def get_name(self):
         return self.name
     

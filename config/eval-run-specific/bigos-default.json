@@ -42,7 +42,7 @@
             },
 
         "mms":{ 
-            "models": ["1b-all"],
+            "models": ["1b-all", "1b-fl102", "1b-l1107"],
             "versions": ["2024Q1"]
             },
 

@@ -31,14 +31,31 @@ transf_punc = jiwer.Compose([
 
 # Function to replace words
 def replace_words(sentence, replacement_dict):
+    print("Lexicon - Words in: ", sentence)
+  
     words = sentence.split()
-    print("Words in: ", words)
     
     replaced_sentence = ' '.join([replacement_dict.get(word, word) for word in words])
-    print("Words out: ", replaced_sentence)
+    print("Lexicon - Words out: ", replaced_sentence)
 
     return replaced_sentence
 
+def remove_tags(sentence, tags=["<unk>", "<silence>", "trunc"]):
+    print("Tags - Words in: ", sentence)
+    words = sentence.split()
+    
+    # remove stand alone tags
+    # e.g. "this is the example of <unk>" becomes "this is the example of"
+    without_stand_alone_tags = [word for word in words if not any(tag.lower() == word.lower() for tag in tags)]
+
+    # remove word if it contains any of the artifacts (regardless of the case and adjacent punctuation and characters)
+    # e.g. "this is the example of sente_trunc" becomes "this is the example of"
+    # e.g. "trunc_this is the example" becomes "is the example"
+    # e.g. "this is the example of <unk>" becomes "this is the example of"
+    without_glued_tags = ' '.join([word for word in without_stand_alone_tags if not any(tag.lower() in word.lower() for tag in tags)])
+    print("Tags - Words out: ", without_glued_tags)
+
+    return without_glued_tags
 
 def prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm, norm_lexicon=None):
     
@@ -48,6 +65,11 @@ def prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm, norm_lexicon=None):
     df_eval_input = df_eval_input[non_empty_hyps]
     print("Number of non-empty hypotheses: ", len(df_eval_input))
     
+    # remove hypothesis with values EMPTY or INVALID
+    df_eval_input = df_eval_input[df_eval_input[hyp_col] != "EMPTY"]
+    df_eval_input = df_eval_input[df_eval_input[hyp_col] != "INVALID"]
+    print("Number of non-empty hypotheses after filtering out EMPTY and INVALID: ", len(df_eval_input))
+
     # retrieve non-empty hypotheses and references    
     ref = df_eval_input[ref_col].tolist()
     hyp = df_eval_input[hyp_col].tolist()
@@ -91,15 +113,24 @@ def prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm, norm_lexicon=None):
     elif norm == "punct":
         ref=transf_punc(ref)
         hyp=transf_punc(hyp)
+    elif norm == "tags":
+        ref = transf_blanks([remove_tags(str(sentence)) for sentence in ref])
+        hyp = transf_blanks([remove_tags(str(sentence)) for sentence in hyp])
+        
     elif norm == "dict":
         # TODO - add dictionary based normalization
         # Apply the function to both lists
         if (norm_lexicon is not None):
+            print("Normalizing using lexicon")
+            print("Lexicon: ", norm_lexicon)
             ref = transf_blanks([replace_words(str(sentence), norm_lexicon) for sentence in ref])
             hyp = transf_blanks([replace_words(str(sentence), norm_lexicon) for sentence in hyp])
     elif norm == "all":
         ref=transf_all(ref)
         hyp=transf_all(hyp)
+        ref = transf_blanks([remove_tags(str(sentence)) for sentence in ref])
+        hyp = transf_blanks([remove_tags(str(sentence)) for sentence in hyp])
+        
         if (norm_lexicon is not None):
             ref = transf_blanks([replace_words(str(sentence), norm_lexicon) for sentence in ref])
             hyp = transf_blanks([replace_words(str(sentence), norm_lexicon) for sentence in hyp])

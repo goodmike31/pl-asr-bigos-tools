@@ -26,7 +26,7 @@ def load_hf_dataset(dataset_name,subset="all", force_download=False):
     hf_dataset = load_dataset(dataset_name, subset)
     return hf_dataset
 
-def load_hf_dataset_split(dataset_name, split, subset="all", force_download=False):
+def load_hf_dataset_split(dataset_name, subset="all", split='test', force_download=False):
     if force_download:
         hf_dataset = load_dataset(dataset_name, subset, split=split, download_mode="force_redownload")
     else:

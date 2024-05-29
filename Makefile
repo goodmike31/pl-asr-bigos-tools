@@ -1,6 +1,6 @@
 
 # BIGOS PELCRA or TEST
-PROJECTS=TEST BIGOS PELCRA AMU-MED DIAGNOSTIC
+PROJECTS= BIGOS PELCRA AMU-MED DIAGNOSTIC
 PROJECT ?= 
 TTS_SET ?=
 TODAY=$(shell date +'%Y%m%d')
@@ -15,9 +15,21 @@ SPLIT =
 .PHONY: eval-e2e run-tests hyps-stats
 
 
-test-e2e:
-	@echo "Running e2e pipeline on test configuration"
-	@python scripts/asr_eval_lib/main.py
+eval-e2e-force-all:
+	@for project in $(PROJECTS); do \
+		echo "Running e2e eval pipeline for project $$project"; \
+		python scripts/asr_eval_lib/main.py --eval_config=$$project --force=True; \
+	done
+
+eval-e2e-all:
+	@for project in $(PROJECTS); do \
+		echo "Running e2e eval pipeline for project $$project"; \
+		python scripts/asr_eval_lib/main.py --eval_config=$$project; \
+	done
+
+eval-e2e-force:
+	@echo "Running e2e eval pipeline"
+	@python scripts/asr_eval_lib/main.py --eval_config $(PROJECT) --force=True
 
 eval-e2e:
 	@echo "Running e2e eval pipeline"

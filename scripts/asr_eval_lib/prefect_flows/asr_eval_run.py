@@ -1,5 +1,5 @@
 from prefect import flow
-from prefect_flows.tasks import calculate_eval_metrics_per_dataset, calculate_eval_metrics_per_sample, save_metrics_tsv, save_metrics_json
+from prefect_flows.tasks import calculate_eval_metrics_per_dataset, calculate_eval_metrics_per_sample, save_metrics_tsv, save_metrics_json, load_hf_dataset_split
 from config_utils import get_config_run 
 import pandas as pd
 from datetime import datetime
@@ -47,11 +47,21 @@ def generate_sample_eval_metrics_subsets(config_user, config_common, config_runt
         os.makedirs(eval_out_dir_dataset, exist_ok=True)
         for split in splits:
             for subset in subsets:
+                hf_dataset = load_hf_dataset_split(dataset, subset, split)
+                
+                # convert HF dataset to pandas dataframe
+                df_hf_dataset = pd.DataFrame(hf_dataset)
+
+                print("HF dataset shape: ", df_hf_dataset.shape)
+                print("HF dataset columns: ", df_hf_dataset.columns)
+                print("HF dataset sample: ", df_hf_dataset.head(1))
+
                 dataset_codename = str.join("-", [dataset, subset, split])
                 eval_out_dir = os.path.join(eval_out_dir_common, dataset_codename, eval_run_codename)
                 os.makedirs(eval_out_dir, exist_ok=True)
                 print("Calculating evaluation metrics for ", dataset_codename, " dataset.")
                 print("Output directory: ", eval_out_dir)
+                # load dataset subset
                 for system in systems:
                     for model in config_runtime["systems"][system]["models"]:
                         for version in config_runtime["systems"][system]["versions"]:
@@ -67,6 +77,14 @@ def generate_sample_eval_metrics_subsets(config_user, config_common, config_runt
                             if not os.path.exists(fn_eval_results_system) or force:
                                 #asr_system = initialize_asr_system(system, model, config_user)
                                 df_eval_result = calculate_eval_metrics_per_sample(df_eval_input, dataset, subset, split, system_codename, ref_types, norm_types)
+                                # get columns names not available in df_eval_results but available in hf_dataset_column_names
+                                # extend df_eval_results with metadata for specific dataset sample based on the content of hf_dataset
+                                # join on column "audiopath_bigos"
+                                df_eval_results_with_meta = pd.merge(df_eval_result, df_hf_dataset, how="left", left_on="id", right_on="audiopath_bigos")
+                                print("df_eval_results_with_meta shape: ", df_eval_results_with_meta.shape)
+                                print("df_eval_results_with_meta columns: ", df_eval_results_with_meta.columns)
+                                print("df_eval_results_with_meta sample: ", df_eval_results_with_meta.head(1))
+                                
                                 save_metrics_tsv(df_eval_result, fn_eval_results_system)
                                 save_metrics_json(df_eval_result, fn_eval_results_system.replace(".tsv", ".json"))
                             else:
