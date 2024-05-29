@@ -53,7 +53,7 @@ def generate_sample_eval_metrics_subsets(config_user, config_common, config_runt
                 df_hf_dataset = pd.DataFrame(hf_dataset)
                 # round all values to 2 decimal places
                 df_hf_dataset = df_hf_dataset.round(2)
-                
+
                 print("HF dataset shape: ", df_hf_dataset.shape)
                 print("HF dataset columns: ", df_hf_dataset.columns)
                 print("HF dataset sample: ", df_hf_dataset.head(1))
@@ -85,7 +85,11 @@ def generate_sample_eval_metrics_subsets(config_user, config_common, config_runt
                                 df_eval_result = pd.merge(df_eval_result_no_meta, df_hf_dataset, how="left", left_on="id", right_on="audiopath_bigos")
                                 # drop columns that are not needed for evaluation metrics - split_y	dataset_y audio audiopath_bigos audiopath_local
                                 df_eval_result = df_eval_result.drop(columns=["split_y", "dataset_y", "audio", "audiopath_bigos", "audiopath_local"])
-
+                                # rename columns with _x suffix to remove it
+                                df_eval_result.columns = df_eval_result.columns.str.replace("_x", "")
+                                # rename columns with _y suffix to remove it
+                                df_eval_result.columns = df_eval_result.columns.str.replace("_y", "")
+                                
                                 print("df_eval_results_with_meta shape: ", df_eval_result.shape)
                                 print("df_eval_results_with_meta columns: ", df_eval_result.columns)
                                 print("df_eval_results_with_meta sample: ", df_eval_result.head(1))
