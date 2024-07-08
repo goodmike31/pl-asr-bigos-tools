@@ -43,7 +43,7 @@ def asr_hyp_stats(config_user, config_common, config_runtime):
                             dataset_codename=dataset_name+"_"+subset+"_"+split
                             cached_hyps_stats[asr_system_codename][dataset_codename]={}                        
 
-                            hf_dataset = load_hf_dataset_split(dataset_name, split, subset)
+                            hf_dataset = load_hf_dataset_split(dataset_name, subset, split)
                             audio_paths = hf_dataset["audiopath_local"]
                             # limit the number of audio paths for testing
                             audio_paths = audio_paths[:max_samples_per_subset]

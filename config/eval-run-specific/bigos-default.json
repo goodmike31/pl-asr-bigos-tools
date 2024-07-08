@@ -7,7 +7,7 @@
     "max_samples_per_subset": 200,
     "eval_metrics": ["lexical"],
     "ref_types": ["orig"],
-    "norm_types": ["none", "all", "lowercase", "blanks", "punct", "dict"],
+    "norm_types": ["none", "all", "lowercase", "blanks", "punct", "dict", "tags"],
     "systems": 
     {
             

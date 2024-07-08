@@ -1,19 +1,44 @@
 
-# BIGOS PELCRA or TEST
-PROJECTS= BIGOS PELCRA AMU-MED DIAGNOSTIC
+# RUNTIME CONFIGURATION
+PROJECTS =
+#PROJECTS = AMU-BIGOS PELCRA AMU-MED AMU-BIGOS-DIAGNOSTIC
+
+# USER CONFIGURATION - ASR EVALUATION
 PROJECT ?= 
+DATASET ?= 
+SPLIT ?= 
+
+# USER CONFIGURATION - TTS DATASET GENERATION
 TTS_SET ?=
+
+# HELPER VARIABLES AND SCRIPTS
 TODAY=$(shell date +'%Y%m%d')
+READ_INI = ./scripts/read_ini.py
 
-HYPS_STATS_FILE = ./data/asr_hyps_cache/stats/cached_hyps_stats-$(PROJECT)-$(TODAY).csv
-SDE_PATH = ../../github/NeMo/tools/speech_data_explorer/data_explorer.py
-MANIFESTS_DIR = ./data/manifests
+# PATHS TO CONFIGURATION FILES
+USER_CONFIG_FILE = ./config/user-specific/config.ini
 
-DATASET = 
-SPLIT = 
+# PATHS EXTRACTED FROM CONFIGURATION FILES
+NEMO_MANIFEST_DIR = $(shell python3 read_ini.py PATHS NEMO_MANIFEST_DIR $(USER_CONFIG_FILE))
+
+NEMO_REPO_DIR = $(shell python3 read_ini.py PATHS NEMO_REPO_DIR $(USER_CONFIG_FILE))
+SDE_PATH = $(NEMO_REPO_DIR)/tools/speech_data_explorer/data_explorer.py
+
+LOCAL_DATA_DIR = $(shell python3 read_ini.py PATHS LOCAL_DATA_DIR $(USER_CONFIG_FILE))
+
+# PATHS TO GENERATED FILES
+HYPS_STATS_FILE = $(LOCAL_DATA_DIR)/asr_hyps_cache/stats/cached_hyps_stats-$(PROJECT)-$(TODAY).csv
+
 
 .PHONY: eval-e2e run-tests hyps-stats
 
+run-tests:
+	@echo "Running tests"
+	# @python -m pytest tests/
+	@for project in TEST; do \
+		echo "Running e2e eval pipeline for project $$project"; \
+		python scripts/asr_eval_lib/main.py --eval_config=$$project --force=True; \
+	done
 
 eval-e2e-force-all:
 	@for project in $(PROJECTS); do \
@@ -101,4 +126,4 @@ tts-set-gen:
 
 sde-manifest:
 	@echo "Showing manifest for DATASET=$(DATASET) SPLIT=$(SPLIT) in SDE tool"
-	@python $(SDE_PATH) -a $(MANIFESTS_DIR)/$(DATASET)-$(SPLIT).jsonl
+	@python $(SDE_PATH) -a $(NEMO_MANIFEST_DIR)/$(DATASET)-$(SPLIT).jsonl
