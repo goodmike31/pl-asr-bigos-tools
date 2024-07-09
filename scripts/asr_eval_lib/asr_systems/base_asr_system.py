@@ -2,6 +2,23 @@ import os
 import json
 from datetime import datetime
 import librosa
+import sys
+
+# Get the parent directory
+repo_root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../'))
+print("repo_root_dir", repo_root_dir)
+
+# Add the parent directory to sys.path
+sys.path.insert(0, repo_root_dir)
+
+from scripts.utils.utils import read_config_ini, read_config_json
+
+# Load the user-specific config file
+config_user_path = os.path.join(repo_root_dir, 'config/user-specific/config.ini')
+print("config_user_path", config_user_path)
+
+config_user = read_config_ini(config_user_path)
+bigos_eval_data_dir = config_user["PATHS"]["BIGOS_EVAL_DATA_REPO_PATH"]
 
 class BaseASRSystem:
     def __init__(self, system, model, language_code) -> None:
@@ -10,6 +27,7 @@ class BaseASRSystem:
         self.model = model
         self.language_code = language_code
         self.max_audio_length_to_process_sec = 300
+        self.bigos_eval_data_dir = bigos_eval_data_dir
 
         # add version encoded as YYQ (year and quarter) to codename to control for changes in the ASR system and model over time
         # assumes that the ASR system and model are evaluated at most once per quarter
@@ -26,7 +44,7 @@ class BaseASRSystem:
         self.name = "{} - {}".format(system.upper(), model.upper())
         print("Initializing ASR system {}, model {}, version {}".format(system, model, self.version))
 
-        self.common_cache_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../../../data/asr_hyps_cache")
+        self.common_cache_dir = os.path.join(self.bigos_eval_data_dir, "asr_hyps_cache")
         os.makedirs(self.common_cache_dir, exist_ok=True)
 
         # Set up cache for already processed audio samples

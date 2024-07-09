@@ -13,7 +13,7 @@ TTS_SET ?=
 
 # HELPER VARIABLES AND SCRIPTS
 TODAY=$(shell date +'%Y%m%d')
-READ_INI = ./scripts/read_ini.py
+READ_INI = ./scripts/utils/	read_ini.py
 
 # PATHS TO CONFIGURATION FILES
 USER_CONFIG_FILE = ./config/user-specific/config.ini
@@ -29,10 +29,9 @@ LOCAL_DATA_DIR = $(shell python3 read_ini.py PATHS LOCAL_DATA_DIR $(USER_CONFIG_
 # PATHS TO GENERATED FILES
 HYPS_STATS_FILE = $(LOCAL_DATA_DIR)/asr_hyps_cache/stats/cached_hyps_stats-$(PROJECT)-$(TODAY).csv
 
+.PHONY: eval-e2e test
 
-.PHONY: eval-e2e run-tests hyps-stats
-
-run-tests:
+test:
 	@echo "Running tests"
 	# @python -m pytest tests/
 	@for project in TEST; do \

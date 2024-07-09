@@ -11,7 +11,6 @@ today = datetime.now().strftime("%Y%m%d")
 
 def get_pretty_column_names(dataset, split):
     config_names = get_dataset_config_names(dataset)[:-1]
-    #print(config_names)
     # add split into to config_names e.g. "amu-cai/pl-asr-bigos-v2-secret-> amu-cai/pl-asr-bigos-v2-secret-test"
     # add split into to config_names e.g. "amu-cai/pl-asr-bigos-diagnostic-> amu-cai/pl-asr-bigos-diagnostic-test"
     config_names_new = [dataset + "-" + config_name + "-" + split for config_name in config_names]
@@ -29,12 +28,13 @@ def generate_sample_eval_metrics_subsets(config_user, config_common, config_runt
     norm_types=config_runtime["norm_types"]
     ref_types=config_runtime["ref_types"]
     print("ref_types", ref_types)
-    bigos_leaderboard_dir = os.path.join(config_user["PATHS"]["BIGOS_EVAL_LEADERBOARD_DIR"], "data")
 
-    # TODO move to config
-    script_dir = os.path.dirname(os.path.realpath(__file__))
-    eval_in_dir = os.path.join(script_dir, "../../../data/eval_input")
-    eval_out_dir_common = os.path.join(script_dir, "../../../data/eval_output/per_sample/", eval_run_codename)
+    # read user specific config to retrieve path to repo to store evaluation data
+    bigos_eval_data_dir = config_user["PATHS"]["BIGOS_EVAL_DATA_REPO_PATH"]
+    print("bigos_eval_data_dir", bigos_eval_data_dir)
+
+    eval_in_dir = os.path.join(bigos_eval_data_dir, "eval_input")
+    eval_out_dir_common = os.path.join(bigos_eval_data_dir, "eval_output/per_sample/", eval_run_codename)
     os.makedirs(eval_out_dir_common, exist_ok=True)
 
     # initialize empty dataframe for storing all evaluation metrics
@@ -105,8 +105,8 @@ def generate_sample_eval_metrics_subsets(config_user, config_common, config_runt
             fn_eval_results_agg = os.path.join(eval_out_dir_dataset, "eval_results-per_sample-all_systems_and_subsets" + datetime.now().strftime("%Y%m%d"))
             save_metrics_tsv(df_eval_results_all, fn_eval_results_agg + ".tsv")
 
-            results_tsv_fn_leaderboard_repo = os.path.join(bigos_leaderboard_dir, dataset, split, eval_run_codename, "eval_results-per_sample-" + datetime.now().strftime("%Y%m%d") + ".tsv")
-            results_tsv_fn_leaderboard_latest = os.path.join(bigos_leaderboard_dir, dataset, split , "eval_results-per_sample-latest.tsv")
+            results_tsv_fn_leaderboard_repo = os.path.join(bigos_eval_data_dir, dataset, split, eval_run_codename, "eval_results-per_sample-" + datetime.now().strftime("%Y%m%d") + ".tsv")
+            results_tsv_fn_leaderboard_latest = os.path.join(bigos_eval_data_dir, dataset, split , "eval_results-per_sample-latest.tsv")
             os.makedirs(os.path.dirname(results_tsv_fn_leaderboard_repo), exist_ok=True)
             
             save_metrics_tsv(df_eval_results_all, results_tsv_fn_leaderboard_repo)
@@ -126,12 +126,13 @@ def generate_agg_eval_metrics_subsets(config_user, config_common, config_runtime
     norm_types=config_runtime["norm_types"]
     ref_types=config_runtime["ref_types"]
 
-    bigos_leaderboard_dir = os.path.join(config_user["PATHS"]["BIGOS_EVAL_LEADERBOARD_DIR"], "data")
+    # read user specific config to retrieve path to repo to store evaluation data
+    bigos_eval_data_dir = config_user["PATHS"]["BIGOS_EVAL_DATA_REPO_PATH"]
+    print("bigos_eval_data_dir", bigos_eval_data_dir)
 
-    # TODO move to config
-    script_dir = os.path.dirname(os.path.realpath(__file__))
-    eval_in_dir = os.path.join(script_dir, "../../../data/eval_input")
-    eval_out_dir_common = os.path.join(script_dir, "../../../data/eval_output/per_dataset/", eval_run_codename)
+    eval_in_dir = os.path.join(bigos_eval_data_dir,"eval_input")
+    eval_out_dir_common = os.path.join(bigos_eval_data_dir, "eval_output/per_dataset/", eval_run_codename)
+
     os.makedirs(eval_out_dir_common, exist_ok=True)
     # initialize empty dataframe for storing all evaluation metrics
     df_eval_results_all = pd.DataFrame([])
@@ -183,8 +184,8 @@ def generate_agg_eval_metrics_subsets(config_user, config_common, config_runtime
             
             save_metrics_tsv(df_eval_results_all, fn_eval_results_agg + ".tsv")
 
-            results_tsv_fn_leaderboard_repo = os.path.join(bigos_leaderboard_dir, dataset, split, eval_run_codename, "eval_results-per_dataset-" + datetime.now().strftime("%Y%m%d") + ".tsv")
-            results_tsv_fn_leaderboard_latest = os.path.join(bigos_leaderboard_dir, dataset, split, "eval_results-per_dataset-latest.tsv")
+            results_tsv_fn_leaderboard_repo = os.path.join(bigos_eval_data_dir, dataset, split, eval_run_codename, "eval_results-per_dataset-" + datetime.now().strftime("%Y%m%d") + ".tsv")
+            results_tsv_fn_leaderboard_latest = os.path.join(bigos_eval_data_dir, dataset, split, "eval_results-per_dataset-latest.tsv")
             os.makedirs(os.path.dirname(results_tsv_fn_leaderboard_repo), exist_ok=True)
             
             save_metrics_tsv(df_eval_results_all, results_tsv_fn_leaderboard_repo)

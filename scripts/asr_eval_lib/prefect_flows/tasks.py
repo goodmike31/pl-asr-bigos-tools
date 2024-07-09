@@ -108,16 +108,18 @@ def calculate_eval_metrics_per_sample(eval_input_df, dataset, subset, split, sys
 
 
 @task
-def save_metrics_tsv(df_eval_results, filename):
+def save_metrics_tsv(df_eval_results, abs_filepath):
     # Implement logic to save metrics as TSV
-    print("Saving metrics to {}".format(filename))
-    df_eval_results.to_csv(filename, sep="\t", index=False)
+    print("Saving metrics to {}".format(abs_filepath))
+    df_eval_results.to_csv(abs_filepath, sep="\t", index=False)
+    # copy results to the HF repository
+
 
 @task
-def save_metrics_json(df_eval_results, filename):
+def save_metrics_json(df_eval_results, abs_filepath):
     # Implement logic to save metrics as JSON
-    print("Saving metrics to {}".format(filename))
-    df_eval_results.to_json(filename, orient="records")
+    print("Saving metrics to {}".format(abs_filepath))
+    df_eval_results.to_json(abs_filepath, orient="records")
 
 @task
 def check_cached_hyps_size_and_coverage(asr_system, audio_paths):

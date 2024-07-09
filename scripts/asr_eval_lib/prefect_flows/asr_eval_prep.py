@@ -18,7 +18,9 @@ def generate_eval_input(config_user, config_common, config_runtime, force=False)
     datasets, subsets, splits, systems, eval_run_codename = get_config_run(config_runtime)
     max_samples_per_subset = config_runtime["max_samples_per_subset"]
     
-    
+    bigos_eval_data_dir = config_user["PATHS"]["BIGOS_EVAL_DATA_REPO_PATH"]
+    print("bigos_eval_data_dir", bigos_eval_data_dir)
+
     # make sure that required hypothesis for specific systems, models, version and datasets are converted into eval input format
     for system in systems:
         for model in config_runtime["systems"][system]["models"]:
@@ -32,7 +34,8 @@ def generate_eval_input(config_user, config_common, config_runtime, force=False)
                             dataset_codename = str.join("-", [dataset, subset, split])
                             # generate eval input for specific dataset, subset, split, system, model and version
                             # TODO move eval input dir root to config
-                            eval_input_dir = os.path.join(script_dir, "../../../data/eval_input", asr_system.get_codename(), version, dataset_codename, eval_run_codename)
+                            
+                            eval_input_dir = os.path.join(bigos_eval_data_dir, "eval_input", asr_system.get_codename(), version, dataset_codename, eval_run_codename)
                             os.makedirs(eval_input_dir, exist_ok=True)
                             eval_input_df_path = os.path.join(eval_input_dir, "eval_input.tsv")
                             if not os.path.exists(eval_input_df_path) or force:

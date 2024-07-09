@@ -8,7 +8,9 @@ import os
 @flow(name="ASR Hypothesis Statistics Calculation Flow")
 def asr_hyp_stats(config_user, config_common, config_runtime):
     config_runtime_name = config_runtime["name"]
+
     script_dir = os.path.dirname(os.path.realpath(__file__))
+    
     cache_dir = os.path.join(script_dir, "../../../data/asr_hyps_cache")
     cache_stats_dir = os.path.join(cache_dir, "stats")
     os.makedirs(cache_dir, exist_ok=True)

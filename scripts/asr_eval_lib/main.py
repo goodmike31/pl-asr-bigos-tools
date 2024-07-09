@@ -6,19 +6,18 @@ from prefect_flows.asr_hyp_stats import asr_hyp_stats
 import argparse
 import os
 import json
-import configparser
+import sys
+
+# Get the parent directory
+repo_root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../'))
+print("repo_root_dir", repo_root_dir)
+
+# Add the parent directory to sys.path
+sys.path.insert(0, repo_root_dir)
+
+from scripts.utils.utils import read_config_ini, read_config_json
 
 from typing import List
-
-def read_config_user(config_user_path):
-    config = configparser.ConfigParser()
-    config.read(config_user_path)
-    return config
-
-def read_config_common(config_common_path):
-    with open(config_common_path, "r") as f:
-        config = json.load(f)
-    return config
 
 # Example execution (you can also run this flow from CLI or Prefect UI)
 if __name__ == "__main__":
@@ -58,8 +57,8 @@ if __name__ == "__main__":
     config_user_path = os.path.join(script_dir, '../../config/user-specific/config.ini')
     print("config_user_path", config_user_path)
 
-    config_user = read_config_user(config_user_path)
-    config_common = read_config_common(config_common_path)
+    config_user = read_config_ini(config_user_path)
+    config_common = read_config_json(config_common_path)
 
     with open(config_runtime_file, "r") as f:
         config_runtime = json.load(f)
