@@ -35,6 +35,8 @@ def generate_sample_eval_metrics_subsets(config_user, config_common, config_runt
 
     eval_in_dir = os.path.join(bigos_eval_data_dir, "eval_input")
     eval_out_dir_common = os.path.join(bigos_eval_data_dir, "eval_output/per_sample/", eval_run_codename)
+    leaderboard_in_dir = os.path.join(bigos_eval_data_dir, "leaderboard_input")
+    os.makedirs(leaderboard_in_dir, exist_ok=True)
     os.makedirs(eval_out_dir_common, exist_ok=True)
 
     # initialize empty dataframe for storing all evaluation metrics
@@ -105,8 +107,8 @@ def generate_sample_eval_metrics_subsets(config_user, config_common, config_runt
             fn_eval_results_agg = os.path.join(eval_out_dir_dataset, "eval_results-per_sample-all_systems_and_subsets" + datetime.now().strftime("%Y%m%d"))
             save_metrics_tsv(df_eval_results_all, fn_eval_results_agg + ".tsv")
 
-            results_tsv_fn_leaderboard_repo = os.path.join(bigos_eval_data_dir, dataset, split, eval_run_codename, "eval_results-per_sample-" + datetime.now().strftime("%Y%m%d") + ".tsv")
-            results_tsv_fn_leaderboard_latest = os.path.join(bigos_eval_data_dir, dataset, split , "eval_results-per_sample-latest.tsv")
+            results_tsv_fn_leaderboard_repo = os.path.join(leaderboard_in_dir, dataset, split, eval_run_codename, "eval_results-per_sample-" + datetime.now().strftime("%Y%m%d") + ".tsv")
+            results_tsv_fn_leaderboard_latest = os.path.join(leaderboard_in_dir, dataset, split , "eval_results-per_sample-latest.tsv")
             os.makedirs(os.path.dirname(results_tsv_fn_leaderboard_repo), exist_ok=True)
             
             save_metrics_tsv(df_eval_results_all, results_tsv_fn_leaderboard_repo)
@@ -130,10 +132,13 @@ def generate_agg_eval_metrics_subsets(config_user, config_common, config_runtime
     bigos_eval_data_dir = config_user["PATHS"]["BIGOS_EVAL_DATA_REPO_PATH"]
     print("bigos_eval_data_dir", bigos_eval_data_dir)
 
-    eval_in_dir = os.path.join(bigos_eval_data_dir,"eval_input")
-    eval_out_dir_common = os.path.join(bigos_eval_data_dir, "eval_output/per_dataset/", eval_run_codename)
-
+    eval_in_dir = os.path.join(bigos_eval_data_dir, "eval_input")
+    eval_out_dir_common = os.path.join(bigos_eval_data_dir, "eval_output/per_sample/", eval_run_codename)
+    leaderboard_in_dir = os.path.join(bigos_eval_data_dir, "leaderboard_input")
+    os.makedirs(leaderboard_in_dir, exist_ok=True)
     os.makedirs(eval_out_dir_common, exist_ok=True)
+
+
     # initialize empty dataframe for storing all evaluation metrics
     df_eval_results_all = pd.DataFrame([])
     # for specified eval configuration, calculate evaluation metrics for each dataset, subset, split, system and model
@@ -184,8 +189,8 @@ def generate_agg_eval_metrics_subsets(config_user, config_common, config_runtime
             
             save_metrics_tsv(df_eval_results_all, fn_eval_results_agg + ".tsv")
 
-            results_tsv_fn_leaderboard_repo = os.path.join(bigos_eval_data_dir, dataset, split, eval_run_codename, "eval_results-per_dataset-" + datetime.now().strftime("%Y%m%d") + ".tsv")
-            results_tsv_fn_leaderboard_latest = os.path.join(bigos_eval_data_dir, dataset, split, "eval_results-per_dataset-latest.tsv")
+            results_tsv_fn_leaderboard_repo = os.path.join(leaderboard_in_dir, dataset, split, eval_run_codename, "eval_results-per_dataset-" + datetime.now().strftime("%Y%m%d") + ".tsv")
+            results_tsv_fn_leaderboard_latest = os.path.join(leaderboard_in_dir, dataset, split, "eval_results-per_dataset-latest.tsv")
             os.makedirs(os.path.dirname(results_tsv_fn_leaderboard_repo), exist_ok=True)
             
             save_metrics_tsv(df_eval_results_all, results_tsv_fn_leaderboard_repo)
