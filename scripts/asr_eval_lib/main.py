@@ -30,21 +30,12 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
 
-    if (args.eval_config == "BIGOS"):
-        config_runtime_file = os.path.join(script_dir, '../../config/eval-run-specific/bigos-default.json')
-    elif (args.eval_config == "PELCRA"):
-        config_runtime_file = os.path.join(script_dir, '../../config/eval-run-specific/pelcra-default.json')
-    elif (args.eval_config == "TEST"):
-        config_runtime_file = os.path.join(script_dir, '../../config/eval-run-specific/test.json')
-    elif (args.eval_config == "AMU-MED"):
-        config_runtime_file = os.path.join(script_dir, '../../config/eval-run-specific/amumed-tts.json')
-    elif (args.eval_config == "DIAGNOSTIC"):
-        config_runtime_file = os.path.join(script_dir, '../../config/eval-run-specific/bigos-diagnostic.json')
-        
-    else:
-        print("Unknown runtime name. Exiting.")
+    try:
+        config_runtime_file = os.path.join(script_dir, '../../config/eval-run-specific/{}.json'.format(args.eval_config))
+    except:
+        print("Error: Config file not found for the runtime")
         exit(1)
-    
+
     force = args.force
     
     print("config_runtime_file", config_runtime_file)
