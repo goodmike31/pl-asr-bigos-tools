@@ -44,29 +44,29 @@ ll.
 To validate if configuration is valid, run: make test
 
 ### Running all evaluation steps
-To run all evaluation steps for a specific project:
-make eval-e2e PROJECT=<project_name>
+To run all evaluation steps for a specific runtime_config:
+make eval-e2e RUNTIME_CONFIG=<runtime_config_name>
 
-To force the evaluation for all projects:
+To force the evaluation for all runtime_configs:
 make eval-e2e-force-all
 
-To run the evaluation for all projects:
+To run the evaluation for all runtime_configs:
 make eval-e2e-all
-To force the evaluation for a specific project:
-make eval-e2e-force PROJECT=<project_name>
+To force the evaluation for a specific runtime_config:
+make eval-e2e-force RUNTIME_CONFIG=<runtime_config_name>
 
 ### Running specific evaluation step
 Generate report with generated
-make hyps-stats PROJECT=<project_name>
+make hyps-stats RUNTIME_CONFIG=<runtime_config_name>
 
 ### Replicating BIGOS V2 benchmark results 
 To run evaluation for BIGOS V2 dataset run:
-make eval-e2e PROJECT=BIGOS
+make eval-e2e RUNTIME_CONFIG=bigos
 To replicate exact results, contact micjun@amu.edu.pl to obtain copy of ASR hypotheses.
 
 ### Replicating PELCRA for BIGOS benchmark results
 To run evaluation for PELCRA for BIGOS dataset run:
-make eval-e2e PROJECT=PELCRA
+make eval-e2e RUNTIME_CONFIG=pelcra
 To replicate exact results, contact micjun@amu.edu.pl to obtain copy of ASR hypotheses.
 
 ### Runtime Configuration Creation/Modification
@@ -79,9 +79,11 @@ Create new file with the implementation of new ASR system based on "base_asr_sys
 Add reference to the new ASR system in the "scripts/asr_eval_lib/asr_systems/__init__.py".
 
 ### Adding new dataset to the BIGOS benchmark
-Modify or add new configuration in the "config/eval-run-specific".
-Make sure that referenced dataset follows the BIGOS format and is publicly available.
-
+Open existing config for already supported dataset e.g. "config/eval-run-specific/bigos.json
+Modify it and save as the new configuration as "config/eval-run-specific/<dataset_name>.json".
+Make sure that new dataset follows the BIGOS format and is publicly available.
+To run the evaluation for new dataset:
+make eval-e2e RUNTIME_CONFIG=<dataset_name>
 ### Generating TTS Synthetic Test Set 
 To generate a synthetic test set:
 make tts-set-gen TTS_SET=<tts_set_name>
