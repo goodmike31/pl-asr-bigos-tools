@@ -1,9 +1,9 @@
 
 # RUNTIME CONFIGURATION
-RUNTIME_CONFIGS = bigos pelcra bigos-med bigos-diagnostic
+EVAL_CONFIGS = bigos pelcra bigos-med bigos-diagnostic
 
 # USER CONFIGURATION - ASR EVALUATION
-RUNTIME_CONFIG ?= 
+EVAL_CONFIG ?= 
 DATASET_SUBSET ?= 
 SPLIT ?= 
 
@@ -39,83 +39,83 @@ test:
 	done
 
 eval-e2e-all-force:
-	@for runtime_config in $(RUNTIME_CONFIGS); do \
+	@for runtime_config in $(EVAL_CONFIGS); do \
 		echo "Running e2e eval pipeline for runtime_config $$runtime_config"; \
 		python scripts/asr_eval_lib/main.py --eval_config=$$runtime_config --force=True; \
 	done
 
 eval-e2e-all:
-	@for runtime_config in $(RUNTIME_CONFIGS); do \
+	@for runtime_config in $(EVAL_CONFIGS); do \
 		echo "Running e2e eval pipeline for runtime_config $$runtime_config"; \
 		python scripts/asr_eval_lib/main.py --eval_config=$$runtime_config; \
 	done
 
 eval-e2e-force:
 	@echo "Running e2e eval pipeline"
-	@python scripts/asr_eval_lib/main.py --eval_config $(RUNTIME_CONFIG) --force=True
+	@python scripts/asr_eval_lib/main.py --eval_config $(EVAL_CONFIG) --force=True
 
 eval-e2e:
 	@echo "Running e2e eval pipeline"
-	@python scripts/asr_eval_lib/main.py --eval_config $(RUNTIME_CONFIG)
+	@python scripts/asr_eval_lib/main.py --eval_config $(EVAL_CONFIG)
 
 all:
 	@echo "Running e2e eval pipeline"
-	@python scripts/asr_eval_lib/main.py --eval_config $(RUNTIME_CONFIG)
+	@python scripts/asr_eval_lib/main.py --eval_config $(EVAL_CONFIG)
 
 # Eval prep flows - ASR hyps generation
 hyps-stats:
 	@echo "Running hyps stats flow"
-	@python scripts/asr_eval_lib/main.py --flow="HYP_STATS" --eval_config=$(RUNTIME_CONFIG)
+	@python scripts/asr_eval_lib/main.py --flow="HYP_STATS" --eval_config=$(EVAL_CONFIG)
 	@cat $(HYPS_STATS_FILE)
 
 hyp-gen:
 	@echo "Running hyps generation flow"
-	@python scripts/asr_eval_lib/main.py --flow="HYP_GEN" --eval_config=$(RUNTIME_CONFIG)
+	@python scripts/asr_eval_lib/main.py --flow="HYP_GEN" --eval_config=$(EVAL_CONFIG)
 
 
 #################################################################
 
 # Eval prep flows - ASR hyps input preparation
 eval-data-prep-all-force:
-	@for runtime_config in $(RUNTIME_CONFIGS); do \
+	@for runtime_config in $(EVAL_CONFIGS); do \
 		echo "Running eval prep flow for runtime_config $$runtime_config"; \
 		python scripts/asr_eval_lib/main.py --flow=EVAL_PREP --eval_config=$$runtime_config --force=True; \
 	done
 	
 eval-data-prep-all:
-	@for runtime_config in $(RUNTIME_CONFIGS); do \
+	@for runtime_config in $(EVAL_CONFIGS); do \
 		echo "Running eval prep flow for runtime_config $$runtime_config"; \
 		python scripts/asr_eval_lib/main.py --flow=EVAL_PREP --eval_config=$$runtime_config; \
 	done
 
 eval-data-prep:
 	@echo "Running eval prep flow"
-	@python scripts/asr_eval_lib/main.py --flow="EVAL_PREP" --eval_config=$(RUNTIME_CONFIG)
+	@python scripts/asr_eval_lib/main.py --flow="EVAL_PREP" --eval_config=$(EVAL_CONFIG)
 
 eval-data-prep-force:
 	@echo "Running eval prep flow"
-	@python scripts/asr_eval_lib/main.py --flow="EVAL_PREP" --eval_config=$(RUNTIME_CONFIG) --force=True
+	@python scripts/asr_eval_lib/main.py --flow="EVAL_PREP" --eval_config=$(EVAL_CONFIG) --force=True
 
 # Evaluation flows - metrics calculation
 eval-scores-gen-all-force:
-	@for runtime_config in $(RUNTIME_CONFIGS); do \
+	@for runtime_config in $(EVAL_CONFIGS); do \
 		echo "Running eval run flow for runtime_config $$runtime_config"; \
 		python scripts/asr_eval_lib/main.py --flow=EVAL_RUN --eval_config=$$runtime_config --force=True; \
 	done
 
 eval-scores-gen-all:
-	@for runtime_config in $(RUNTIME_CONFIGS); do \
+	@for runtime_config in $(EVAL_CONFIGS); do \
 		echo "Running eval run flow for runtime_config $$runtime_config"; \
 		python scripts/asr_eval_lib/main.py --flow=EVAL_RUN --eval_config=$$runtime_config; \
 	done
 
 eval-scores-gen:
 	@echo "Running eval run flow"
-	@python scripts/asr_eval_lib/main.py --flow=EVAL_RUN --eval_config=$(RUNTIME_CONFIG)
+	@python scripts/asr_eval_lib/main.py --flow=EVAL_RUN --eval_config=$(EVAL_CONFIG)
 
 eval-scores-gen-force:
 	@echo "Running eval run flow with forced generation of hyps"
-	@python scripts/asr_eval_lib/main.py --flow=EVAL_RUN --eval_config=$(RUNTIME_CONFIG) --force=True
+	@python scripts/asr_eval_lib/main.py --flow=EVAL_RUN --eval_config=$(EVAL_CONFIG) --force=True
 
 # Eval prep - synthetic speech recordings
 tts-set-gen:

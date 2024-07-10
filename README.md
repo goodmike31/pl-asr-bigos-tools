@@ -45,10 +45,10 @@ To validate if configuration is valid, run: make test
 
 ### Use-cases
 #### Running all evaluation steps
-To run all evaluation steps for a specific runtime_config:
-make eval-e2e RUNTIME_CONFIG=<runtime_config_name>
+To run all evaluation steps for a specific eval_config:
+make eval-e2e EVAL_CONFIG=<eval_config_name>
 
-To run the evaluation for all runtime_configs:
+To run the evaluation for all eval_configs:
 make eval-e2e-all
 
 #### Running specific evaluation step
@@ -56,7 +56,7 @@ make eval-e2e-all
 
 
 ##### Generate report about ASR hypotheses 
-make hyps-stats RUNTIME_CONFIG=<runtime_config_name>
+make hyps-stats EVAL_CONFIG=<eval_config_name>
 
 #####
 
@@ -66,20 +66,20 @@ make hyps-stats RUNTIME_CONFIG=<runtime_config_name>
 By default, if specific intermediary results exists, the processing is skipped.
 To force regeneration of hypotheses, evaluation scores calculation etc, completent the command with "force"
 For example:
-To force the evaluation for all runtime_configs:
+To force the evaluation for all eval_configs:
 make eval-e2e-all-force
 
-To force the evaluation for a specific runtime_config:
-make eval-e2e-force RUNTIME_CONFIG=<runtime_config_name>
+To force the evaluation for a specific eval_config:
+make eval-e2e-force EVAL_CONFIG=<eval_config_name>
 
 ### Replicating BIGOS V2 benchmark results 
 To run evaluation for BIGOS V2 dataset run:
-make eval-e2e RUNTIME_CONFIG=bigos
+make eval-e2e EVAL_CONFIG=bigos
 To replicate exact results, contact micjun@amu.edu.pl to obtain copy of ASR hypotheses.
 
 ### Replicating PELCRA for BIGOS benchmark results
 To run evaluation for PELCRA for BIGOS dataset run:
-make eval-e2e RUNTIME_CONFIG=pelcra
+make eval-e2e EVAL_CONFIG=pelcra
 To replicate exact results, contact micjun@amu.edu.pl to obtain copy of ASR hypotheses.
 
 ### Runtime Configuration Creation/Modification
@@ -96,7 +96,7 @@ Open existing config for already supported dataset e.g. "config/eval-scores-gen-
 Modify it and save as the new configuration as "config/eval-scores-gen-specific/<dataset_name>.json".
 Make sure that new dataset follows the BIGOS format and is publicly available.
 To run the evaluation for new dataset:
-make eval-e2e RUNTIME_CONFIG=<dataset_name>
+make eval-e2e EVAL_CONFIG=<dataset_name>
 ### Generating TTS Synthetic Test Set 
 To generate a synthetic test set:
 make tts-set-gen TTS_SET=<tts_set_name>
