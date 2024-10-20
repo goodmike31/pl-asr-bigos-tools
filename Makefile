@@ -1,6 +1,6 @@
 
 # RUNTIME CONFIGURATION
-EVAL_CONFIGS = bigos pelcra bigos-med bigos-diagnostic
+EVAL_CONFIGS = test bigos pelcra bigos-med bigos-diagnostic
 
 # USER CONFIGURATION - ASR EVALUATION
 EVAL_CONFIG ?= 
@@ -68,9 +68,18 @@ hyps-stats:
 	@python scripts/asr_eval_lib/main.py --flow="HYP_STATS" --eval_config=$(EVAL_CONFIG)
 	@cat $(HYPS_STATS_FILE)
 
+hyps-stats-force:
+	@echo "Running hyps stats flow"
+	@python scripts/asr_eval_lib/main.py --flow="HYP_STATS" --eval_config=$(EVAL_CONFIG) --force_hyps=True
+	@cat $(HYPS_STATS_FILE)
+
 hyp-gen:
 	@echo "Running hyps generation flow"
 	@python scripts/asr_eval_lib/main.py --flow="HYP_GEN" --eval_config=$(EVAL_CONFIG)
+
+hyp-gen-force:
+	@echo "Running hyps generation flow"
+	@python scripts/asr_eval_lib/main.py --flow="HYP_GEN" --eval_config=$(EVAL_CONFIG) --force_hyps=True
 
 
 #################################################################
@@ -125,3 +134,17 @@ tts-set-gen:
 sde-manifest:
 	@echo "Showing manifest for DATASET_SUBSET=$(DATASET_SUBSET) SPLIT=$(SPLIT) in SDE tool"
 	@python $(SDE_PATH) -a $(NEMO_MANIFEST_DIR)/$(DATASET_SUBSET)-$(SPLIT).jsonl
+
+# Prepare dataset for manual inspection in Argilla
+
+prep-eval-results-inspection:
+	@echo "Preparing manual inspection of eval results for EVAL_CONFIG=$(EVAL_CONFIG)"
+	@python scripts/asr_eval_lib/main.py --eval_config=$(EVAL_CONFIG) --flow="PREP_EVAL_RESULTS_INSPECTION"
+
+# Save manual inspection results in Argilla as separate HF dataset
+
+# TODO - Save manual inspection results on Hugging Face hub
+
+# TODO - Post-process manual inspection results to include on Leaderboard
+# TODO - Automatic eval results post-processing
+# TODO - preannotate ASR errors

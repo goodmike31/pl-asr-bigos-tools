@@ -3,7 +3,7 @@ from prefect_flows.tasks import load_hf_dataset_split, gen_hyps_from_audio_sampl
 from asr_systems import initialize_asr_system
 
 @flow(name="ASR Hypothesis Generation Flow")
-def asr_hyp_gen(config_user, config_common, config_runtime):
+def asr_hyp_gen(config_user, config_common, config_runtime, force_hyps=False):
 
     datasets = config_runtime["datasets"]
     subsets = config_runtime["subsets"]
@@ -32,5 +32,5 @@ def asr_hyp_gen(config_user, config_common, config_runtime):
                         audio_paths = hf_dataset["audiopath_local"]
                         # limit the number of audio paths for testing
                         audio_paths = audio_paths[:max_samples_per_subset]
-                        gen_hyps = gen_hyps_from_audio_samples(audio_paths, asr_system)
+                        gen_hyps = gen_hyps_from_audio_samples(audio_paths, asr_system, force_hyps)
                         print("Generated or retrieved hypotheses for {} samples for subset: {}\n and split: {}\n".format(len(gen_hyps), subset, split) )

@@ -31,3 +31,6 @@ pyannote.metrics
 editdistance
 ipython
 assemblyai
+argilla
+huggingface-hub==0.23.2
+pydub

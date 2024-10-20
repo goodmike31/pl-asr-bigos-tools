@@ -8,6 +8,9 @@
     "eval_metrics": ["lexical"],
     "ref_types": ["orig"],
     "norm_types": ["none", "all", "lowercase", "blanks", "punct", "dict"],
+    "sampling_settings_for_manual_inspection": {"random": 3},
+    "norm_types_for_manual_inspection": ["all"],
+    "metadata_for_manual_inspection": ["all"],
     "systems": 
     {
             

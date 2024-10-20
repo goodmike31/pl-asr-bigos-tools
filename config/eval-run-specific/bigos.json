@@ -8,8 +8,15 @@
     "eval_metrics": ["lexical"],
     "ref_types": ["orig"],
     "norm_types": ["none", "all", "lowercase", "blanks", "punct", "dict", "tags"],
+    "sampling_settings_for_manual_inspection": {"random": 3},
+    "norm_types_for_manual_inspection": ["all"],
     "systems": 
     {
+
+        "nemo":{
+            "models": ["stt_pl_quartznet15x5", "stt_multilingual_fastconformer_hybrid_large_pc", "stt_pl_fastconformer_hybrid_large_pc"],
+            "versions": ["2024Q1"]
+            },
             
         "assembly_ai":{
             "models": ["nano", "best"],
@@ -28,11 +35,6 @@
 
         "azure":{ 
             "models": ["latest"],
-            "versions": ["2024Q1"]
-            },
-
-        "nemo":{
-            "models": ["stt_pl_fastconformer_hybrid_large_pc", "stt_pl_quartznet15x5", "stt_multilingual_fastconformer_hybrid_large_pc"],
             "versions": ["2024Q1"]
             },
 

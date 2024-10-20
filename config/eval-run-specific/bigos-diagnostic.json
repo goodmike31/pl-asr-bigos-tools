@@ -4,10 +4,13 @@
     "datasets": ["amu-cai/pl-asr-bigos-v2-diagnostic"],
     "subsets": ["pjatk-clarin_mobile-15", "pjatk-clarin_studio-15", "mailabs-corpus_librivox-19", "pwr-azon_read-20", "pwr-azon_spont-20", "pwr-maleset-unk", "pwr-viu-unk", "pwr-shortwords-unk", "google-fleurs-22", "polyai-minds14-21"],
     "splits": ["test", "validation", "train"],
-    "max_samples_per_subset": 200,
+    "max_samples_per_subset_to_evaluate": 200,
     "eval_metrics": ["lexical"],
     "ref_types": ["orig", "written", "spoken"],
     "norm_types": ["none", "all", "lowercase", "blanks", "punct", "dict"],
+    "sampling_settings_for_manual_inspection": {"random": 3},
+    "norm_types_for_manual_inspection": ["all"],
+    "metadata_for_manual_inspection": ["all"],
     "systems": 
     {
             
