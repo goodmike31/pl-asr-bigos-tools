@@ -1,4 +1,5 @@
 {
+    "audio_format_argilla": "mp3",
     "BIGOS_CORPORA": ["amu-cai/pl-asr-bigos-v2", "pelcra/pl-asr-pelcra-for-bigos"],
     "amu-cai/pl-asr-bigos-v2":
     {

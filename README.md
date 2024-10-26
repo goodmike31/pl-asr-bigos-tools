@@ -41,7 +41,9 @@ You need to provide user-specific configuration e.g. Cloud API keys.
 To do so edit "template.ini" and save as "config.ini" (`./config/user-specific/config.ini`)
 ll.
 
-To validate if configuration is valid, run: make test
+To validate if configuration is valid, run:
+make test-force-hyp
+make test
 
 ### Use-cases
 #### Running all evaluation steps
@@ -88,8 +90,9 @@ To add new or edit existing runtime configuration go to "config/eval-scores-gen-
 
 ### Adding new ASR system to the BIGOS benchmark
 See exemplary implementations of ASR systems classes in scripts/asr_eval_lib/asr_systems.
-Create new file with the implementation of new ASR system based on "base_asr_system.py" class.
+Create new file with the implementation of new ASR system based on "template_asr_system.py" script.
 Add reference to the new ASR system in the "scripts/asr_eval_lib/asr_systems/__init__.py".
+Update dependecies in the requirements.txt. 
 
 ### Adding new dataset to the BIGOS benchmark
 Open existing config for already supported dataset e.g. "config/eval-scores-gen-specific/bigos.json

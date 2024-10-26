@@ -41,6 +41,9 @@ class BaseASRSystem:
         #"{}Q{}".format(self.year, self.quarter)
         
         self.codename = "{}_{}".format(system.lower(), model.lower())
+        #remove "/" from codename
+        self.codename = self.codename.replace("/", "_")
+        
         self.name = "{} - {}".format(system.upper(), model.upper())
         print("Initializing ASR system {}, model {}, version {}".format(system, model, self.version))
 
@@ -63,12 +66,19 @@ class BaseASRSystem:
         return self.model
     
     # TODO consider saving only ID of file and dataset name, not the full path, to make cache reusable across systems
-    def process_audio(self, speech_file:str) -> str:
+    def process_audio(self, speech_file:str, force_hyps) -> str:
         # Load the audio into memory
         print("Processing audio with {}".format(self.get_name()))
         print("Filename:", os.path.basename(speech_file))
         print("Path:", speech_file)
-        audio_duration = round(librosa.get_duration(path=speech_file),2)
+
+        # check librosa version
+        print("Librosa version: ", librosa.__version__)
+        if librosa.__version__ < "0.10.0":
+            audio_duration = round(librosa.get_duration(path=speech_file),2)
+        else:
+            audio_duration = round(librosa.get_duration(filename=speech_file),2)
+        
         print("Audio duration [s]: ", audio_duration)
 
         # Check if the files exists
@@ -84,21 +94,21 @@ class BaseASRSystem:
             print("Audio length exceeds max allowed duration of {} seconds. Skipping".format(self.max_audio_length_to_process_sec))
             return ""
 
-        # Load results from cache if possible
-        print("Checking cache:")
-        asr_hyp = self.get_hyp_from_cache(speech_file, self.version)
+        if not force_hyps:
+            # Load results from cache if possible
+            print("Checking cache:")
+            asr_hyp = self.get_hyp_from_cache(speech_file, self.version)
 
-
-        # Generate new hypothesis if cache is empty or None
-        if asr_hyp is None:
-            print("Hypothesis in cache not available. Generating new hypothesis.")
-        elif asr_hyp == "INVALID":
-            print("Hypothesis in cache is invalid. Generating new hypothesis.")
-        elif asr_hyp == "":
-            print("Hypothesis in cache is the empty string. Generating new hypothesis.")
-        else:
-            print("Hypothesis in cache is VALID: {}. Returning.".format(asr_hyp))
-            return asr_hyp
+            # Generate new hypothesis if cache is empty or None
+            if asr_hyp is None:
+                print("Hypothesis in cache not available. Generating new hypothesis.")
+            elif asr_hyp == "INVALID":
+                print("Hypothesis in cache is invalid. Generating new hypothesis.")
+            elif asr_hyp == "":
+                print("Hypothesis in cache is the empty string. Generating new hypothesis.")
+            else:
+                print("Hypothesis in cache is VALID: {}. Returning.".format(asr_hyp))
+                return asr_hyp
 
         asr_hyp = self.generate_asr_hyp(speech_file)
         print("NEW ASR hypothesis: ", asr_hyp)
@@ -120,8 +130,10 @@ class BaseASRSystem:
                 print("ASR hypothesis is None AGAIN. Saving value INVALID in cache.")
                 self.update_cache(speech_file, "INVALID")
                 return "INVALID"
-
-        self.update_cache(speech_file, asr_hyp)
+        else:
+            print("Non empty hyp - saving in cache.")
+            self.update_cache(speech_file, asr_hyp)
+        
         return asr_hyp
             
         

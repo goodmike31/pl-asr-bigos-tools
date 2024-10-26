@@ -1,0 +1,151 @@
+{
+    "guidelines": "Inspect ASR evaluation results and data.",
+    "questions": [
+      {
+        "id": null,
+        "name": "error_types",
+        "settings": {
+          "type": "multi_label_selection",
+          "options": [
+            { "text": "OK - no errors", "value": "none" },
+            { "text": "Spacing", "value": "spacing" },
+            { "text": "Punctuation", "value": "punctuation" },
+            { "text": "Numerical", "value": "numerical" },
+            { "text": "Missing words", "value": "removal" },
+            { "text": "Added words", "value": "addition" },
+            { "text": "Replaced words", "value": "replacement" },
+            { "text": "Spelling error", "value": "spelling" },
+            { "text": "Syntax error", "value": "syntax" },
+            { "text": "Foreign language related", "value": "foreign_language" },
+            { "text": "Empty hypothesis", "value": "empty" },
+            { "text": "Hallucination", "value": "hallucination" }
+          ],
+          "visible_options": 10,
+          "options_order": "natural"
+        },
+        "title": "Mark all ASR errors present in the hypothesis or select OK - no errors.",
+        "description": "Select all that apply.",
+        "required": true,
+        "inserted_at": null,
+        "updated_at": null,
+        "type": "multi_label_selection"
+      },
+      {
+        "id": null,
+        "name": "asr_error",
+        "settings": {
+          "type": "span",
+          "allow_overlapping": false,
+          "field": "hyp",
+          "options": [
+            { "text": "Major - Impairs correct understanding", "value": "major" },
+            {
+              "text": "Minor - Negligible impact on understanding",
+              "value": "minor"
+            }
+          ],
+          "visible_options": null
+        },
+        "title": "If applicable, mark error spans in ASR hypothesis.",
+        "description": "Mark and classify ASR errors.",
+        "required": false,
+        "inserted_at": null,
+        "updated_at": null,
+        "type": "span"
+      },
+      {
+        "id": null,
+        "name": "ref_issue",
+        "settings": {
+          "type": "label_selection",
+          "options": [
+            { "text": "Minor - normalization, spelling", "value": "minor" },
+            { "text": "Major - syntax, semantics", "value": "major" },
+            {
+              "text": "Critical - incomplete, gibberish, etc.",
+              "value": "critical"
+            }
+          ],
+          "visible_options": 3
+        },
+        "title": "If applicable, mark issues in reference.",
+        "description": null,
+        "required": false,
+        "inserted_at": null,
+        "updated_at": null,
+        "type": "label_selection"
+      },
+      {
+        "id": null,
+        "name": "audio_issue",
+        "settings": {
+          "type": "label_selection",
+          "options": [
+            {
+              "text": "Invalid audio (too short, corrupted, cut-off, etc.)",
+              "value": "invalid"
+            },
+            {
+              "text": "Hard to comprehend due to background noise",
+              "value": "hard_noise"
+            },
+            {
+              "text": "Hard to comprehend due to interlocutor (accent, hesitations, mumbling etc.)",
+              "value": "hard_interlocutor"
+            }
+          ],
+          "visible_options": 3
+        },
+        "title": "If applicable, mark issues in audio.",
+        "description": null,
+        "required": false,
+        "inserted_at": null,
+        "updated_at": null,
+        "type": "label_selection"
+      }
+    ],
+    "fields": [
+      {
+        "id": null,
+        "inserted_at": null,
+        "updated_at": null,
+        "name": "audio",
+        "settings": { "type": "text", "use_markdown": true },
+        "title": "Audio file",
+        "required": true,
+        "description": "Audio file containing the speech utterance.",
+        "dataset_id": null,
+        "type": "text"
+      },
+      {
+        "id": null,
+        "inserted_at": null,
+        "updated_at": null,
+        "name": "hyp",
+        "settings": { "type": "text", "use_markdown": false },
+        "title": "ASR output",
+        "required": true,
+        "description": "ASR output used for evaluation.",
+        "dataset_id": null,
+        "type": "text"
+      },
+      {
+        "id": null,
+        "inserted_at": null,
+        "updated_at": null,
+        "name": "ref",
+        "settings": { "type": "text", "use_markdown": false },
+        "title": "Reference transcription",
+        "required": true,
+        "description": "Reference transcription of speech used for evaluation.",
+        "dataset_id": null,
+        "type": "text"
+      }
+    ],
+    "vectors": [],
+    "metadata": [],
+    "allow_extra_metadata": true,
+    "distribution": { "strategy": "overlap", "min_submitted": 1 },
+    "mapping": null
+  }
+  
