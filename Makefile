@@ -30,10 +30,18 @@ HYPS_STATS_FILE = $(LOCAL_DATA_DIR)/asr_hyps_cache/stats/cached_hyps_stats-$(DAT
 
 .PHONY: eval-e2e test
 
+test-force-hyps:
+	@echo "Running tests"
+	# @python -m pytest tests/
+	@for runtime_config in test; do \
+		echo "Running e2e eval pipeline for runtime_config $$runtime_config"; \
+		python scripts/asr_eval_lib/main.py --eval_config=$$runtime_config --force=True --force_hyps=True; \
+	done
+
 test:
 	@echo "Running tests"
 	# @python -m pytest tests/
-	@for runtime_config in TEST; do \
+	@for runtime_config in test; do \
 		echo "Running e2e eval pipeline for runtime_config $$runtime_config"; \
 		python scripts/asr_eval_lib/main.py --eval_config=$$runtime_config --force=True; \
 	done
