@@ -12,6 +12,10 @@
     "norm_types_for_manual_inspection": ["all"],
     "systems": 
     {
+        "owsm_local":{
+            "models": ["espnet/owsm_v3.2","espnet/owsm_v3.1_ebf", "espnet/owsm_v3.1_ebf_base", "espnet/owsm_v3", "espnet/owsm_v2", "espnet/owsm_v1"],
+            "versions": ["  2024Q1"]
+            },
 
         "nemo":{
             "models": ["stt_pl_quartznet15x5", "stt_multilingual_fastconformer_hybrid_large_pc", "stt_pl_fastconformer_hybrid_large_pc"],

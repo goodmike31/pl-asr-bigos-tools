@@ -1,6 +1,6 @@
 
 # RUNTIME CONFIGURATION
-EVAL_CONFIGS = test bigos pelcra bigos-med bigos-diagnostic
+EVAL_CONFIGS = bigos pelcra bigos-med bigos-diagnostic
 
 # USER CONFIGURATION - ASR EVALUATION
 EVAL_CONFIG ?= 

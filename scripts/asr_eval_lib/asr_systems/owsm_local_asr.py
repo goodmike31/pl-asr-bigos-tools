@@ -11,23 +11,31 @@ class OWSMLocalASR(BaseASRSystem):
     
         device = "cuda" if torch.cuda.is_available() else "cpu"
         # temporary solution to avoid crashing the GPU on local machine
-        device = "cpu"
+        #device = "cpu"
 
         if not torch.cuda.is_available():
             raise Warning("Please use GPU for better inference speed.")
 
         #change to CPU for large models which crushes the GPU
-        #if model in [] 
         self.language_code = self.map_language_code(language_code)
         print("Language code: ", self.language_code)
 
-
+        #default decoder for default device
         s2t = Speech2Text.from_pretrained(
             model,
             device=device,
             lang_sym=self.language_code
         )
+        
         self.s2t = s2t
+
+        # fallback CPU
+        s2t_cpu = Speech2Text.from_pretrained(
+            model,
+            device="cpu",
+            lang_sym=self.language_code
+        )
+        self.s2t_cpu = s2t_cpu
 
     def map_language_code(self, language_code):
         # modify the way you map the language code
@@ -39,6 +47,7 @@ class OWSMLocalASR(BaseASRSystem):
     
 
     def generate_asr_hyp(self, speech_file):
+        
         try:
             print ("Generate ASR hyp function for ASR system: {} .\n Generating hypothesis for: {}".format(self.codename, speech_file))
 
@@ -52,8 +61,18 @@ class OWSMLocalASR(BaseASRSystem):
 
             print("Hyp:", hyp)
         except Exception as e:
-            print(f"Other error: {e}")
-            exit()
+            print("Default device generation fail. Using CPU")
+            try:
+                speech, rate = soundfile.read(speech_file)
+                result = self.s2t_cpu(speech)
+                text = result[0][-2]
+                print("text:", text)
+                hyp = text[4:]
+                print("Hyp:", hyp)
+
+            except Exception as e:
+                print(f"Other error: {e}")
+                exit()
         
         self.update_cache(speech_file, hyp)
         return hyp
