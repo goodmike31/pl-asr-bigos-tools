@@ -13,6 +13,10 @@
     "metadata_for_manual_inspection": ["all"],
     "systems": 
     {
+        "owsm_local":{
+            "models": ["espnet/owsm_v1", "espnet/owsm_v2", "espnet/owsm_v2_ebranchformer", "espnet/owsm_v3", "espnet/owsm_v3.1_ebf_base", "espnet/owsm_v3.1_ebf_small_lowrestriction",  "espnet/owsm_v3.2"],
+            "versions": ["  2024Q1"]
+            },
             
         "assembly_ai":{
             "models": ["nano", "best"],
@@ -35,7 +39,7 @@
             },
 
         "nemo":{
-            "models": ["stt_pl_fastconformer_hybrid_large_pc", "stt_pl_quartznet15x5", "stt_multilingual_fastconformer_hybrid_large_pc"],
+            "models": ["stt_pl_fastconformer_hybrid_large_pc", "stt_multilingual_fastconformer_hybrid_large_pc", "stt_pl_quartznet15x5"],
             "versions": ["2024Q1"]
             },
 
