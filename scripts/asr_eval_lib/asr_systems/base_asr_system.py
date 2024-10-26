@@ -41,6 +41,9 @@ class BaseASRSystem:
         #"{}Q{}".format(self.year, self.quarter)
         
         self.codename = "{}_{}".format(system.lower(), model.lower())
+        #remove "/" from codename
+        self.codename = self.codename.replace("/", "_")
+        
         self.name = "{} - {}".format(system.upper(), model.upper())
         print("Initializing ASR system {}, model {}, version {}".format(system, model, self.version))
 
@@ -68,7 +71,14 @@ class BaseASRSystem:
         print("Processing audio with {}".format(self.get_name()))
         print("Filename:", os.path.basename(speech_file))
         print("Path:", speech_file)
-        audio_duration = round(librosa.get_duration(path=speech_file),2)
+
+        # check librosa version
+        print("Librosa version: ", librosa.__version__)
+        if librosa.__version__ < "0.10.0":
+            audio_duration = round(librosa.get_duration(path=speech_file),2)
+        else:
+            audio_duration = round(librosa.get_duration(filename=speech_file),2)
+        
         print("Audio duration [s]: ", audio_duration)
 
         # Check if the files exists

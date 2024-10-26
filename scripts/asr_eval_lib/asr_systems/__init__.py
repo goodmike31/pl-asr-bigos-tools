@@ -9,6 +9,8 @@ from .facebook_mms_local import FacebookMMS
 from .facebook_wav2vec import FacebookWav2Vec
 from .nvidia_nemo_asr import NvidiaNemoASR
 from .assembly_ai_asr import AssemblyAIASR
+from .owsm_local_asr import OWSMLocalASR
+# if you added a new ASR system, import it here
 
 def initialize_asr_system(system, model, config_file):
     return asr_system_factory(system, model, config_file)
@@ -47,6 +49,11 @@ def asr_system_factory(system, model, config):
     
     elif system == 'nemo':
         return NvidiaNemoASR(system, model)
+
+    elif system == 'owsm_local':
+        return OWSMLocalASR(system, model)
     
+    # Add your ASR system here
+       
     else:
         raise ValueError(f"Unknown ASR system type: {system}")
