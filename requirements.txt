@@ -34,3 +34,9 @@ assemblyai
 argilla
 huggingface-hub==0.23.2
 pydub
+git+https://github.com/espnet/espnet
+espnet_model_zoo
+torchaudio --index-url https://download.pytorch.org/whl/cu118
+torch --index-url https://download.pytorch.org/whl/cu118
+wheel
+ninja
