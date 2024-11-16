@@ -1,7 +1,7 @@
 {
     "name":"BIGOS",
     "eval_run_codename": "alpha",
-    "datasets": ["michaljunczyk/test_A_poleval_24"],
+    "datasets": ["michaljunczyk/test_B_poleval_24"],
     "subsets": ["default"],
     "splits": ["test"],
     "max_samples_per_subset": 2500,
