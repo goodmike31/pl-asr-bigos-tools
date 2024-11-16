@@ -48,31 +48,62 @@ class OWSMLocalASR(BaseASRSystem):
 
     def generate_asr_hyp(self, speech_file):
         
-        try:
-            print ("Generate ASR hyp function for ASR system: {} .\n Generating hypothesis for: {}".format(self.codename, speech_file))
-
-            speech, rate = soundfile.read(speech_file)
-            result = self.s2t(speech)
-            text = result[0][-2]
-            print("text:", text)
+        # check audio duration
+        duration = librosa.get_duration(filename=speech_file)
+        if duration < 30:
+            print("Audio duration is less than 30s. Normal decoding")
             
-            # remove token with language code from the hypothesis
-            hyp = text[4:]
+            try:
+                print ("Generate ASR hyp function for ASR system: {} .\n Generating hypothesis for: {}".format(self.codename, speech_file))
 
-            print("Hyp:", hyp)
-        except Exception as e:
-            print("Default device generation fail. Using CPU")
+                speech, rate = soundfile.read(speech_file)
+                result = self.s2t(speech)
+                text = result[0][-2]
+                print("text:", text)
+                
+                # remove token with language code from the hypothesis
+                hyp = text[4:]
+
+                print("Hyp:", hyp)
+            except Exception as e:
+                print("Default device generation fail. Using CPU")
+                try:
+                    speech, rate = soundfile.read(speech_file)
+                    result = self.s2t_cpu(speech)
+                    text = result[0][-2]
+                    print("text:", text)
+                    hyp = text[4:]
+                    print("Hyp:", hyp)
+
+                except Exception as e:
+                    print(f"Other error: {e}")
+                    exit()
+        else:
+            print("Audio duration is more than 30s. Using decode_long function.")
             try:
                 speech, rate = soundfile.read(speech_file)
-                result = self.s2t_cpu(speech)
-                text = result[0][-2]
+                result = self.s2t.decode_long(speech)
+                # given the list of tuples (start_time, end_time, text) in result, extract all text_fields and join them as single string
+                text = " ".join([x[2] for x in result])
+
                 print("text:", text)
                 hyp = text[4:]
                 print("Hyp:", hyp)
 
             except Exception as e:
-                print(f"Other error: {e}")
-                exit()
-        
+                print("Default device generation fail for long audio. Using CPU")
+                try:
+                    speech, rate = soundfile.read(speech_file)
+                    result = self.s2t_cpu.decode_long(speech)
+                    text = " ".join([x[2] for x in result])
+                    print("text:", text)
+                    hyp = text[4:]
+                    print("Hyp:", hyp)
+
+                except Exception as e:
+                    print(f"Other error: {e}")
+                    exit()
+                
         self.update_cache(speech_file, hyp)
         return hyp
+    

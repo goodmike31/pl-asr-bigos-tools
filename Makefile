@@ -1,6 +1,8 @@
 
 # RUNTIME CONFIGURATION
-EVAL_CONFIGS = bigos pelcra bigos-med bigos-diagnostic
+EVAL_CONFIGS = poleval_test_a
+#bigos pelcra
+# bigos-med bigos-diagnostic
 
 # USER CONFIGURATION - ASR EVALUATION
 EVAL_CONFIG ?= 

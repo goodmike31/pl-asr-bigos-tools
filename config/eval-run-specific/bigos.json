@@ -13,7 +13,7 @@
     "systems": 
     {
         "owsm_local":{
-            "models": ["espnet/owsm_v3.2","espnet/owsm_v3.1_ebf", "espnet/owsm_v3.1_ebf_base", "espnet/owsm_v3", "espnet/owsm_v2", "espnet/owsm_v1"],
+            "models": ["espnet/owsm_v3.2", "espnet/owsm_v3.1_ebf_base", "espnet/owsm_v3", "espnet/owsm_v2", "espnet/owsm_v1"],
             "versions": ["  2024Q1"]
             },
 
