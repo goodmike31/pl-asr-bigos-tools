@@ -9,8 +9,8 @@
 
 ## News
 - [02/25/2025] 🚀 Added support for OWSM (Open Whisper-style Speech Models) ASR system
-- [01/15/2025] 🚀 Released updated evaluation results on the [Polish ASR leaderboard](https://huggingface.co/spaces/amu-cai/pl-asr-leaderboard)
 - [12/10/2024] 🚀 Published BIGOS benchmark paper in NeurIPS Datasets and Benchmarks Track
+- [12/01/2024] 🚀 Released updated PolEval evaluation results on the [Polish ASR leaderboard](https://huggingface.co/spaces/amu-cai/pl-asr-leaderboard)
 
 ## Overview
 BIGOS (Benchmark Intended Grouping of Open Speech) is a framework for evaluating Automatic Speech Recognition (ASR) systems on Polish language datasets. It provides tools for:
