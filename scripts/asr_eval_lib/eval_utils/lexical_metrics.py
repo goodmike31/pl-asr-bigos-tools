@@ -66,6 +66,7 @@ def prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm, norm_lexicon=None):
     print("Number of non-empty hypotheses: ", len(df_eval_input))
     
     # remove hypothesis with values EMPTY or INVALID
+    # TODO - move filtering logic to config
     df_eval_input = df_eval_input[df_eval_input[hyp_col] != "EMPTY"]
     df_eval_input = df_eval_input[df_eval_input[hyp_col] != "INVALID"]
     print("Number of non-empty hypotheses after filtering out EMPTY and INVALID: ", len(df_eval_input))
@@ -192,7 +193,10 @@ def get_lexical_metrics_per_sample(df_eval_input, dataset, subset, split, system
         # TODO consider adding more metadata e.g. audio duration, etc.
         # calculate audio_duration
         audio_path = audio_paths[index]
-        audio_duration = round(librosa.get_duration(path=audio_path),2)
+        if librosa.__version__ < "0.10.0":
+            audio_duration = round(librosa.get_duration(path=audio_path),2)
+        else:
+            audio_duration = round(librosa.get_duration(filename=audio_path),2)
         #print("Audio duration: ", audio_duration)
 
         id = ids[index]
