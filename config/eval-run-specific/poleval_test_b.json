@@ -4,24 +4,30 @@
     "datasets": ["michaljunczyk/test_B_poleval_24"],
     "subsets": ["default"],
     "splits": ["test"],
-    "max_samples_per_subset": 2500,
+    "max_samples_per_subset": 5000,
     "eval_metrics": ["lexical"],
     "ref_types": ["orig"],
-    "norm_types": ["none", "all", "lowercase", "blanks", "punct", "dict", "tags"],
+    "norm_types": ["none", "all", "lowercase", "blanks", "punct"],
     "sampling_settings_for_manual_inspection": {"random": 3},
     "norm_types_for_manual_inspection": ["all"],
     "systems": 
     {
-        "nemo":{
-            "models": ["stt_pl_quartznet15x5", "stt_multilingual_fastconformer_hybrid_large_pc", "stt_pl_fastconformer_hybrid_large_pc"],
-            "versions": ["2024Q1"]
-            },
-            
+                    
         "assembly_ai":{
             "models": ["nano", "best"],
             "versions": ["2024Q1"]
             },
-        
+            
+        "nemo":{
+                "models": ["stt_pl_quartznet15x5", "stt_multilingual_fastconformer_hybrid_large_pc", "stt_pl_fastconformer_hybrid_large_pc"],
+                "versions": ["2024Q1"]
+                },
+         
+        "whisper_local":{ 
+                "models": ["tiny", "base", "small", "medium", "large"],
+                "versions": ["2024Q1"]
+                },
+                
         "google": { 
             "models": ["default", "command_and_search", "latest_long", "latest_short"],
             "versions": ["2024Q1"]
@@ -49,11 +55,6 @@
 
         "whisper_cloud":{ 
             "models": ["whisper-1"],
-            "versions": ["2024Q1"]
-            },
-            
-        "whisper_local":{ 
-            "models": ["tiny", "base", "small", "medium", "large", "large-v1", "large-v2"],
             "versions": ["2024Q1"]
             }
 
