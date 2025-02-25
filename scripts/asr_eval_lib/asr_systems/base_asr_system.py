@@ -103,7 +103,8 @@ class BaseASRSystem:
             if asr_hyp is None:
                 print("Hypothesis in cache not available. Generating new hypothesis.")
             elif asr_hyp == "INVALID":
-                print("Hypothesis in cache is invalid. Generating new hypothesis.")
+                print("Hypothesis in cache is invalid. Skipping.")
+                return "INVALID"
             elif asr_hyp == "":
                 print("Hypothesis in cache is the empty string. Generating new hypothesis.")
             else:
