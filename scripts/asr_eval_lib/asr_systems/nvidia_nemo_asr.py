@@ -1,6 +1,11 @@
 from .base_asr_system import BaseASRSystem
 import nemo.collections.asr as nemo_asr
 
+import torch
+
+torch.cuda.empty_cache()
+
+
 class NvidiaNemoASR(BaseASRSystem):
     def __init__(self, system, model, language_code:str = "pl-PL",sampling_rate:int = 16000) -> None:
         super().__init__(system, model, language_code)
