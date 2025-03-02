@@ -177,7 +177,7 @@ The framework is designed to work with datasets in the BIGOS format:
 The following TODO items represent ongoing development priorities:
 
 ### Documentation
-- [ ] Add detailed docstrings to all classes and functions
+- [x] Add detailed docstrings to all classes and functions
 - [ ] Create a comprehensive API reference
 - [ ] Add examples for extending with new metrics
 - [ ] Document the data format specification in detail
