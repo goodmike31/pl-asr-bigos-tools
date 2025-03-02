@@ -1,7 +1,7 @@
 # BIGOS - Benchmark for Polish ASR Systems
 
 <div align="center">
-  <a href="https://arxiv.org/pdf/2406.20094"><img src="https://img.shields.io/badge/Paper-arXiv-red" alt="arXiv"></a>
+  <a href="https://proceedings.neurips.cc/paper_files/paper/2024/hash/69bddcea866e8210cf483769841282dd-Abstract-Datasets_and_Benchmarks_Track.html"><img src="https://upload.wikimedia.org/wikipedia/en/0/08/Logo_for_Conference_on_Neural_Information_Processing_Systems.svg" alt="NeurIPS"></a>
   <a href="https://huggingface.co/datasets/amu-cai/pl-asr-bigos-v2"><img src="https://img.shields.io/badge/Dataset-%F0%9F%A4%97%20Hugging_Face-yellow" alt="Hugging Face"></a>
   <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="https://img.shields.io/badge/Data%20License-CC_BY_NC_SA_4.0-blue" alt="Data License"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/Code%20License-MIT-blue" alt="Code License"></a>
