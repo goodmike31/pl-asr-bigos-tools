@@ -1,9 +1,33 @@
+"""
+ASR Hypothesis Generation Flow Module.
+
+This module contains Prefect flows for generating ASR hypotheses from audio samples
+using specified ASR systems and models on various datasets.
+"""
+
 from prefect import flow
 from prefect_flows.tasks import load_hf_dataset_split, gen_hyps_from_audio_samples
 from asr_systems import initialize_asr_system
 
 @flow(name="ASR Hypothesis Generation Flow")
 def asr_hyp_gen(config_user, config_common, config_runtime, force_hyps=False):
+    """
+    Prefect flow that generates ASR hypotheses for audio samples.
+    
+    This flow initializes ASR systems for each specified model, loads datasets,
+    and either generates new hypotheses or retrieves existing ones for each audio sample.
+    
+    Args:
+        config_user (dict): User-specific configuration settings.
+        config_common (dict): Common configuration settings shared across runs.
+        config_runtime (dict): Runtime configuration containing datasets, subsets, 
+                               splits, systems, and sample limits.
+        force_hyps (bool, optional): If True, force regeneration of hypotheses 
+                                    even if they already exist. Defaults to False.
+    
+    Returns:
+        None: Results are generated as side effects (files saved to disk).
+    """
 
     datasets = config_runtime["datasets"]
     subsets = config_runtime["subsets"]

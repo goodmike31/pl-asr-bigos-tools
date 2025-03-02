@@ -6,6 +6,7 @@ import argparse
 import pandas as pd
 import jiwer
 
+#TODO - merge with bigos_utils_eval file and rename to "helpers.py"
 
 postnorm_types=["none", "lower_case","blanks","punct", "all"]
 

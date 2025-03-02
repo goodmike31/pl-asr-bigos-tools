@@ -21,40 +21,33 @@ config_user = read_config_ini(config_user_path)
 bigos_eval_data_dir = config_user["PATHS"]["BIGOS_EVAL_DATA_REPO_PATH"]
 
 class BaseASRSystem:
-    """
-    Base class for all ASR systems in the BIGOS benchmark.
+    """Base class for all ASR system implementations in the BIGOS framework.
     
-    This class provides common functionality for all ASR systems including:
-    - Caching of previously processed audio samples
-    - Interface for processing audio and generating transcriptions
-    - Version control for ASR systems
-    - Standard methods for retrieving system information
-    
-    All ASR system implementations should inherit from this class and 
-    implement the generate_asr_hyp method.
+    This abstract class defines the common interface that all ASR system implementations
+    must adhere to. It handles caching of ASR results and provides common functionality
+    for processing audio samples.
     
     Attributes:
-        system (str): Name of the ASR system (e.g., "google", "azure")
-        model (str): Name of the specific model being used
-        language_code (str): ISO language code (e.g., "pl-PL")
-        version (str): Version identifier (YearQuarter format)
-        codename (str): Unique identifier for this system and model
-        name (str): Human-readable name of the system
-        cache (dict): Cache of processed audio samples
-        max_audio_length_to_process_sec (int): Maximum audio duration to process in seconds
-        bigos_eval_data_dir (str): Directory for storing evaluation data
-        common_cache_dir (str): Directory for storing cached hypotheses
-        cache_file (str): Path to the cache file for this ASR system
+        system (str): Identifier for the ASR system type (e.g., 'google', 'azure').
+        model (str): The specific model of the ASR system being used.
+        language_code (str): Language code in format supported by the ASR system.
+        max_audio_length_to_process_sec (int): Maximum audio duration in seconds to process.
+        bigos_eval_data_dir (str): Directory path for storing evaluation data.
+        version (str): Version of the ASR system in YYQ format (year and quarter).
+        codename (str): Unique identifier for this ASR system and model combination.
+        name (str): Human-readable name for this ASR system.
+        common_cache_dir (str): Directory for storing cached hypotheses.
+        cache (dict): Dictionary storing cached transcription results.
+        cache_file (str): Path to the cache file on disk.
     """
-
-    def __init__(self, system, model, language_code) -> None:
-        """
-        Initialize the ASR system.
+    
+    def __init__(self, system, model, language_code):
+        """Initialize the ASR system with basic parameters.
         
         Args:
-            system (str): Name of the ASR system
-            model (str): Name of the specific model being used
-            language_code (str): ISO language code (e.g., "pl-PL")
+            system (str): Identifier for the ASR system type (e.g., 'google', 'azure').
+            model (str): The specific model of the ASR system being used.
+            language_code (str): Language code in format supported by the ASR system.
         """
         self.system = system
         self.model = model
@@ -96,30 +89,25 @@ class BaseASRSystem:
             print("Cache file does not exist")
             
     def get_model(self):
-        """
-        Get the model name.
+        """Get the model identifier for this ASR system.
         
         Returns:
-            str: The model name
+            str: The model identifier.
         """
         return self.model
     
-    def process_audio(self, speech_file: str, force_hyps) -> str:
-        """
-        Process an audio file and return the transcription.
+    def process_audio(self, speech_file, force_hyps):
+        """Process an audio file and return transcription result.
         
-        This method handles the caching logic and calls generate_asr_hyp()
-        which should be implemented by subclasses. It also handles various
-        error conditions and edge cases like empty files or files that are
-        too long.
+        This method handles caching logic and delegates the actual transcription
+        to the generate_asr_hyp method which must be implemented by subclasses.
         
         Args:
-            speech_file (str): Path to the audio file
-            force_hyps (bool): Whether to force generation of new hypotheses
-                               regardless of cache status
+            speech_file (str): Path to the audio file to transcribe.
+            force_hyps (bool): If True, ignore the cache and force regeneration of hypothesis.
             
         Returns:
-            str: Transcription text or error indicator ("EMPTY" or "INVALID")
+            str: The transcription result, or "EMPTY"/"INVALID" for problematic cases.
         """
         # Load the audio into memory
         print("Processing audio with {}".format(self.get_name()))
@@ -189,56 +177,50 @@ class BaseASRSystem:
             self.update_cache(speech_file, asr_hyp)
         
         return asr_hyp
-            
+        
     def get_name(self):
-        """
-        Get the human-readable name of the system.
+        """Get the human-readable name of this ASR system.
         
         Returns:
-            str: Human-readable name combining system and model
+            str: The system name.
         """
         return self.name
     
     def get_codename(self):
-        """
-        Get the system codename (unique identifier).
+        """Get the unique codename for this ASR system and model combination.
         
         Returns:
-            str: System codename
+            str: The system codename.
         """
         return self.codename
     
     def get_system(self):
-        """
-        Get the system name.
+        """Get the system identifier.
         
         Returns:
-            str: System name
+            str: The system identifier.
         """
         return self.system
     
     def get_version(self):
-        """
-        Get the system version.
+        """Get the version of this ASR system.
         
         Returns:
-            str: System version in YearQuarter format
+            str: The version in YYQ format.
         """
         return self.version
     
     def get_hyp_from_cache(self, audio_path, version):
-        """
-        Retrieve a hypothesis from the cache for the given audio path and version.
+        """Retrieve a cached hypothesis for the given audio file if available.
         
-        This method first tries to find the exact audio path in the cache. If not found,
-        it will try to match by filename only.
+        Attempts to find a cached hypothesis by exact audio path or by filename.
         
         Args:
-            audio_path (str): Full path to the audio file
-            version (str): Version of the ASR system
+            audio_path (str): Path to the audio file.
+            version (str): Version of the ASR system to look for in the cache.
             
         Returns:
-            str or None: The cached hypothesis or None if not found
+            str or None: The cached hypothesis if found, None otherwise.
         """
         # check if audio sample is in cache
         #print("Checking if audio path is in cache.")
@@ -275,12 +257,11 @@ class BaseASRSystem:
             return None
     
     def update_cache(self, audio_path, asr_hyp):
-        """
-        Update the cache with a new hypothesis.
+        """Update the cache with a new hypothesis.
         
         Args:
-            audio_path (str): Path to the audio file
-            asr_hyp (str): ASR hypothesis to cache
+            audio_path (str): Path to the audio file.
+            asr_hyp (str): The ASR hypothesis to cache.
         """
         metadata = {
             'asr_hyp': asr_hyp,
@@ -295,9 +276,7 @@ class BaseASRSystem:
         self.save_cache()
     
     def save_cache(self):
-        """
-        Save the cache to disk in JSONL format.
-        """
+        """Save the current cache to disk in JSONL format."""
         print("Saving cache")
         with open(self.cache_file, "w") as f:
             # save as JSONL file
@@ -307,27 +286,26 @@ class BaseASRSystem:
                 f.write("\n")
 
     def get_cached_hyps(self):
-        """
-        Get all cached hypotheses.
+        """Get all cached hypotheses.
         
         Returns:
-            dict: Dictionary of all cached hypotheses
+            dict: Dictionary of all cached hypotheses.
         """
         return self.cache
-    
+
     def generate_asr_hyp(self, speech_file):
-        """
-        Generate an ASR hypothesis for the given audio file.
+        """Generate ASR hypothesis for a given audio file.
         
-        This method must be implemented by subclasses.
+        This method must be implemented by all subclasses to provide
+        system-specific transcription logic.
         
         Args:
-            speech_file (str): Path to the audio file
+            speech_file (str): Path to the audio file to transcribe.
             
         Returns:
-            str: The ASR hypothesis
+            str: The transcription result.
             
         Raises:
-            NotImplementedError: If the subclass does not implement this method
+            NotImplementedError: If the subclass doesn't implement this method.
         """
-        raise NotImplementedError("Subclasses must implement the generate_asr_hyp method")
+        raise NotImplementedError("Subclasses must implement generate_asr_hyp")

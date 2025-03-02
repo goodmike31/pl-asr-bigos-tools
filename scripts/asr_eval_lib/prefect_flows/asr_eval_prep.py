@@ -9,11 +9,36 @@ from config_utils import get_config_run
 import os
 
 """
-Input: dataset refs + hyps.cache
-Output: eval_input.tsv with all available ref types and hyps for each dataset, subset, split, system, model, version
+ASR Evaluation Preparation Module
 
+This module provides functionality for preparing evaluation input files from cached ASR hypothesis results.
+It processes datasets and their splits, applying specific ASR system configurations to generate
+standardized evaluation input files (TSVs) that contain reference transcriptions and hypotheses.
+
+Input: dataset references and hypothesis cache files
+Output: eval_input.tsv with all available reference types and hypotheses for each dataset, subset, split, system, model, version
 """
+
 def generate_eval_input(config_user, config_common, config_runtime, force=False):
+    """
+    Generate evaluation input files for ASR systems evaluation.
+    
+    This function processes datasets according to configuration parameters and generates TSV files
+    containing reference transcriptions and hypotheses for evaluation. For each combination of
+    dataset, subset, split, ASR system, model and version, it creates a separate evaluation input file.
+    
+    Args:
+        config_user (dict): User configuration containing paths and environment settings
+        config_common (dict): Common configuration settings shared across different runs
+        config_runtime (dict): Runtime configuration with dataset and system specifications
+        force (bool, optional): If True, overwrites existing evaluation input files. Defaults to False.
+        
+    Returns:
+        None: The function writes output files to the filesystem based on configuration
+        
+    Note:
+        The output is saved as TSV files at paths determined by the configuration and system parameters.
+    """
     script_dir = os.path.dirname(os.path.realpath(__file__))
     datasets, subsets, splits, systems, eval_run_codename = get_config_run(config_runtime)
     max_samples_per_subset = config_runtime["max_samples_per_subset"]
@@ -53,4 +78,27 @@ def generate_eval_input(config_user, config_common, config_runtime, force=False)
 
 @flow(name="ASR Evaluation Preparation Flow")
 def asr_eval_prep(config_user, config_common, config_runtime, force):
+    """
+    Prefect flow for ASR evaluation preparation.
+    
+    This flow orchestrates the evaluation preparation process by calling the generate_eval_input function
+    with the provided configuration parameters.
+    
+    Args:
+        config_user (dict): User configuration containing paths and environment settings
+        config_common (dict): Common configuration settings shared across different runs
+        config_runtime (dict): Runtime configuration with dataset and system specifications
+        force (bool): If True, overwrites existing evaluation input files
+        
+    Returns:
+        None: The flow generates output files based on the configuration
+        
+    Example:
+        To run this flow:
+        ```python
+        from prefect_flows.asr_eval_prep import asr_eval_prep
+        
+        asr_eval_prep(config_user, config_common, config_runtime, force=False)
+        ```
+    """
     generate_eval_input(config_user, config_common, config_runtime, force)
