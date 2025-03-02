@@ -1,7 +1,7 @@
 # BIGOS - Benchmark for Polish ASR Systems
 
 <div align="center">
-  <a href="https://proceedings.neurips.cc/paper_files/paper/2024/hash/69bddcea866e8210cf483769841282dd-Abstract-Datasets_and_Benchmarks_Track.html"><img src="" alt="Paper"></a>
+  <a href="https://proceedings.neurips.cc/paper_files/paper/2024/hash/69bddcea866e8210cf483769841282dd-Abstract-Datasets_and_Benchmarks_Track.html"><img src="https://img.shields.io/badge/Code%20License-MIT-grey" alt="Paper"></a>
   <a href="https://huggingface.co/datasets/amu-cai/pl-asr-bigos-v2"><img src="https://img.shields.io/badge/Dataset-%F0%9F%A4%97%20Hugging_Face-yellow" alt="Hugging Face"></a>
   <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="https://img.shields.io/badge/Data%20License-CC_BY_NC_SA_4.0-blue" alt="Data License"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/Code%20License-MIT-blue" alt="Code License"></a>
@@ -9,7 +9,7 @@
 
 ## News
 - [02/25/2025] 🚀 Added support for OWSM (Open Whisper-style Speech Models) ASR system
-- [12/10/2024] 🚀 Published BIGOS benchmark paper in NeurIPS Datasets and Benchmarks Track
+- [12/10/2024] 🚀 Published BIGOS benchmark paper in NeurIPS Datasets and Benchmarks Track 2024
 - [12/01/2024] 🚀 Released updated PolEval evaluation results on the [Polish ASR leaderboard](https://huggingface.co/spaces/amu-cai/pl-asr-leaderboard)
 
 ## Overview
