@@ -1,3 +1,10 @@
+"""
+Generate NeMo-compatible manifest files from HuggingFace datasets.
+
+This script converts HuggingFace datasets into NeMo manifest files in JSONL format.
+It can convert all datasets, subsets, and splits defined in the common configuration file
+or specific ones provided as command-line arguments.
+"""
 import json
 import os
 import sys
@@ -8,10 +15,17 @@ import configparser
 def hf_to_nemo_manifest(hf_dataset)->dict:  
     """
     Converts a Hugging Face dataset to a NeMo manifest.
+    
     Parameters:
     -----------
     hf_dataset: Hugging Face dataset
         Single subset and split of HF dataset to be converted.
+    
+    Returns:
+    --------
+    list:
+        List of dictionaries, where each dictionary represents a sample in the NeMo manifest format
+        with keys: 'audio_filepath', 'duration', 'text', 'audioname', and 'speaker_id'.
     """
     manifest = []
     sampling_rate=hf_dataset.features['audio'].sampling_rate
@@ -44,6 +58,16 @@ def hf_to_nemo_manifest(hf_dataset)->dict:
     return manifest
 
 def save_manifest_as_jsonl(manifest_dict, target_file):
+    """
+    Saves a manifest dictionary as a JSONL file.
+    
+    Parameters:
+    -----------
+    manifest_dict: list
+        List of dictionaries representing the NeMo manifest.
+    target_file: str
+        Path where the JSONL manifest will be saved.
+    """
     with open(target_file, 'w') as f:
         for sample in manifest_dict:
             json.dump(sample, f)
@@ -52,14 +76,23 @@ def save_manifest_as_jsonl(manifest_dict, target_file):
 
 def convert_hf_to_nemo(dataset_id, subset, split, target_dir=None):
     """
-    Converts a Hugging Face dataset to a NeMo manifest.
+    Converts a Hugging Face dataset to a NeMo manifest and saves it as a JSONL file.
+    
     Parameters:
     -----------
+    dataset_id: str
+        Identifier of the Hugging Face dataset to convert.
     subset: str
-        Name of a subset taken from subsets.    # if duration is not provided, calculate it from the audio array
-    
+        Name of a subset taken from subsets.
     split: str
         Name of a split taken from BIGOS_SPLITS.
+    target_dir: str, optional
+        Directory where the manifest will be saved. If None, uses current directory.
+    
+    Returns:
+    --------
+    None
+        The function saves the manifest to disk and doesn't return any value.
     """
     target_file = os.path.join(target_dir, subset + "-" + split + '.jsonl')
     

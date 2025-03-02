@@ -1,0 +1,26 @@
+{
+    "name":"TEST",
+    "eval_run_codename": "test",
+    "datasets": ["amu-cai/pl-asr-bigos-v2-secret"],
+    "subsets": ["polyai-minds14-21"],
+    "splits": ["test"],
+    "max_samples_per_subset": 3,
+    "eval_metrics": ["lexical"],
+    "ref_types": ["orig"],
+    "norm_types": ["none", "all", "lowercase", "blanks", "punct", "dict", "tags"],
+    "sampling_settings_for_manual_inspection": {"random": 3},
+    "norm_types_for_manual_inspection": ["all"],
+    "metadata_for_manual_inspection": ["all"],
+    "systems": 
+    {
+        "owsm_local":{
+            "models": ["espnet/owsm_v3.2","espnet/owsm_v3.1_ebf", "espnet/owsm_v3.1_ebf_base", "espnet/owsm_v3", "espnet/owsm_v2", "espnet/owsm_v1"],
+            "versions": ["  2024Q1"]
+            },
+        
+        "nemo":{
+                "models": ["stt_pl_fastconformer_hybrid_large_pc", "stt_multilingual_fastconformer_hybrid_large_pc", "stt_pl_quartznet15x5"],
+                "versions": ["2024Q1"]
+                }
+        }
+}

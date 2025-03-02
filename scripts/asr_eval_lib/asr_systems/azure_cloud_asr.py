@@ -2,7 +2,25 @@ from .base_asr_system import BaseASRSystem
 from azure.cognitiveservices.speech import SpeechConfig, SpeechRecognizer, AudioConfig, ResultReason, CancellationReason
 
 class AzureCloudASR(BaseASRSystem):
+    """Microsoft Azure Speech Service implementation for the BIGOS framework.
+    
+    Provides integration with the Microsoft Azure Speech-to-Text API.
+    
+    Attributes:
+        speech_config (SpeechConfig): Azure speech recognition configuration.
+    """
+    
     def __init__(self, system, model, credentials:str, region:str, language_code:str = "pl-PL", sampling_rate:int = 16000) -> None:
+        """Initialize the Azure Speech Service ASR system.
+        
+        Args:
+            system (str): Identifier for the ASR system type ('azure').
+            model (str): The specific model to use.
+            credentials (str): Azure Speech Service subscription key.
+            region (str): Azure region for the Speech Service.
+            language_code (str, optional): Language code. Defaults to "pl-PL".
+            sampling_rate (int, optional): Audio sampling rate. Defaults to 16000.
+        """
         super().__init__(system, model, language_code)
 
         # Set up the speech sdk configuration
@@ -10,7 +28,14 @@ class AzureCloudASR(BaseASRSystem):
         self.speech_config.speech_recognition_language=language_code
         
     def generate_asr_hyp(self, speech_file):
-
+        """Generate transcription for an audio file using Azure Speech Service.
+        
+        Args:
+            speech_file (str): Path to the audio file to transcribe.
+            
+        Returns:
+            str: The transcription result.
+        """
         try:
             audio_config = AudioConfig(filename=speech_file)
             recognizer = SpeechRecognizer(speech_config=self.speech_config, audio_config=audio_config)

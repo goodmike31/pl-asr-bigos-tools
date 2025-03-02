@@ -4,6 +4,7 @@ import pandas as pd
 import librosa
 import os
 
+# Define transformations for text normalization
 transf_all = jiwer.Compose([
     jiwer.ToLowerCase(),
     jiwer.RemoveWhiteSpace(replace_by_space=True),
@@ -31,6 +32,16 @@ transf_punc = jiwer.Compose([
 
 # Function to replace words
 def replace_words(sentence, replacement_dict):
+    """
+    Replace words in a sentence based on a provided dictionary.
+    
+    Args:
+        sentence (str): Input sentence where words need to be replaced.
+        replacement_dict (dict): Dictionary mapping words to their replacements.
+        
+    Returns:
+        str: Sentence with words replaced according to the dictionary.
+    """
     print("Lexicon - Words in: ", sentence)
   
     words = sentence.split()
@@ -41,6 +52,17 @@ def replace_words(sentence, replacement_dict):
     return replaced_sentence
 
 def remove_tags(sentence, tags=["<unk>", "<silence>", "trunc"]):
+    """
+    Remove specified tags from a sentence, both standalone and embedded in words.
+    
+    Args:
+        sentence (str): Input sentence containing tags to be removed.
+        tags (list): List of tag strings to remove from the sentence. 
+                    Default: ["<unk>", "<silence>", "trunc"]
+        
+    Returns:
+        str: Sentence with all tags removed.
+    """
     print("Tags - Words in: ", sentence)
     words = sentence.split()
     
@@ -58,7 +80,22 @@ def remove_tags(sentence, tags=["<unk>", "<silence>", "trunc"]):
     return without_glued_tags
 
 def prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm, norm_lexicon=None):
+    """
+    Prepare reference and hypothesis pairs for evaluation by applying normalization
+    and filtering out invalid entries.
     
+    Args:
+        df_eval_input (pandas.DataFrame): DataFrame containing reference and hypothesis columns.
+        ref_col (str): Name of the reference column.
+        hyp_col (str): Name of the hypothesis column.
+        norm (str): Type of normalization to apply ('none', 'lowercase', 'blanks', 
+                   'punct', 'tags', 'dict', or 'all').
+        norm_lexicon (dict, optional): Dictionary for lexicon-based normalization. Default is None.
+        
+    Returns:
+        tuple: (references, hypotheses, ids, audio_paths) - Lists containing the processed
+               reference and hypothesis texts, sample IDs, and paths to audio files.
+    """
     # get masking vector for non-empty hypotheses
     non_empty_hyps = df_eval_input[hyp_col].notnull()
     # filter out non-empty hypotheses from dataframe
@@ -168,6 +205,24 @@ def prepare_refs_hyps(df_eval_input, ref_col, hyp_col, norm, norm_lexicon=None):
     return ref, hyp, ids, audio_paths
 
 def get_lexical_metrics_per_sample(df_eval_input, dataset, subset, split, system_codename, ref_type, norm, norm_lexicon = None)->pd.DataFrame:
+    """
+    Calculate speech recognition metrics for each individual sample.
+    
+    Args:
+        df_eval_input (pandas.DataFrame): DataFrame with reference and hypothesis data.
+        dataset (str): Name of the dataset.
+        subset (str): Subset of the dataset.
+        split (str): Data split (e.g., 'train', 'test', 'val').
+        system_codename (str): Identifier for the ASR system.
+        ref_type (str): Type of reference (e.g., 'original', 'normalized').
+        norm (str): Normalization type applied.
+        norm_lexicon (dict, optional): Dictionary for lexicon-based normalization. Default is None.
+        
+    Returns:
+        pandas.DataFrame: DataFrame with speech metrics for each sample, including
+                         Word Information Lost (WIL), Match Error Rate (MER), 
+                         Word Error Rate (WER), and Character Error Rate (CER).
+    """
     print("Calculating metrics for individual sentences for dataset:\nDataset: {}\nSubset: {}\nSplit: {}\nSystem: {}\nRef_type: {}\nNormalization: {}\n".format(dataset, subset, split, system_codename, ref_type, norm))
     # assume that the input dataframe   
     # a. was prefiltered accordingly to the proper business logic e.g. only test set, only specific subset, etc.
@@ -225,7 +280,24 @@ def get_lexical_metrics_per_sample(df_eval_input, dataset, subset, split, system
 
     
 def get_lexical_metrics_per_dataset(df_eval_input, dataset, subset, split, system_codename, ref_type, norm, norm_lexicon)->pd.DataFrame:
-
+    """
+    Calculate aggregated speech recognition metrics across an entire dataset.
+    
+    Args:
+        df_eval_input (pandas.DataFrame): DataFrame with reference and hypothesis data.
+        dataset (str): Name of the dataset.
+        subset (str): Subset of the dataset.
+        split (str): Data split (e.g., 'train', 'test', 'val').
+        system_codename (str): Identifier for the ASR system.
+        ref_type (str): Type of reference (e.g., 'original', 'normalized').
+        norm (str): Normalization type applied.
+        norm_lexicon (dict, optional): Dictionary for lexicon-based normalization.
+        
+    Returns:
+        pandas.DataFrame: DataFrame with aggregated metrics including Sentence Error Rate (SER),
+                         Word Information Lost (WIL), Match Error Rate (MER), Word Error Rate (WER),
+                         and Character Error Rate (CER).
+    """
     # TODO consider moving to config
     # TODO consider standardizing the names of transformations
     # TODO consider splitting into specific metrics
@@ -283,6 +355,19 @@ def get_lexical_metrics_per_dataset(df_eval_input, dataset, subset, split, syste
     return df_results
 
 def get_lexical_metrics_per_dataset_all_ref_types(df_eval_input, dataset_codename, system_codename, norm, norm_lexicon = None)-> pd.DataFrame:
+    """
+    Calculate metrics across all reference types for a given dataset and ASR system.
+    
+    Args:
+        df_eval_input (pandas.DataFrame): DataFrame with reference and hypothesis data.
+        dataset_codename (str): Name of the dataset.
+        system_codename (str): Identifier for the ASR system.
+        norm (str): Normalization type applied.
+        norm_lexicon (dict, optional): Dictionary for lexicon-based normalization. Default is None.
+        
+    Returns:
+        pandas.DataFrame: Combined DataFrame with metrics for all reference types.
+    """
     df_results = pd.DataFrame([])
 
     ref_cols = [col for col in df_eval_input.columns if col.startswith('ref')]
@@ -295,6 +380,19 @@ def get_lexical_metrics_per_dataset_all_ref_types(df_eval_input, dataset_codenam
     return(df_results)
 
 def get_lexical_metrics_per_dataset_all_systems(df_eval_input, dataset_codename, ref_type, norm, norm_lexicon = None)-> pd.DataFrame:
+    """
+    Calculate metrics for all ASR systems on a given dataset and reference type.
+    
+    Args:
+        df_eval_input (pandas.DataFrame): DataFrame with reference and hypothesis data.
+        dataset_codename (str): Name of the dataset.
+        ref_type (str): Type of reference (e.g., 'original', 'normalized').
+        norm (str): Normalization type applied.
+        norm_lexicon (dict, optional): Dictionary for lexicon-based normalization. Default is None.
+        
+    Returns:
+        pandas.DataFrame: Combined DataFrame with metrics for all ASR systems.
+    """
     df_results = pd.DataFrame([])
 
     hyp_cols =  [col for col in df_eval_input.columns if col.startswith('hyp')]
@@ -307,6 +405,18 @@ def get_lexical_metrics_per_dataset_all_systems(df_eval_input, dataset_codename,
     return(df_results)
 
 def get_lexical_metrics_per_sample_all_ref_types(df_eval_input, dataset_codename, system_codename, norm)-> pd.DataFrame:
+    """
+    Calculate per-sample metrics across all reference types for a given dataset and ASR system.
+    
+    Args:
+        df_eval_input (pandas.DataFrame): DataFrame with reference and hypothesis data.
+        dataset_codename (str): Name of the dataset.
+        system_codename (str): Identifier for the ASR system.
+        norm (str): Normalization type applied.
+        
+    Returns:
+        pandas.DataFrame: Combined DataFrame with per-sample metrics for all reference types.
+    """
     df_results = pd.DataFrame([])
 
     ref_cols = [col for col in df_eval_input.columns if col.startswith('ref')]

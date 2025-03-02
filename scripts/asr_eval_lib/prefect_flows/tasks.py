@@ -7,12 +7,32 @@ import os
 
 @task
 def load_config(config_path):
+    """
+    Load configuration from the specified path.
+    
+    Args:
+        config_path (str): Path to the configuration file.
+    
+    Returns:
+        dict: Loaded configuration.
+    """
     # Implement your config loading logic
     pass
     print("Loading config from {}".format(config_path))
 
 @task
 def gen_hyps_from_audio_samples(audio_paths, asr_system, force_hyps):
+    """
+    Generate ASR hypotheses from audio samples.
+    
+    Args:
+        audio_paths (list): List of paths to audio files.
+        asr_system (object): ASR system object with process_audio method.
+        force_hyps (bool): Flag to force generation even if hypotheses exist in cache.
+    
+    Returns:
+        list: Generated ASR hypotheses.
+    """
     asr_hyps = []
     for audiopath in audio_paths:
         print("Processing sample {}".format(audiopath))
@@ -22,11 +42,34 @@ def gen_hyps_from_audio_samples(audio_paths, asr_system, force_hyps):
     return(asr_hyps)
 
 @task
-def load_hf_dataset(dataset_name,subset="all", force_download=False):
+def load_hf_dataset(dataset_name, subset="all", force_download=False):
+    """
+    Load a Hugging Face dataset.
+    
+    Args:
+        dataset_name (str): Name of the dataset to load.
+        subset (str, optional): Subset of the dataset to load. Defaults to "all".
+        force_download (bool, optional): Force download of the dataset. Defaults to False.
+    
+    Returns:
+        Dataset: Loaded Hugging Face dataset.
+    """
     hf_dataset = load_dataset(dataset_name, subset)
     return hf_dataset
 
 def load_hf_dataset_split(dataset_name, subset="all", split='test', force_download=False):
+    """
+    Load a specific split of a Hugging Face dataset.
+    
+    Args:
+        dataset_name (str): Name of the dataset to load.
+        subset (str, optional): Subset of the dataset to load. Defaults to "all".
+        split (str, optional): Split of the dataset to load. Defaults to 'test'.
+        force_download (bool, optional): Force download of the dataset. Defaults to False.
+    
+    Returns:
+        Dataset: Loaded split of the Hugging Face dataset.
+    """
     if force_download:
         hf_dataset = load_dataset(dataset_name, subset, split=split, download_mode="force_redownload")
     else:
@@ -35,21 +78,58 @@ def load_hf_dataset_split(dataset_name, subset="all", split='test', force_downlo
 
 @task
 def select_split_of_dataset(dataset, split):
+    """
+    Select a specific split from a loaded dataset.
+    
+    Args:
+        dataset (Dataset): Loaded dataset.
+        split (str): Split to select (e.g., 'train', 'test', 'validation').
+    
+    Returns:
+        Dataset: Selected split of the dataset.
+    """
     dataset = dataset[split]
     return dataset
 
 @task
 def select_subset_of_dataset(dataset, subset):
+    """
+    Select a subset from a loaded dataset.
+    
+    Args:
+        dataset (Dataset): Loaded dataset.
+        subset (str): Subset to select.
+    
+    Returns:
+        Dataset: Selected subset of the dataset.
+    """
     dataset = dataset[subset]
     return dataset
 
 @task
 def save_results(results):
+    """
+    Save evaluation results.
+    
+    Args:
+        results (object): Results to save.
+    """
     # Implement logic to save results
     pass
 
 @task
 def prepare_eval_input_from_hyps_cache(hf_dataset, asr_system, max_samples_per_subset) -> pd.DataFrame:
+    """
+    Prepare evaluation input dataframe from hypotheses cache.
+    
+    Args:
+        hf_dataset (Dataset): Hugging Face dataset.
+        asr_system (object): ASR system object with methods for retrieving system metadata and hypotheses.
+        max_samples_per_subset (int): Maximum number of samples to include per subset.
+    
+    Returns:
+        pd.DataFrame: DataFrame containing audio paths, ASR system metadata, references, and hypotheses.
+    """
     
     # Implement logic to prepare eval input
     # use audio path columns as index
@@ -82,6 +162,22 @@ def prepare_eval_input_from_hyps_cache(hf_dataset, asr_system, max_samples_per_s
 
 @task
 def calculate_eval_metrics_per_dataset(eval_input_df, dataset, subset, split, system_codename, ref_types=["orig"], norm_types=["all"], norm_lexicon=None):
+    """
+    Calculate evaluation metrics for the entire dataset.
+    
+    Args:
+        eval_input_df (pd.DataFrame): Input DataFrame with references and hypotheses.
+        dataset (str): Dataset name.
+        subset (str): Subset name.
+        split (str): Split name.
+        system_codename (str): ASR system codename.
+        ref_types (list, optional): Types of references to use. Defaults to ["orig"].
+        norm_types (list, optional): Types of normalization to apply. Defaults to ["all"].
+        norm_lexicon (dict, optional): Normalization lexicon. Defaults to None.
+    
+    Returns:
+        pd.DataFrame: DataFrame containing evaluation metrics for the dataset.
+    """
     
     df_eval_results_all= pd.DataFrame()
 
@@ -95,6 +191,22 @@ def calculate_eval_metrics_per_dataset(eval_input_df, dataset, subset, split, sy
 
 @task
 def calculate_eval_metrics_per_sample(eval_input_df, dataset, subset, split, system_codename, ref_types=["orig"], norm_types=["all"], norm_lexicon=None):
+    """
+    Calculate evaluation metrics for each sample individually.
+    
+    Args:
+        eval_input_df (pd.DataFrame): Input DataFrame with references and hypotheses.
+        dataset (str): Dataset name.
+        subset (str): Subset name.
+        split (str): Split name.
+        system_codename (str): ASR system codename.
+        ref_types (list, optional): Types of references to use. Defaults to ["orig"].
+        norm_types (list, optional): Types of normalization to apply. Defaults to ["all"].
+        norm_lexicon (dict, optional): Normalization lexicon. Defaults to None.
+    
+    Returns:
+        pd.DataFrame: DataFrame containing evaluation metrics for each sample.
+    """
     # TODO - add support for different normalization methods and ref_types - provide them as input arguments (list or specific value)?
     #iterate over reference types
     df_eval_results_all= pd.DataFrame()
@@ -109,6 +221,13 @@ def calculate_eval_metrics_per_sample(eval_input_df, dataset, subset, split, sys
 
 @task
 def save_metrics_tsv(df_eval_results, abs_filepath):
+    """
+    Save evaluation metrics to a TSV file.
+    
+    Args:
+        df_eval_results (pd.DataFrame): DataFrame containing evaluation metrics.
+        abs_filepath (str): Absolute path to save the TSV file.
+    """
     # Implement logic to save metrics as TSV
     print("Saving metrics to {}".format(abs_filepath))
     df_eval_results.to_csv(abs_filepath, sep="\t", index=False)
@@ -117,12 +236,31 @@ def save_metrics_tsv(df_eval_results, abs_filepath):
 
 @task
 def save_metrics_json(df_eval_results, abs_filepath):
+    """
+    Save evaluation metrics to a JSON file.
+    
+    Args:
+        df_eval_results (pd.DataFrame): DataFrame containing evaluation metrics.
+        abs_filepath (str): Absolute path to save the JSON file.
+    """
     # Implement logic to save metrics as JSON
     print("Saving metrics to {}".format(abs_filepath))
     df_eval_results.to_json(abs_filepath, orient="records")
 
 @task
 def check_cached_hyps_size_and_coverage(asr_system, audio_paths):
+    """
+    Check the size and coverage of cached hypotheses for a set of audio paths.
+    
+    Args:
+        asr_system (object): ASR system object with methods to get cached hypotheses.
+        audio_paths (list): List of audio paths to check for in the cache.
+    
+    Returns:
+        tuple: A tuple containing (number of cached hypotheses, 
+               number of audio paths found in cache, 
+               number of audio paths missing from cache).
+    """
     # Implement logic to get number of cached hypotheses
     asr_system_codename = asr_system.get_codename()
     cached_hyps = asr_system.get_cached_hyps()
@@ -141,6 +279,17 @@ def check_cached_hyps_size_and_coverage(asr_system, audio_paths):
 
 @task
 def cached_hyps_stats_to_df(cached_hyps_stats):
+    """
+    Convert cached hypotheses statistics to a DataFrame.
+    
+    Args:
+        cached_hyps_stats (dict): Dictionary containing statistics of cached hypotheses
+                                organized by system and dataset.
+    
+    Returns:
+        pd.DataFrame: DataFrame with columns for System, Dataset, Target_Hypotheses,
+                      Common_Hypotheses, Missing_Hypotheses, and Hypothesis_Coverage.
+    """
     data_list_new_format = []
 
     for system, datasets in cached_hyps_stats.items():

@@ -1,3 +1,14 @@
+"""
+ASR Evaluation Manual Inspection Preparation Flow.
+
+This module contains functionality for preparing ASR evaluation results for manual inspection.
+It creates tasks in the Argilla system for annotating evaluation results, allowing for human
+review of ASR system outputs with different sampling strategies.
+
+The flow takes ASR evaluation results containing references, hypotheses, metrics scores, and
+metadata, and creates annotation tasks in the Argilla system.
+"""
+
 from prefect import flow
 from prefect_flows.tasks import load_hf_dataset_split
 import pandas as pd
@@ -12,11 +23,27 @@ import os
 """
 Input: Results from ASR evaluation - per sample. Contains references and hypotheses, metrics scores and metadata.
 Output: Task in argilla system to annotate the evaluation results. If tasks was already created, it will be skipped, unless force=True.
-Dependencies: Credetianls and annotation task configuration for Argilla system.
+Dependencies: Credentials and annotation task configuration for Argilla system.
 Parameters: Number of samples per system to be annotated. Default is 50.
 """
 
 def generate_manual_inspection_tasks(config_user, config_common, config_runtime, force=False):
+    """
+    Generate manual inspection tasks in the Argilla system for ASR evaluation results.
+    
+    Creates annotation tasks for different combinations of systems, datasets, subsets, and splits.
+    Tasks are created with both random sampling and sorted (worst-performing) sampling based on
+    configuration settings.
+    
+    Args:
+        config_user (dict): User-specific configuration containing credentials and paths
+        config_common (dict): Common configuration settings shared across runs
+        config_runtime (dict): Runtime configuration with dataset, systems, and sampling settings
+        force (bool, optional): Whether to force recreation of existing tasks. Defaults to False.
+    
+    Returns:
+        None: Creates Argilla datasets and uploads records for manual inspection
+    """
     script_dir = os.path.dirname(os.path.realpath(__file__))
     datasets, subsets, splits, systems, eval_run_codename = get_config_run(config_runtime)
     sampling_settings = config_runtime["sampling_settings_for_manual_inspection"]
@@ -120,5 +147,20 @@ def generate_manual_inspection_tasks(config_user, config_common, config_runtime,
 
 
 @flow(name="ASR Evaluation Results Inspection Preparation Flow")
-def asr_eval_man_inspect_prep(config_user, config_common, config_runtime, force):
+def asr_eval_man_inspect_prep(config_user, config_common, config_runtime, force=False):
+    """
+    Prefect flow for preparing ASR evaluation results for manual inspection in Argilla.
+    
+    This flow orchestrates the creation of manual inspection tasks for ASR evaluation results.
+    It processes the results and creates annotation tasks in the Argilla system for human review.
+    
+    Args:
+        config_user (dict): User-specific configuration containing credentials and paths
+        config_common (dict): Common configuration settings shared across runs
+        config_runtime (dict): Runtime configuration with dataset, systems, and sampling settings
+        force (bool, optional): Whether to force recreation of existing tasks. Defaults to False.
+    
+    Returns:
+        None: Executes the task generation process
+    """
     generate_manual_inspection_tasks(config_user, config_common, config_runtime, force)

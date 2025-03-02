@@ -1,3 +1,10 @@
+"""
+ASR Evaluation Flow Module
+
+This module defines Prefect flows for running ASR evaluation, including functions for calculating
+metrics on both per-dataset and per-sample levels. It orchestrates the evaluation pipeline, handles
+data loading, metrics calculation, and results persistence.
+"""
 from prefect import flow
 from prefect_flows.tasks import calculate_eval_metrics_per_dataset, calculate_eval_metrics_per_sample, save_metrics_tsv, save_metrics_json, load_hf_dataset_split
 from config_utils import get_config_run 
@@ -10,6 +17,20 @@ today = datetime.now().strftime("%Y%m%d")
 
 
 def get_pretty_column_names(dataset, split):
+    """
+    Create a mapping of dataset config names to shortened display names.
+    
+    This function generates a dictionary that maps full dataset configuration names
+    (including dataset name, config name, and split) to shortened, more readable names
+    suitable for display in tables or charts.
+    
+    Args:
+        dataset (str): The dataset name (e.g., "amu-cai/pl-asr-bigos-v2-secret")
+        split (str): The dataset split (e.g., "test")
+        
+    Returns:
+        dict: A dictionary mapping full dataset config paths to their shortened names
+    """
     config_names = get_dataset_config_names(dataset)[:-1]
     # add split into to config_names e.g. "amu-cai/pl-asr-bigos-v2-secret-> amu-cai/pl-asr-bigos-v2-secret-test"
     # add split into to config_names e.g. "amu-cai/pl-asr-bigos-diagnostic-> amu-cai/pl-asr-bigos-diagnostic-test"
@@ -23,6 +44,22 @@ def get_pretty_column_names(dataset, split):
     return(column_names)
 
 def generate_sample_eval_metrics_subsets(config_user, config_common, config_runtime, force):
+    """
+    Generate and save sample-level evaluation metrics for specified ASR systems and datasets.
+    
+    This function processes evaluation data on a per-sample level by:
+    1. Loading evaluation input data for each system/dataset combination
+    2. Calculating per-sample evaluation metrics (WER, CER, etc.)
+    3. Merging metrics with dataset metadata
+    4. Saving results to TSV and JSON files for further analysis
+    5. Saving aggregated results to the leaderboard input directory
+    
+    Args:
+        config_user (dict): User-specific configuration containing paths
+        config_common (dict): Common configuration settings
+        config_runtime (dict): Runtime configuration specifying datasets, systems, and metrics settings
+        force (bool): If True, recalculate metrics even if output files already exist
+    """
     
     datasets, subsets, splits, systems, eval_run_codename = get_config_run(config_runtime)
     norm_types=config_runtime["norm_types"]
@@ -118,6 +155,22 @@ def generate_sample_eval_metrics_subsets(config_user, config_common, config_runt
         #TODO - calculate WER per audio duration bucket and plot results
 
 def generate_agg_eval_metrics_subsets(config_user, config_common, config_runtime, force):
+    """
+    Generate and save aggregated evaluation metrics for datasets.
+    
+    This function processes evaluation data on a per-dataset level by:
+    1. Loading evaluation input data for each system/dataset combination
+    2. Calculating aggregated metrics across the entire dataset
+    3. Applying normalization lexicons if available
+    4. Saving results to TSV and JSON files
+    5. Saving aggregated results to the leaderboard input directory
+    
+    Args:
+        config_user (dict): User-specific configuration containing paths
+        config_common (dict): Common configuration settings
+        config_runtime (dict): Runtime configuration specifying datasets, systems, and metrics settings
+        force (bool): If True, recalculate metrics even if output files already exist
+    """
     
     datasets, subsets, splits, systems, eval_run_codename = get_config_run(config_runtime)
     print("datasets", datasets)
@@ -198,5 +251,18 @@ def generate_agg_eval_metrics_subsets(config_user, config_common, config_runtime
 
 @flow(name="ASR Evaluation Execution Flow")
 def asr_eval_run(config_user, config_common, config_runtime, force):
+    """
+    Main Prefect flow for executing ASR evaluation pipeline.
+    
+    This flow orchestrates the full ASR evaluation process by sequentially calling
+    functions to generate both aggregated dataset-level metrics and detailed
+    sample-level metrics for all specified systems and datasets.
+    
+    Args:
+        config_user (dict): User-specific configuration containing paths
+        config_common (dict): Common configuration settings 
+        config_runtime (dict): Runtime configuration specifying datasets, systems, and metrics settings
+        force (bool): If True, recalculate metrics even if output files already exist
+    """
     generate_agg_eval_metrics_subsets(config_user, config_common, config_runtime, force)
     generate_sample_eval_metrics_subsets(config_user, config_common, config_runtime, force)

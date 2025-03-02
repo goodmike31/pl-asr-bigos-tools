@@ -3,8 +3,26 @@ from .base_asr_system import BaseASRSystem
 from google.cloud import speech
 
 class GoogleCloudASR(BaseASRSystem):
-    #https://cloud.google.com/speech-to-text/docs/transcription-model#speech_transcribe_model_selection-python
+    """Google Cloud Speech-to-Text API implementation for the BIGOS framework.
+    
+    Provides integration with the Google Cloud Speech-to-Text API (v1).
+    
+    Attributes:
+        client (speech.SpeechClient): Google Cloud Speech client.
+        config (speech.RecognitionConfig): Configuration for speech recognition.
+    """
+    
     def __init__(self, system, model, credentials:str, language_code:str = "pl-PL", enable_automatic_punctuation:bool = True, sampling_rate:int = 16000):
+        """Initialize the Google Cloud Speech-to-Text ASR system.
+        
+        Args:
+            system (str): Identifier for the ASR system type ('google').
+            model (str): The specific model to use.
+            credentials (str): Path to Google Cloud credentials JSON file.
+            language_code (str, optional): Language code. Defaults to "pl-PL".
+            enable_automatic_punctuation (bool, optional): Whether to enable automatic punctuation. Defaults to True.
+            sampling_rate (int, optional): Audio sampling rate. Defaults to 16000.
+        """
         super().__init__(system, model, language_code)
 
         # system specific handling of creadentials. Can be API key or path to credentials file        
@@ -32,6 +50,14 @@ class GoogleCloudASR(BaseASRSystem):
 
         
     def generate_asr_hyp(self, speech_file:str) -> str:
+        """Generate transcription for an audio file using Google Cloud Speech-to-Text.
+        
+        Args:
+            speech_file (str): Path to the audio file to transcribe.
+            
+        Returns:
+            str: The transcription result, or None if no results were returned.
+        """
         # if not available in cache, process audio
         with open(speech_file, "rb") as audio_file:
             audio_content = audio_file.read()
