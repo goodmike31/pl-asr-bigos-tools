@@ -200,7 +200,7 @@ def generate_agg_eval_metrics_subsets(config_user, config_common, config_runtime
     for dataset in datasets:
         eval_out_dir_dataset = os.path.join(eval_out_dir_common, dataset, eval_run_codename)
         os.makedirs(eval_out_dir_dataset, exist_ok=True)
-        norm_lexicon_path = os.path.join("./data/norm_lexicons", dataset + ".csv")
+        norm_lexicon_path = os.path.join("./config/norm_lexicons", dataset + ".csv")
         print("norm_lexicon_path", norm_lexicon_path)
         if not os.path.exists(norm_lexicon_path):
             print("Norm lexicon file does not exist. Exiting.")
